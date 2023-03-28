@@ -1,3 +1,7 @@
+<template>
+    <p class="greeting">{{ greeting }}</p>
+</template>
+
 <script>
 export default {
     name: 'StatementComponent',
@@ -8,10 +12,6 @@ export default {
     }
 }
 </script>
-
-<template>
-    <p class="greeting">{{ greeting }}</p>
-</template>
 
 <style>
 .greeting {

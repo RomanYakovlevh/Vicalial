@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import CalculatorView from "@/components/CalculatorView.vue";
+import CalculatorView from "@/views/CalculatorView.vue";
 import StatementComponent from "@/components/StatementComponent.vue";
 
 const routes = [
