@@ -25,11 +25,11 @@ export default {
         addNewMatrixAndCloserWindow() {
             //TODO refactor, this logic should be in some service
             const id = this.$store.state.lastObjectID
-            this.$store.commit('incrementLastObjectId')
-            const v = this.$data.textValue.split('\n').map((x) => x.split(','))
+            const value = this.$data.textValue.split('\n').map((x) => x.split(','))
             const name = "object" + id
-            this.$store.commit('appendStatement', {id, name, v})
-            console.log(this.$store.state)
+
+            this.$emit("newDataAdded", {id, name, value})
+            this.$store.commit('incrementLastObjectId')
             this.setOpenDataWindow(false)
         }
 
@@ -38,7 +38,8 @@ export default {
         return {
             textValue: ""
         }
-    }
+    },
+    emits: ['newDataAdded']
 };
 </script>
 

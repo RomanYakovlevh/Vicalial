@@ -1,36 +1,37 @@
 <template>
-    <AddDataWindow/>
-    <p class="greeting" v-for="s in getStatements" :key=s.id>{{ s.id }}
-    </p>
+    <AddDataWindow @new-data-added="pushStatement"/>
+    <div class="greeting" v-for="s in getStatements" :key=s.id>
+        <StatementComponent :statement=s>
+        </StatementComponent>
+    </div>
     <ControlsBarComponent/>
 </template>
 
 <script>
 import ControlsBarComponent from "@/components/ControlsBarComponent.vue";
 import AddDataWindow from "@/components/AddDataWindow.vue";
+import StatementComponent from "@/components/StatementComponent.vue";
 
 export default {
     name: 'CalculatorView',
     components: {
+        StatementComponent,
         ControlsBarComponent,
         AddDataWindow
     },
     data() {
         return {
-            statements: [1, 2, 3]
+            statements: []
         }
     },
     computed: {
         getStatements() {
-            let statements = [];
-            this.$store.state.statementNames.forEach((id, n) => {
-                statements.push({
-                    id: id,
-                    name: n,
-                    value: this.$store.state.statementValues[id]
-                })
-            })
-            return statements
+            return this.$data.statements
+        }
+    },
+    methods: {
+        pushStatement(st) {
+            this.$data.statements.push(st)
         }
     }
 }

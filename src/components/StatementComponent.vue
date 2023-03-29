@@ -1,5 +1,5 @@
 <template>
-    <p class="greeting">{{ greeting }}</p>
+    <p class="greeting">{{ statement }}</p>
 </template>
 
 <script>
@@ -7,9 +7,14 @@ export default {
     name: 'StatementComponent',
     data() {
         return {
-            greeting: 'Hello World!'
+        }
+    },
+    props: {
+        statement: {
+            required: true
         }
     }
+
 }
 </script>
 
