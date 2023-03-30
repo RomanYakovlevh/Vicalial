@@ -1,7 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CalculatorView from "@/views/CalculatorView.vue";
-import StatementComponent from "@/components/StatementComponent.vue";
 
 const routes = [
     {
@@ -21,11 +20,6 @@ const routes = [
         path: '/calculator',
         name: 'calculator',
         component: CalculatorView
-    },
-    {
-        path: '/statement',
-        name: 'statement',
-        component: StatementComponent
     }
 ]
 

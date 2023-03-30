@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import Matrix from "../services/Matrix.js"
 
 export default {
     name: 'AddDataWindow',
@@ -25,12 +26,18 @@ export default {
         addNewMatrixAndCloserWindow() {
             //TODO refactor, this logic should be in some service
             const id = this.$store.state.lastObjectID
-            const value = this.$data.textValue.split('\n').map((x) => x.split(','))
             const name = "object" + id
 
-            this.$emit("newDataAdded", {id, name, value})
-            this.$store.commit('incrementLastObjectId')
-            this.setOpenDataWindow(false)
+            try {
+                const matrix = new Matrix(this.$data.textValue.split('\n').map((x) => x.split(',')))
+
+                this.$emit("newDataAdded", {id, name, matrix})
+                this.$store.commit('incrementLastObjectId')
+                this.setOpenDataWindow(false)
+            } catch (e: MatrixInvalidError) {
+
+            }
+
         }
 
     },
