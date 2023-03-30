@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Matrix from "../services/Matrix.js"
+import Matrix from "../services/Matrix.ts"
 
 export default {
     name: 'AddDataWindow',
@@ -34,8 +34,8 @@ export default {
                 this.$emit("newDataAdded", {id, name, matrix})
                 this.$store.commit('incrementLastObjectId')
                 this.setOpenDataWindow(false)
-            } catch (e: MatrixInvalidError) {
-
+            } catch (e) {
+            console.log("OOPESEIES")
             }
 
         }
