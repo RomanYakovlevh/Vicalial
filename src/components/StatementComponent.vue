@@ -1,5 +1,6 @@
 <template>
-    <p class="greeting">{{ statement }}</p>
+    <div class="greeting">{{ statement }}</div>
+    <table class=".matrix"></table>
 </template>
 
 <script>
@@ -13,6 +14,15 @@ export default {
         statement: {
             required: true
         }
+    },
+    mounted() {
+        const table = document.querySelector('.matrix')
+        this.statement.forEach(function(line) {
+            table.insertRow()
+            line.forEach(function (item) {
+                table.insrtCell().textContext = item
+            })
+        })
     }
 
 }
