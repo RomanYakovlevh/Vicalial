@@ -8,9 +8,26 @@
 <script>
 export default {
     name: 'StatementComponent',
+    data() {
+        return {
+            rowButtonsAmount: 0,
+            colButtonsAmount: 0,
+            mouseover: -1
+        }
+    },
+    computed: {
+        onRowHover(thisIndex) {
+            if (this.$data.mouseover === thisIndex) {
+                return { 'bg-gray-300': true }
+            } else {
+                return ""
+            }
+        }
+    },
     mounted() {
         console.log(this.statement)
         const table = this.$refs.matrix
+        const thisLocalized = this
 
         const buttonRow = table.insertRow()
         for (var i = 0; i < this.statement.matrix.columnsAmount; i++) {
@@ -18,16 +35,17 @@ export default {
             const b = document.createElement('button')
             btn.appendChild(b)
             b.textContent = '⏺'
-            b.className = 'btn-statement-component'
+            b.className = 'row-col-selector-btn'
         }
 
-        this.statement.matrix.asList2D.forEach(function (line) {
+        this.statement.matrix.asList2D.forEach(function (line, i) {
             const row = table.insertRow()
             line.forEach(function (item) {
                 const cell = row.insertCell()
                 const d = document.createElement('div');
                 d.textContent = item
                 d.className = 'hld'
+                d.style = thisLocalized.computed.onRowHover(i)
                 cell.appendChild(d)
                 cell.className = "cnt-cell"
             })
@@ -35,22 +53,27 @@ export default {
             const btn = row.insertCell()
             const b = document.createElement('button')
             btn.appendChild(b)
+            console.log(i)
+            b.addEventListener("click", () => {
+                console.log("Button clicked! ", i);
+            });
+            b.addEventListener("mouseover", () => {
+                console.log("Hovered ", i)
+                thisLocalized.$data.mouseover = i
+            })
+            b.addEventListener("mouseout", () => {
+                console.log("Mouseout ", i)
+                thisLocalized.$data.mouseover = -1
+            })
             b.textContent = '⏺'
-            b.className = 'btn-statement-component'
+            b.className = 'row-col-selector-btn'
         })
-    },
-    data() {
-        return {
-            rowButtonsAmount: 0,
-            colButtonsAmount: 0
-        }
     },
     props: {
         statement: {
             required: true
         }
     }
-
 
 }
 </script>
@@ -85,14 +108,14 @@ export default {
     margin: 3px 8px 3px 8px;
 }
 
-.btn-statement-component{
+.row-col-selector-btn {
     border: none;
     border-radius: 5px;
     width: 2em;
     height: 2em;
 }
 
-.btn-statement-component:hover {
+.row-col-selector-btn:hover {
     background-color: #d6d5d2;
 }
 </style>
