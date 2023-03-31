@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Matrix from "../services/Matrix.ts"
+import Matrix from "../services/Matrix.js"
 
 export default {
     name: 'AddDataWindow',
@@ -27,16 +27,11 @@ export default {
             //TODO refactor, this logic should be in some service
             const id = this.$store.state.lastObjectID
             const name = "object" + id
+            const matrix = new Matrix(this.$data.textValue.split('\n').map((x) => x.split(',')))
 
-            try {
-                const matrix = new Matrix(this.$data.textValue.split('\n').map((x) => x.split(',')))
-
-                this.$emit("newDataAdded", {id, name, matrix})
-                this.$store.commit('incrementLastObjectId')
-                this.setOpenDataWindow(false)
-            } catch (e) {
-            console.log("OOPESEIES")
-            }
+            this.$emit("newDataAdded", {id, name, matrix})
+            this.$store.commit('incrementLastObjectId')
+            this.setOpenDataWindow(false)
 
         }
 
