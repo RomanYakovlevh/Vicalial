@@ -1,7 +1,5 @@
 {
     "compilerOptions": {
-        "noEmit": true,
-        "allowImportingTsExtensions": true,
         "target": "esnext",
         "module": "esnext",
         "strict": true,
@@ -39,7 +37,7 @@
         "src/**/*.vue",
         "tests/**/*.ts",
         "tests/**/*.tsx"
-    ],
+, "src/services/Matrix.js", "src/services/Matrix.js"    ],
     "exclude": [
         "node_modules"
     ]

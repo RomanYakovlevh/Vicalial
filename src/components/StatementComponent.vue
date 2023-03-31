@@ -11,7 +11,17 @@ export default {
     mounted() {
         console.log(this.statement)
         const table = this.$refs.matrix
-        this.statement.value.forEach(function (line) {
+
+        const buttonRow = table.insertRow()
+        for (var i = 0; i < this.statement.matrix.columnsAmount; i++) {
+            const btn = buttonRow.insertCell()
+            const b = document.createElement('button')
+            btn.appendChild(b)
+            b.textContent = '⏺'
+            b.className = 'btn-statement-component'
+        }
+
+        this.statement.matrix.asList2D.forEach(function (line) {
             const row = table.insertRow()
             line.forEach(function (item) {
                 const cell = row.insertCell()
@@ -21,10 +31,19 @@ export default {
                 cell.appendChild(d)
                 cell.className = "cnt-cell"
             })
+
+            const btn = row.insertCell()
+            const b = document.createElement('button')
+            btn.appendChild(b)
+            b.textContent = '⏺'
+            b.className = 'btn-statement-component'
         })
     },
     data() {
-        return {}
+        return {
+            rowButtonsAmount: 0,
+            colButtonsAmount: 0
+        }
     },
     props: {
         statement: {
@@ -49,8 +68,8 @@ export default {
 }
 
 .matrix {
-    margin: 1%;
-    border: 1px solid #999999;
+    margin: 0% 1% 1% 1%;
+    border: 0px solid #999999;
 }
 
 .stt {
@@ -64,5 +83,16 @@ export default {
 
 .hld {
     margin: 3px 8px 3px 8px;
+}
+
+.btn-statement-component{
+    border: none;
+    border-radius: 5px;
+    width: 2em;
+    height: 2em;
+}
+
+.btn-statement-component:hover {
+    background-color: #d6d5d2;
 }
 </style>
