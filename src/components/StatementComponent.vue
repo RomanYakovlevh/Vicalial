@@ -23,7 +23,7 @@
                 </td>
             </tr>
         </table>
-        <FunctionChoiceComponent :tabs="tabs"></FunctionChoiceComponent>
+        <FunctionChoiceComponent></FunctionChoiceComponent>
     </div>
 </template>
   
@@ -37,21 +37,7 @@ export default {
             mouseoverRow: -1,
             mouseoverCol: -1,
             mouseoverAll: false,
-            mouseOverSingle: { row: -1, col: -1 },
-            tabs: [
-                {
-                    title: "Tab 1",
-                    content: "This is the content of tab 1",
-                },
-                {
-                    title: "Tab 2",
-                    content: "This is the content of tab 2",
-                },
-                {
-                    title: "Tab 3",
-                    content: "This is the content of tab 3",
-                },
-            ],
+            mouseOverSingle: { row: -1, col: -1 }
         };
     },
     components: {

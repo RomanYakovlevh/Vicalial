@@ -5,10 +5,11 @@
                 :class="{ active: index === activeTabIndex }">{{ tab.title }}</button>
         </div>
         <div class="tab-contents">
-            <div v-for="(tab, index) in tabs" :key="index" v-show="isTabActive(index)" :class="{ active: index === activeTabIndex }">
-                <div>
-                    content: {{ tab.content }}
-                </div>
+            <div v-for="(tab, index) in tabs" :key="index" v-show="isTabActive(index)"
+                :class="{ active: index === activeTabIndex }">
+                <button v-for="(op, j) in tab.content" :key="j">
+                    {{ op.name }}
+                </button>
             </div>
         </div>
     </div>
@@ -18,17 +19,39 @@
 export default {
     name: "FunctionChoiceComponent",
     props: {
-        tabs: {
-            type: Array,
-            required: true,
-            validator: (value) => {
-                return value.every((tab) => "title" in tab && "content" in tab);
-            },
-        },
     },
     data() {
         return {
             activeTabIndex: 0,
+            tabs: [
+                {
+                    title: "Math",
+                    content: [
+                        { id: 0, shorthand: "+", name: "Addition" },
+                        { id: 1, shorthand: "-", name: "Substraction" },
+                        { id: 2, shorthand: "*", name: "Multiplication" },
+                        { id: 3, shorthand: "T", name: "Transposition" },
+                        { id: 4, shorthand: "^-1", name: "Inversion" }],
+                },
+                {
+                    title: "Code",
+                    content: [
+                        { id: 5, shorthand: "+", name: "Replace" },
+                        { id: 6, shorthand: "-", name: "Swap" },
+                        { id: 7, shorthand: "*", name: "Map" },
+                        { id: 8, shorthand: "T", name: "Fold" },
+                        { id: 9, shorthand: "^-1", name: "Size" }],
+                },
+                {
+                    title: "Other",
+                    content: [
+                        { id: 10, shorthand: "+", name: "Plot" },
+                        { id: 11, shorthand: "-", name: "Export LaTex" },
+                        { id: 12, shorthand: "*", name: "Export Excel" },
+                        { id: 13, shorthand: "T", name: "Export .txt" },
+                        { id: 14, shorthand: "^-1", name: "To Abstract" }],
+                },
+            ],
         };
     },
     computed: {
