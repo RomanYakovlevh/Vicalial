@@ -1,10 +1,10 @@
 export class Matrix {
     constructor(list2D) {
         console.log("HIIII")
-        this.linesAmount = list2D.length
+        this.rowsAmount = list2D.length
         this.columnsAmount = list2D[0].length
         const thisLocalized = this;
-        console.log(this.linesAmount, this.columnsAmount, thisLocalized.linesAmount, thisLocalized.columnsAmount)
+        console.log(this.rowsAmount, this.columnsAmount, thisLocalized.rowsAmount, thisLocalized.columnsAmount)
         list2D.forEach(function (line) {
             console.log(line)
             if (line.length !== thisLocalized.columnsAmount) {
