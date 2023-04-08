@@ -7,10 +7,17 @@
         <div class="tab-contents">
             <div v-for="(tab, index) in tabs" :key="index" v-show="isTabActive(index)"
                 :class="{ active: index === activeTabIndex }">
-                <button v-for="(op, j) in tab.content" :key="j">
+                <button v-for="(op, j) in tab.content" :key="j" @click="activeFunctionChoiceIndex = op.id">
                     {{ op.name }}
                 </button>
             </div>
+        </div>
+    </div>
+    <div v-if="activeFunctionChoiceIndex !== -1" class="fun-arg-sel">
+        {{ allFunctions.find(x => x.id === activeFunctionChoiceIndex).name }}:
+        <div v-for="i in Array.from({ length: allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum }, (_, index) => index)"
+            :key="i">
+            {{ this.pullFromWorkspace(i) }},
         </div>
     </div>
 </template>
@@ -19,39 +26,36 @@
 export default {
     name: "FunctionChoiceComponent",
     props: {
+        workspace: { require: true, type: Array }
+    },
+    methods: {
+        pullFromWorkspace(i) {
+            if (i < this.$props.workspace.length) {
+                return "s"+i
+            } else {
+                return "-"
+            }
+        }
     },
     data() {
         return {
             activeTabIndex: 0,
-            tabs: [
-                {
-                    title: "Math",
-                    content: [
-                        { id: 0, shorthand: "+", name: "Addition" },
-                        { id: 1, shorthand: "-", name: "Substraction" },
-                        { id: 2, shorthand: "*", name: "Multiplication" },
-                        { id: 3, shorthand: "T", name: "Transposition" },
-                        { id: 4, shorthand: "^-1", name: "Inversion" }],
-                },
-                {
-                    title: "Code",
-                    content: [
-                        { id: 5, shorthand: "+", name: "Replace" },
-                        { id: 6, shorthand: "-", name: "Swap" },
-                        { id: 7, shorthand: "*", name: "Map" },
-                        { id: 8, shorthand: "T", name: "Fold" },
-                        { id: 9, shorthand: "^-1", name: "Size" }],
-                },
-                {
-                    title: "Other",
-                    content: [
-                        { id: 10, shorthand: "+", name: "Plot" },
-                        { id: 11, shorthand: "-", name: "Export LaTex" },
-                        { id: 12, shorthand: "*", name: "Export Excel" },
-                        { id: 13, shorthand: "T", name: "Export .txt" },
-                        { id: 14, shorthand: "^-1", name: "To Abstract" }],
-                },
-            ],
+            activeFunctionChoiceIndex: -1,
+            allFunctions: [{ id: 0, shorthand: "+", name: "Addition", argNum: 2 },
+            { id: 1, shorthand: "-", name: "Substraction", argNum: 2 },
+            { id: 2, shorthand: "*", name: "Multiplication", argNum: 2 },
+            { id: 3, shorthand: "T", name: "Transposition", argNum: 1 },
+            { id: 4, shorthand: "^-1", name: "Inversion", argNum: 1 },
+            { id: 5, shorthand: "+", name: "Replace", argNum: 2 },
+            { id: 6, shorthand: "-", name: "Swap", argNum: 2 },
+            { id: 7, shorthand: "*", name: "Map", argNum: 2 },
+            { id: 8, shorthand: "T", name: "Fold", argNum: 2 },
+            { id: 9, shorthand: "^-1", name: "Size", argNum: 1 },
+            { id: 10, shorthand: "+", name: "Plot", argNum: 1 },
+            { id: 11, shorthand: "-", name: "Export LaTex", argNum: 1 },
+            { id: 12, shorthand: "*", name: "Export Excel", argNum: 1 },
+            { id: 13, shorthand: "T", name: "Export .txt", argNum: 1 },
+            { id: 14, shorthand: "^-1", name: "To Abstract", argNum: 1 }]
         };
     },
     computed: {
@@ -61,6 +65,22 @@ export default {
                 return index === this.activeTabIndex;
             };
         },
+        tabs() {
+            return [
+                {
+                    title: "Math",
+                    content: this.allFunctions.filter((x) => new Array(0, 1, 2, 3, 4).findIndex(y => y === x.id) !== -1),
+                },
+                {
+                    title: "Code",
+                    content: this.allFunctions.filter((x) => new Array(5, 6, 7, 8, 9).findIndex(y => y === x.id) !== -1),
+                },
+                {
+                    title: "Other",
+                    content: this.allFunctions.filter((x) => new Array(10, 11, 12, 13, 14).findIndex(y => y === x.id) !== -1),
+                },
+            ]
+        }
     },
 };
 </script>

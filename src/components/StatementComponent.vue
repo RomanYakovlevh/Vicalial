@@ -23,7 +23,7 @@
                 </td>
             </tr>
         </table>
-        <FunctionChoiceComponent></FunctionChoiceComponent>
+        <FunctionChoiceComponent v-if="workspace.length!==0" :workspace="workspace"></FunctionChoiceComponent>
     </div>
 </template>
   
