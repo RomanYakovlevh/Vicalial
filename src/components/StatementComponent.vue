@@ -23,7 +23,8 @@
                 </td>
             </tr>
         </table>
-        <FunctionChoiceComponent v-if="workspace.length!==0" :workspace="workspace"></FunctionChoiceComponent>
+        <FunctionChoiceComponent v-if="workspace.filter(x => x.parentId === statement.id).length !== 0" :workspace="workspace">
+        </FunctionChoiceComponent>
     </div>
 </template>
   

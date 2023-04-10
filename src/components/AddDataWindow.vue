@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { Matrix, MatrixInvalidError } from "../services/Matrix.js"
+import { Matrix, MatrixInvalidError } from "../services/Matrix.ts"
 
 export default {
     name: 'AddDataWindow',
@@ -30,8 +30,8 @@ export default {
             try {
                 const matrix = new Matrix(this.$data.textValue.split('\n').map((x) => x.split(',')));
 
-                this.$emit("newDataAdded", { id, name, matrix })
                 this.$store.commit('incrementLastObjectId')
+                this.$emit("newDataAdded", { id, name, matrix })
                 this.setOpenDataWindow(false)
             } catch (e) {
                 if (e instanceof MatrixInvalidError) {

@@ -19,6 +19,7 @@
             :key="i">
             {{ this.pullFromWorkspace(i) }},
         </div>
+        <button v-if="allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum <= workspace.length" @click="runFunction()">Apply</button>
     </div>
 </template>
   
@@ -31,10 +32,13 @@ export default {
     methods: {
         pullFromWorkspace(i) {
             if (i < this.$props.workspace.length) {
-                return "s"+i
+                return "s" + i
             } else {
                 return "-"
             }
+        },
+        runFunction() {
+
         }
     },
     data() {
@@ -128,6 +132,12 @@ export default {
 
 .tab-contents>div:first-child {
     display: block;
+}
+
+.fun-arg-sel {
+    display: flex;
+    flex-direction: row;
+    margin: 1%;
 }
 </style>
   
