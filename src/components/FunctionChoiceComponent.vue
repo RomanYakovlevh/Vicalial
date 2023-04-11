@@ -19,11 +19,14 @@
             :key="i">
             {{ this.pullFromWorkspace(i) }},
         </div>
-        <button v-if="allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum <= workspace.length" @click="runFunction()">Apply</button>
+        <button v-if="allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum <= workspace.length"
+            @click="runFunction()">Apply</button>
     </div>
 </template>
   
 <script>
+import { runFunctionById } from '@/services/Matrix'
+
 export default {
     name: "FunctionChoiceComponent",
     props: {
@@ -38,8 +41,13 @@ export default {
             }
         },
         runFunction() {
+            const objid = this.$store.state.lastObjectID
+            const name = "object" + objid
+            const matrix = runFunctionById(this.$data.activeFunctionChoiceIndex, this.$props.workspace)
 
-        }
+            this.$store.commit('incrementLastObjectId')
+            this.$emit("newDataAdded", { objid, name, matrix })
+        },
     },
     data() {
         return {
@@ -86,7 +94,8 @@ export default {
             ]
         }
     },
-};
+    emits: ['newDataAdded']
+}
 </script>
   
 <style>

@@ -1,14 +1,11 @@
-import { loadPyodide } from "pyodide";
+import { pyodide } from "./PyLoader";
 
 export class Matrix {
-    pyodide: any;
     rowsAmount: number;
     columnsAmount: number;
     asList2D: number[][];
     constructor(list2D: Array<Array<number>>) {
         console.log("HIIII")
-
-        this.pyLoad()
 
         this.rowsAmount = list2D.length
         this.columnsAmount = list2D[0].length
@@ -26,11 +23,6 @@ export class Matrix {
             })
         })
         this.asList2D = list2D
-    }
-
-    async pyLoad() {
-        this.pyodide = await loadPyodide();
-        await this.pyodide.loadPackage("numpy");
     }
 
     extractElemsAsMatrix(cellsToExtract: Array<{ row: number, col: number }>) {
@@ -56,33 +48,8 @@ export class Matrix {
         return new Matrix(Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => this.asList2D[row][col])))
     }
 
-    runFunctionById(id: number) {
-        switch (id) {
-            case 0:
-                break
-            case 1:
-                break
-            case 2:
-                break
-            case 3:
-                break
-            case 4:
-                break
-            case 5:
-                break
-            case 6:
-                break
-            case 7:
-                break
-            case 8:
-                break
-            case 9:
-                break
-        }
-    }
-
     addition(arg2: Matrix) {
-        const np = this.pyodide.globals.get('numpy')
+        const np = pyodide.globals.get('numpy')
         const arr = np.array(this.asList2D)
         const arr2 = np.array(arg2.asList2D)
         const c = np.add(arr, arr2)
@@ -92,3 +59,33 @@ export class Matrix {
 }
 
 export class MatrixInvalidError extends Error { }
+
+export function runFunctionById(id: number, workspace: Array<{ parentId: number, parent: Matrix, selected: Array<{ row: number, col: number }> }>): Matrix {
+    switch (id) {
+        case 0: {
+            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
+            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            return e1.addition(e2)
+        }
+
+        case 1:
+            break
+        case 2:
+            break
+        case 3:
+            break
+        case 4:
+            break
+        case 5:
+            break
+        case 6:
+            break
+        case 7:
+            break
+        case 8:
+            break
+        case 9:
+            break
+    }
+    return new Matrix([])
+}

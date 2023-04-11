@@ -149,7 +149,7 @@ export default {
             required: true
         }
     },
-    emits: ['workspaceUpdate']
+    emits: ['workspaceUpdate', 'newDataAdded']
 };
 </script>
   
