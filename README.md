@@ -29,3 +29,4 @@ Project is hard-coded to work on matrices, other types of data should also be ad
 All checks and conversions for variable creation happen in AddDataWindow.vue, which is inapropriate place.
 Solve issue with css locality
 Bug: There should be only one FunctionChoice component visible at a time. As of now you can select cells from different matrices and that would create more that one FunctionChoice.
+In some distant future we propably should replace fetching pyodide from jsdelivr to fetching it from our own server. There is also script import in index.html.
