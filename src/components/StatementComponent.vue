@@ -24,7 +24,8 @@
                 </td>
             </tr>
         </table>
-        <FunctionChoiceComponent v-if="workspace.filter(x => x.parentId === statement.id).length !== 0" :workspace="workspace" @new-statement-added="newStatementAdded">
+        <FunctionChoiceComponent v-if="workspace.filter(x => x.parentId === statement.id).length !== 0"
+            :workspace="workspace" @new-statement-added="newStatementAdded">
         </FunctionChoiceComponent>
     </div>
 </template>
@@ -86,7 +87,7 @@ export default {
             //console.log(this.$data.mouseoverCol)
         },
         onAllButtonClick() {
-           // console.log('All Button clicked! ');
+            // console.log('All Button clicked! ');
             var selected = []
             for (var i = 0; i < this.statement.matrix.rowsAmount; i++) {
                 for (var j = 0; j < this.statement.matrix.columnsAmount; j++) {
@@ -124,7 +125,8 @@ export default {
             return (rowIndex, colIndex) => {
                 if (this.mouseoverRow === rowIndex || this.mouseoverCol == colIndex || this.mouseoverAll || (this.mouseOverSingle.row === rowIndex && this.mouseOverSingle.col === colIndex)) {
                     return {
-                        backgroundColor: "grey"
+                        backgroundColor: "grey",
+                        border: "1px solid grey"
                     };
                 } else if (this.$props.workspace
                     .filter((w) => {
@@ -142,7 +144,8 @@ export default {
                     };
                 } else {
                     return {
-                        backgroundColor: "white"
+                        backgroundColor: "white",
+                        border: "1px solid white"
                     };
                 }
             };

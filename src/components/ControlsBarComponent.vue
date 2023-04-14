@@ -1,9 +1,7 @@
 <template>
     <div class="bottom-bar">
         <button class="btn" @click=setOpenDataWindow(true)>add data</button>
-        <div class="btm-bar-divider"></div>
-        <button class="btn">Button 2</button>
-        <button class="btn">Button 3</button>
+        <button class="btn" @click="clearWorkspace">deselect</button>
     </div>
 </template>
 
@@ -13,8 +11,12 @@ export default {
     methods: {
         setOpenDataWindow(value) {
             this.$store.commit('setOpenDataWindow', value)
+        },
+        clearWorkspace() {
+            this.$emit('workspaceUpdate', [])
         }
-    }
+    },
+    emits: ['workspaceUpdate']
 }
 </script>
 

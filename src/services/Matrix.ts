@@ -25,7 +25,7 @@ export class Matrix {
         this.asList2D = list2D
     }
 
-    extractElemsAsMatrix(cellsToExtract: Array<{ row: number, col: number }>) {
+    groupSelectionByRow(cellsToExtract: Array<{ row: number, col: number }>) {
         const groupedMap: Map<number, Array<{ row: number, col: number }>> = new Map()
         cellsToExtract.slice().forEach(({ row, col }) => {
             const arr = groupedMap.get(row)
@@ -38,7 +38,24 @@ export class Matrix {
 
         })
 
+        return groupedMap
+    }
 
+    setElementsBySelection(selection: Array<{ row: number, col: number }>, setTo: Matrix) {
+        const groupedMap = this.groupSelectionByRow(selection)
+        const groupedArray = Array.from(groupedMap.values())
+        if (groupedArray.map(x => x.length !== setTo.columnsAmount).reduce((prev, cur) => prev || cur)  || groupedArray.length !== setTo.rowsAmount) {
+            throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
+        }
+        groupedArray.forEach((row, i) => {
+            row.forEach((item, j) => {
+                this.asList2D[item.row][item.col] = setTo.asList2D[i][j]
+            })
+        })
+    }
+
+    extractElemsAsMatrix(cellsToExtract: Array<{ row: number, col: number }>) {
+        const groupedMap = this.groupSelectionByRow(cellsToExtract)
         return new Matrix(Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => this.asList2D[row][col])))
     }
 
@@ -58,6 +75,11 @@ export class Matrix {
             }
         })
         return res
+    }
+
+    copy() {
+        const list2DCopy = this.asList2D.map(x => x.slice())
+        return new Matrix(list2DCopy)
     }
 
     addition(arg2: Matrix) {
@@ -136,12 +158,10 @@ export function runFunctionById(id: number, workspace: Array<{ parentId: number,
         }
         case 5: {
             //Replace
-            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
             const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
-            if (e1.columnsAmount !== e2.columnsAmount || e1.rowsAmount !== e2.rowsAmount) {
-                throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
-            }
-            
+            const res = workspace[0].parent.copy()
+            res.setElementsBySelection(workspace[0].selected, e2)
+            return res
         }
         case 6:
             break

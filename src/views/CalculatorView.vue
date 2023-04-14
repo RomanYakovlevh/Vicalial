@@ -1,12 +1,13 @@
 <template>
     <AddDataWindow @new-statement-added="pushStatement" />
-    <button @click="updateWorkspace([])">Deselect</button>
-    <div class="greeting" v-for="s in getStatements" :key=s.id>
-        <StatementComponent :statement=s :workspace=workspace @workspace-update="updateWorkspace"
-            @new-statement-added="pushStatement" @statement-deleted="deleteStatement">
-        </StatementComponent>
+    <div class="statement-components-list">
+        <div class="greeting" v-for="s in getStatements" :key=s.id>
+            <StatementComponent :statement=s :workspace=workspace @workspace-update="updateWorkspace"
+                @new-statement-added="pushStatement" @statement-deleted="deleteStatement">
+            </StatementComponent>
+        </div>
     </div>
-    <ControlsBarComponent />
+    <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="updateWorkspace"/>
 </template>
 
 <script>
@@ -54,5 +55,9 @@ export default {
 .greeting {
     color: red;
     font-weight: bold;
+}
+
+.statement-components-list{
+    padding-bottom: 10%;
 }
 </style>
