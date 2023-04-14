@@ -30,3 +30,7 @@ All checks and conversions for variable creation happen in AddDataWindow.vue, wh
 Solve issue with css locality
 Bug: There should be only one FunctionChoice component visible at a time. As of now you can select cells from different matrices and that would create more that one FunctionChoice.
 In some distant future we propably should replace fetching pyodide from jsdelivr to fetching it from our own server. There is also script import in index.html.
+There is so many way to name multiplication of matrices: I should appropriately call them dot-products, cross-products and etc.
+Rename all Matrix methods in a way that it would exactly match names of corresponding functions in numpy.
+Just number of arguments is definetly not enough for function choice. We need like dynamic amount (for Extraction function), and typed arguments(for functions like Map and Reduce).
+We hardcode relation selection-parent, but it should be more like parent-child-child-child...

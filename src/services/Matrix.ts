@@ -5,14 +5,14 @@ export class Matrix {
     columnsAmount: number;
     asList2D: number[][];
     constructor(list2D: Array<Array<number>>) {
-        console.log("HIIII")
+        //console.log("HIIII")
 
         this.rowsAmount = list2D.length
         this.columnsAmount = list2D[0].length
         const thisLocalized = this;
-        console.log(this.rowsAmount, this.columnsAmount, thisLocalized.rowsAmount, thisLocalized.columnsAmount)
+        //console.log(this.rowsAmount, this.columnsAmount, thisLocalized.rowsAmount, thisLocalized.columnsAmount)
         list2D.forEach(function (line) {
-            console.log(line)
+            //console.log(line)
             if (line.length !== thisLocalized.columnsAmount) {
                 throw new MatrixInvalidError("Matrix has inconsistent amount of elements in rows")
             }
@@ -27,13 +27,7 @@ export class Matrix {
 
     extractElemsAsMatrix(cellsToExtract: Array<{ row: number, col: number }>) {
         const groupedMap: Map<number, Array<{ row: number, col: number }>> = new Map()
-        cellsToExtract.slice().sort(function (a, b) {
-            if (a.row - b.row !== 0) {
-                return a.row - b.row
-            } else {
-                return a.col - b.col
-            }
-        }).forEach(({ row, col }) => {
+        cellsToExtract.slice().forEach(({ row, col }) => {
             const arr = groupedMap.get(row)
             if (arr === undefined) {
                 groupedMap.set(row, new Array({ row, col }))
@@ -48,13 +42,68 @@ export class Matrix {
         return new Matrix(Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => this.asList2D[row][col])))
     }
 
+    toString() {
+        let res = ""
+        this.asList2D.forEach((row, i) => {
+            let rowAcc = ""
+            row.forEach((item, j) => {
+                rowAcc += item
+                if (j < this.columnsAmount - 1) {
+                    rowAcc += ","
+                }
+            })
+            res += rowAcc
+            if (i < this.rowsAmount - 1) {
+                res += ";"
+            }
+        })
+        return res
+    }
+
     addition(arg2: Matrix) {
-        const np = pyodide.globals.get('numpy')
-        const arr = np.array(this.asList2D)
-        const arr2 = np.array(arg2.asList2D)
-        const c = np.add(arr, arr2)
-        console.log(c)
-        return new Matrix(c)
+        pyodide.globals.set("x", this.toString())
+        pyodide.globals.set("y", arg2.toString())
+        pyodide.runPython(
+            "mx = numpy.matrix(x) \n" +
+            "my = numpy.matrix(y) \n" +
+            "result = numpy.add(mx, my).tolist()")
+        return new Matrix(pyodide.globals.get('result').toJs())
+    }
+
+    subtraction(arg2: Matrix) {
+        pyodide.globals.set("x", this.toString())
+        pyodide.globals.set("y", arg2.toString())
+        pyodide.runPython(
+            "mx = numpy.matrix(x) \n" +
+            "my = numpy.matrix(y) \n" +
+            "result = numpy.subtract(mx, my).tolist()")
+        return new Matrix(pyodide.globals.get('result').toJs())
+    }
+
+    multiplication(arg2: Matrix) {
+        pyodide.globals.set("x", this.toString())
+        pyodide.globals.set("y", arg2.toString())
+        pyodide.runPython(
+            "mx = numpy.matrix(x) \n" +
+            "my = numpy.matrix(y) \n" +
+            "result = mx * my")
+        return new Matrix(pyodide.globals.get('result').toJs())
+    }
+
+    transposition() {
+        pyodide.globals.set("x", this.toString())
+        pyodide.runPython(
+            "mx = numpy.matrix(x) \n" +
+            "result = numpy.transpose(mx).tolist()")
+        return new Matrix(pyodide.globals.get('result').toJs())
+    }
+
+    inversion() {
+        pyodide.globals.set("x", this.toString())
+        pyodide.runPython(
+            "mx = numpy.matrix(x) \n" +
+            "result = numpy.linalg.inv(mx).tolist()")
+        return new Matrix(pyodide.globals.get('result').toJs())
     }
 }
 
@@ -67,17 +116,33 @@ export function runFunctionById(id: number, workspace: Array<{ parentId: number,
             const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
             return e1.addition(e2)
         }
-
-        case 1:
-            break
-        case 2:
-            break
-        case 3:
-            break
-        case 4:
-            break
-        case 5:
-            break
+        case 1: {
+            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
+            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            return e1.subtraction(e2)
+        }
+        case 2: {
+            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
+            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            return e1.multiplication(e2)
+        }
+        case 3: {
+            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
+            return e1.transposition()
+        }
+        case 4: {
+            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
+            return e1.inversion()
+        }
+        case 5: {
+            //Replace
+            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
+            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            if (e1.columnsAmount !== e2.columnsAmount || e1.rowsAmount !== e2.rowsAmount) {
+                throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
+            }
+            
+        }
         case 6:
             break
         case 7:
@@ -85,6 +150,8 @@ export function runFunctionById(id: number, workspace: Array<{ parentId: number,
         case 8:
             break
         case 9:
+            break
+        case 10:
             break
     }
     return new Matrix([])

@@ -1,5 +1,6 @@
 <template>
     <div class="holder">
+        <button class="st-cmp-del-button" @click="deleteStatementAndWorkspaceEntries">✖</button>
         <div class="stt">{{ statement.name }} =</div>
         <table ref="matrix" class="matrix">
             <tr>
@@ -23,7 +24,7 @@
                 </td>
             </tr>
         </table>
-        <FunctionChoiceComponent v-if="workspace.filter(x => x.parentId === statement.id).length !== 0" :workspace="workspace">
+        <FunctionChoiceComponent v-if="workspace.filter(x => x.parentId === statement.id).length !== 0" :workspace="workspace" @new-statement-added="newStatementAdded">
         </FunctionChoiceComponent>
     </div>
 </template>
@@ -45,6 +46,11 @@ export default {
         FunctionChoiceComponent
     },
     methods: {
+        deleteStatementAndWorkspaceEntries() {
+            const newWorkspace = this.$props.workspace.filter(x => x.parentId !== this.statement.id)
+            this.$emit("workspaceUpdate", newWorkspace)
+            this.$emit("statementDeleted", this.statement.id)
+        },
         onRowButtonClick(rowIndex) {
             console.log('Button clicked! ', rowIndex);
             var selected = []
@@ -56,14 +62,14 @@ export default {
         },
         onRowMouseOver(rowIndex) {
             this.$data.mouseoverRow = rowIndex
-            console.log(this.$data.mouseoverRow)
+            //console.log(this.$data.mouseoverRow)
         },
         onRowMouseOut() {
             this.$data.mouseoverRow = -1
-            console.log(this.$data.mouseoverRow)
+            //console.log(this.$data.mouseoverRow)
         },
         onColButtonClick(colIndex) { //Dunno why but in template in line with <th v-for="col in statement.matrix.columnsAmount" :key="col"> indexing by some reason starts with 1
-            console.log('Button clicked! ', colIndex);
+            //console.log('Button clicked! ', colIndex);
             var selected = []
             for (var i = 0; i < this.statement.matrix.rowsAmount; i++) {
                 selected.push({ row: i, col: colIndex })
@@ -73,14 +79,14 @@ export default {
         },
         onColMouseOver(colIndex) {
             this.$data.mouseoverCol = colIndex
-            console.log(this.$data.mouseoverCol)
+            //console.log(this.$data.mouseoverCol)
         },
         onColMouseOut() {
             this.$data.mouseoverCol = -1
-            console.log(this.$data.mouseoverCol)
+            //console.log(this.$data.mouseoverCol)
         },
         onAllButtonClick() {
-            console.log('All Button clicked! ');
+           // console.log('All Button clicked! ');
             var selected = []
             for (var i = 0; i < this.statement.matrix.rowsAmount; i++) {
                 for (var j = 0; j < this.statement.matrix.columnsAmount; j++) {
@@ -92,11 +98,11 @@ export default {
         },
         onAllMouseOver() {
             this.$data.mouseoverAll = true
-            console.log(this.$data.mouseoverCol)
+            //console.log(this.$data.mouseoverCol)
         },
         onAllMouseOut() {
             this.$data.mouseoverAll = false
-            console.log(this.$data.mouseoverCol)
+            //console.log(this.$data.mouseoverCol)
         },
         onSingleMouseClick(rowIndex, colIndex) {
             const newWorkspace = [...this.$props.workspace, { parentId: this.statement.id, parent: this.statement.matrix, selected: [{ row: rowIndex, col: colIndex }] }]
@@ -104,10 +110,13 @@ export default {
         },
         onSingleMouseOver(rowIndex, colIndex) {
             this.$data.mouseOverSingle = { row: rowIndex, col: colIndex }
-            console.log(this.$data.mouseOverSingle)
+            //console.log(this.$data.mouseOverSingle)
         },
         onSingleMouseOut() {
             this.$data.mouseOverSingle = { row: -1, col: -1 }
+        },
+        newStatementAdded(data) {
+            this.$emit("newStatementAdded", data)
         }
     },
     computed: {
@@ -119,7 +128,6 @@ export default {
                     };
                 } else if (this.$props.workspace
                     .filter((w) => {
-                        //console.log(w.parentId, this.statement.id)
                         return w.parentId === this.statement.id
                     })
                     .filter((w) => {
@@ -149,7 +157,7 @@ export default {
             required: true
         }
     },
-    emits: ['workspaceUpdate', 'newDataAdded']
+    emits: ['workspaceUpdate', 'newStatementAdded', 'statementDeleted']
 };
 </script>
   
@@ -204,6 +212,19 @@ export default {
 
 .bg-gray-300 {
     background-color: #d6d5d2;
+}
+
+.st-cmp-del-button {
+    margin: 1%;
+    text-align: center;
+    font-size: medium;
+    border: none;
+    border-radius: 5px;
+    padding: 4px;
+}
+
+.st-cmp-del-button:hover {
+    background-color: #999999;
 }
 </style>
   

@@ -31,7 +31,7 @@ export default {
                 const matrix = new Matrix(this.$data.textValue.split('\n').map((x) => x.split(',')));
 
                 this.$store.commit('incrementLastObjectId')
-                this.$emit("newDataAdded", { id, name, matrix })
+                this.$emit("newStatementAdded", { id, name, matrix })
                 this.setOpenDataWindow(false)
             } catch (e) {
                 if (e instanceof MatrixInvalidError) {
@@ -50,7 +50,7 @@ export default {
             textValue: ""
         }
     },
-    emits: ['newDataAdded']
+    emits: ['newStatementAdded']
 };
 </script>
 

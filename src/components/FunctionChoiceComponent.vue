@@ -41,12 +41,12 @@ export default {
             }
         },
         runFunction() {
-            const objid = this.$store.state.lastObjectID
-            const name = "object" + objid
+            const id = this.$store.state.lastObjectID
+            const name = "object" + id
             const matrix = runFunctionById(this.$data.activeFunctionChoiceIndex, this.$props.workspace)
 
             this.$store.commit('incrementLastObjectId')
-            this.$emit("newDataAdded", { objid, name, matrix })
+            this.$emit("newStatementAdded", { id, name, matrix })
         },
     },
     data() {
@@ -54,7 +54,7 @@ export default {
             activeTabIndex: 0,
             activeFunctionChoiceIndex: -1,
             allFunctions: [{ id: 0, shorthand: "+", name: "Addition", argNum: 2 },
-            { id: 1, shorthand: "-", name: "Substraction", argNum: 2 },
+            { id: 1, shorthand: "-", name: "Subtraction", argNum: 2 },
             { id: 2, shorthand: "*", name: "Multiplication", argNum: 2 },
             { id: 3, shorthand: "T", name: "Transposition", argNum: 1 },
             { id: 4, shorthand: "^-1", name: "Inversion", argNum: 1 },
@@ -63,17 +63,17 @@ export default {
             { id: 7, shorthand: "*", name: "Map", argNum: 2 },
             { id: 8, shorthand: "T", name: "Fold", argNum: 2 },
             { id: 9, shorthand: "^-1", name: "Size", argNum: 1 },
-            { id: 10, shorthand: "+", name: "Plot", argNum: 1 },
-            { id: 11, shorthand: "-", name: "Export LaTex", argNum: 1 },
-            { id: 12, shorthand: "*", name: "Export Excel", argNum: 1 },
-            { id: 13, shorthand: "T", name: "Export .txt", argNum: 1 },
-            { id: 14, shorthand: "^-1", name: "To Abstract", argNum: 1 }]
+            { id: 10, shorthand: "+", name: "Selection", argNum: 0 }, //Technically it should be infinity, but we dont support that yet
+            { id: 11, shorthand: "+", name: "Plot", argNum: 1 },
+            { id: 12, shorthand: "-", name: "Export LaTex", argNum: 1 },
+            { id: 13, shorthand: "*", name: "Export Excel", argNum: 1 },
+            { id: 14, shorthand: "T", name: "Export .txt", argNum: 1 },
+            { id: 15, shorthand: "^-1", name: "To Abstract", argNum: 1 }]
         };
     },
     computed: {
         isTabActive() {
             return (index) => {
-                console.log(this.$props.tabs)
                 return index === this.activeTabIndex;
             };
         },
@@ -85,16 +85,16 @@ export default {
                 },
                 {
                     title: "Code",
-                    content: this.allFunctions.filter((x) => new Array(5, 6, 7, 8, 9).findIndex(y => y === x.id) !== -1),
+                    content: this.allFunctions.filter((x) => new Array(5, 6, 7, 8, 9, 10).findIndex(y => y === x.id) !== -1),
                 },
                 {
                     title: "Other",
-                    content: this.allFunctions.filter((x) => new Array(10, 11, 12, 13, 14).findIndex(y => y === x.id) !== -1),
+                    content: this.allFunctions.filter((x) => new Array(11, 12, 13, 14, 15).findIndex(y => y === x.id) !== -1),
                 },
             ]
         }
     },
-    emits: ['newDataAdded']
+    emits: ['newStatementAdded']
 }
 </script>
   

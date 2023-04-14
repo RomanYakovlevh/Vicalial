@@ -1,11 +1,12 @@
 <template>
-    <AddDataWindow @new-data-added="pushStatement"/>
+    <AddDataWindow @new-statement-added="pushStatement" />
     <button @click="updateWorkspace([])">Deselect</button>
     <div class="greeting" v-for="s in getStatements" :key=s.id>
-        <StatementComponent :statement=s :workspace=workspace @workspace-update="updateWorkspace">
+        <StatementComponent :statement=s :workspace=workspace @workspace-update="updateWorkspace"
+            @new-statement-added="pushStatement" @statement-deleted="deleteStatement">
         </StatementComponent>
     </div>
-    <ControlsBarComponent/>
+    <ControlsBarComponent />
 </template>
 
 <script>
@@ -40,7 +41,10 @@ export default {
         },
         updateWorkspace(workspaceModified) {
             this.$data.workspace = workspaceModified
-            console.log(this.$data.workspace)
+            //console.log(this.$data.workspace)
+        },
+        deleteStatement(stId) {
+            this.$data.statements = this.$data.statements.filter(x => x.id !== stId)
         }
     }
 }
