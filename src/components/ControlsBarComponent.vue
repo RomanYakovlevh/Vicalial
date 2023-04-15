@@ -1,7 +1,10 @@
 <template>
     <div class="bottom-bar">
-        <button class="btn" @click=setOpenDataWindow(true)>add data</button>
-        <button class="btn" @click="clearWorkspace">deselect</button>
+        <button class="btn" @click=setOpenDataWindow(true)>Add data</button>
+        <button class="btn" @click="clearWorkspace">Deselect</button>
+        <div class="frmt-as-cbc-text"> Format as: </div>
+        <button class="btn" @click="this.$store.state.formatStyle = 0">Long Float</button>
+        <button class="btn" @click="this.$store.state.formatStyle = 1">Fraction</button>
     </div>
 </template>
 
@@ -60,5 +63,15 @@ export default {
     background-color: #333333;
     margin-right: 0.5%;
     border-radius: 5px;
+}
+
+.frmt-as-cbc-text {
+    font-size: 18px;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    margin: 0.5%;
+    color: black;
 }
 </style>

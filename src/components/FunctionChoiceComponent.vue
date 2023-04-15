@@ -41,12 +41,13 @@ export default {
             }
         },
         runFunction() {
-            const id = this.$store.state.lastObjectID
-            const name = "object" + id
-            const matrix = runFunctionById(this.$data.activeFunctionChoiceIndex, this.$props.workspace)
-
-            this.$store.commit('incrementLastObjectId')
-            this.$emit("newStatementAdded", { id, name, matrix })
+            runFunctionById(this.$data.activeFunctionChoiceIndex, this.$props.workspace).forEach(matrix => {
+                const id = this.$store.state.lastObjectID
+                const name = "object " + id
+                this.$store.commit('incrementLastObjectId')
+                this.$emit("newStatementAdded", { id, name, matrix })
+            })
+            this.$emit("workspaceUpdate", [])
         },
     },
     data() {
@@ -68,7 +69,8 @@ export default {
             { id: 12, shorthand: "-", name: "Export LaTex", argNum: 1 },
             { id: 13, shorthand: "*", name: "Export Excel", argNum: 1 },
             { id: 14, shorthand: "T", name: "Export .txt", argNum: 1 },
-            { id: 15, shorthand: "^-1", name: "To Abstract", argNum: 1 }]
+            { id: 15, shorthand: "^-1", name: "To Abstract", argNum: 1 },
+            { id: 16, shorthand: "*", name: "Element-wise multiply", argNum: 2 }]
         };
     },
     computed: {
@@ -81,7 +83,7 @@ export default {
             return [
                 {
                     title: "Math",
-                    content: this.allFunctions.filter((x) => new Array(0, 1, 2, 3, 4).findIndex(y => y === x.id) !== -1),
+                    content: this.allFunctions.filter((x) => new Array(0, 1, 2, 3, 4, 16).findIndex(y => y === x.id) !== -1),
                 },
                 {
                     title: "Code",
@@ -94,7 +96,7 @@ export default {
             ]
         }
     },
-    emits: ['newStatementAdded']
+    emits: ['newStatementAdded', 'workspaceUpdate']
 }
 </script>
   

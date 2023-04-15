@@ -3,11 +3,12 @@
     <div class="statement-components-list">
         <div class="greeting" v-for="s in getStatements" :key=s.id>
             <StatementComponent :statement=s :workspace=workspace @workspace-update="updateWorkspace"
-                @new-statement-added="pushStatement" @statement-deleted="deleteStatement">
+                @new-statement-added="pushStatement" @statement-deleted="deleteStatement"
+                @statement-updated="onStatementUpdated">
             </StatementComponent>
         </div>
     </div>
-    <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="updateWorkspace"/>
+    <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="updateWorkspace" />
 </template>
 
 <script>
@@ -46,6 +47,9 @@ export default {
         },
         deleteStatement(stId) {
             this.$data.statements = this.$data.statements.filter(x => x.id !== stId)
+        },
+        onStatementUpdated(statement) {
+            this.$data.statements[this.$data.statements.findIndex(x => x.id === statement.id)] = statement
         }
     }
 }
@@ -57,7 +61,7 @@ export default {
     font-weight: bold;
 }
 
-.statement-components-list{
+.statement-components-list {
     padding-bottom: 10%;
 }
 </style>

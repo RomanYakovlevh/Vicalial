@@ -26,7 +26,7 @@ export default {
         addNewMatrixAndCloserWindow() {
             //TODO refactor, this logic should be in some service
             const id = this.$store.state.lastObjectID
-            const name = "object" + id
+            const name = "object " + id
             try {
                 const matrix = new Matrix(this.$data.textValue.split('\n').map((x) => x.split(',')));
 

@@ -1,7 +1,9 @@
 <template>
     <div class="holder">
         <button class="st-cmp-del-button" @click="deleteStatementAndWorkspaceEntries">✖</button>
-        <div class="stt">{{ statement.name }} =</div>
+        <div class="stt">
+            <div contenteditable="true" style="margin-right: 1em" @input="onStatementNameEdit">{{ statement.name }}</div> =
+        </div>
         <table ref="matrix" class="matrix">
             <tr>
                 <th v-for="col in statement.matrix.columnsAmount" :key="col">
@@ -11,7 +13,7 @@
                 <th> <button class="row-col-selector-btn" @click="onAllButtonClick()" @mouseover="onAllMouseOver()"
                         @mouseout="onAllMouseOut()">◼</button></th>
             </tr>
-            <tr v-for="(row, rowIndex) in statement.matrix.asList2D" :key="rowIndex">
+            <tr v-for="(row, rowIndex) in getMatrixAccordingToFormatter()" :key="rowIndex">
                 <td v-for="(item, colIndex) in row" :style="cellStyle(rowIndex, colIndex)"
                     :key="rowIndex * statement.matrix.columnsAmount + colIndex"
                     @click="onSingleMouseClick(rowIndex, colIndex)" @mouseover="onSingleMouseOver(rowIndex, colIndex)"
@@ -25,7 +27,7 @@
             </tr>
         </table>
         <FunctionChoiceComponent v-if="workspace.filter(x => x.parentId === statement.id).length !== 0"
-            :workspace="workspace" @new-statement-added="newStatementAdded">
+            :workspace="workspace" @new-statement-added="newStatementAdded" @workspace-update="onWorkspaceUpdate">
         </FunctionChoiceComponent>
     </div>
 </template>
@@ -47,10 +49,17 @@ export default {
         FunctionChoiceComponent
     },
     methods: {
+        onStatementNameEdit() {
+            const newText = event.target.value
+            this.$emit("statementUpdated", { id: this.statement.id, name: newText, matrix: this.statement.matrix })
+        },
         deleteStatementAndWorkspaceEntries() {
             const newWorkspace = this.$props.workspace.filter(x => x.parentId !== this.statement.id)
             this.$emit("workspaceUpdate", newWorkspace)
             this.$emit("statementDeleted", this.statement.id)
+        },
+        onWorkspaceUpdate(newWorkspace) {
+            this.$emit("workspaceUpdate", newWorkspace)
         },
         onRowButtonClick(rowIndex) {
             console.log('Button clicked! ', rowIndex);
@@ -150,6 +159,24 @@ export default {
                 }
             };
         },
+        getMatrixAccordingToFormatter() {
+            return () => {
+                if (this.$store.state.formatStyle === 0) {
+                    return this.statement.matrix.asList2D
+                } else if (this.$store.state.formatStyle === 1) {
+                    return this.statement.matrix.asList2DFractions.map(row => row.map(item => {
+                        if (item.denominator === 1) {
+                            return item.numerator
+                        } else {
+                            return item.numerator + "/" + item.denominator
+                        }
+                    }))
+                } else {
+                    return this.statement.matrix.asList2D
+                }
+            }
+
+        },
     },
     props: {
         statement: {
@@ -160,7 +187,7 @@ export default {
             required: true
         }
     },
-    emits: ['workspaceUpdate', 'newStatementAdded', 'statementDeleted']
+    emits: ['workspaceUpdate', 'newStatementAdded', 'statementDeleted', 'statementUpdated']
 };
 </script>
   
@@ -187,6 +214,8 @@ export default {
 .stt {
     text-align: center;
     margin: 1%;
+    display: flex;
+    flex-direction: row;
 }
 
 .cnt-cell {
