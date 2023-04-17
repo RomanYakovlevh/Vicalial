@@ -1,3 +1,5 @@
+import { reactive } from 'vue';
+
 async function pyLoad() {
     const pyodide = await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/dev/full/" })
     // In some distant future we propably should replace fetching pyodide from jsdelivr to fetching it from our own server. There is also script import in index.html.
@@ -5,11 +7,18 @@ async function pyLoad() {
     await pyodide.loadPackage("sympy")
     pyodide.runPython(
         "import numpy \n" +
-        "import sympy"
+        "import sympy \n"
     )
     return pyodide
 }
 
 export let pyodide
 
-pyLoad().then(x => pyodide = x)
+export const reactiveState  = reactive({
+    hasLoaded: false
+})
+
+pyLoad().then(x => {
+    pyodide = x
+    reactiveState.hasLoaded = true
+})

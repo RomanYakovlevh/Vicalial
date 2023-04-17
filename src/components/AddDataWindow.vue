@@ -1,5 +1,13 @@
 <template>
     <div class="floating-window" v-if=isOpenAddDataWindow>
+        <div style="font-size: smaller; text-align: left; padding: 1%;"> Vicalial uses Python to evaluate mathematical expressions. Please use Python syntax when writing an
+            expression. For
+            example, if you want to write "sum of two and two in a power of three", write "(2 + 2)**3". Do define matrix
+            separate elements on a line with "," and move to a new line to define new matrix line. For example: <div style="color: grey; margin-left: 3%;"><br>
+            1, 2, 1/3 <br>
+            5.5, 7, 6 <br>
+            4, 5, -10 <br></div></div>
+
         <textarea class="txt-box" v-model='textValue'></textarea>
         <div>
             <button class="btn" @click=addNewMatrixAndCloserWindow>Confirm</button>
@@ -10,7 +18,7 @@
 </template>
 
 <script>
-import { Matrix, MatrixInvalidError } from "../services/Matrix.ts"
+import { Matrix, MatrixInvalidError, evaluateMathWithPython } from "../services/Matrix.ts"
 
 export default {
     name: 'AddDataWindow',
@@ -28,7 +36,9 @@ export default {
             const id = this.$store.state.lastObjectID
             const name = "object " + id
             try {
-                const matrix = new Matrix(this.$data.textValue.split('\n').map((x) => x.split(',')));
+                const list2D = this.$data.textValue.split('\n').map((x) => x.split(',').map(y => evaluateMathWithPython(y)))
+
+                const matrix = new Matrix(list2D);
 
                 this.$store.commit('incrementLastObjectId')
                 this.$emit("newStatementAdded", { id, name, matrix })
@@ -63,8 +73,8 @@ export default {
     transform: translate(-50%, -50%);
     background-color: white;
     border: 1px solid black;
-    width: 400px;
-    height: 300px;
+    width: 50%;
+    height: 50%;
     border-radius: 10px;
     align-content: flex-end;
     display: flex;

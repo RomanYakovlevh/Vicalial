@@ -12,12 +12,12 @@ export class Matrix {
         this.columnsAmount = list2D[0].length
         const thisLocalized = this;
         //console.log(this.rowsAmount, this.columnsAmount, thisLocalized.rowsAmount, thisLocalized.columnsAmount)
-        list2D.forEach(function (line) {
+        list2D.map(function (line) {
             //console.log(line)
             if (line.length !== thisLocalized.columnsAmount) {
                 throw new MatrixInvalidError("Matrix has inconsistent amount of elements in rows")
             }
-            line.forEach(function (item) {
+            return line.forEach(function (item) {
                 if (isNaN(Number(item))) {
                     throw new MatrixInvalidError("Matrix has non-numeric elements")
                 }
@@ -157,6 +157,16 @@ export class Matrix {
 }
 
 export class MatrixInvalidError extends Error { }
+
+export function evaluateMathWithPython(expr: string): number {
+    const regex = /^[0-9+\-*/^().\s]+$/;
+    const isValid = regex.test(expr);
+    if (!isValid) {
+        throw new MatrixInvalidError("Mathematical expression is unsafe.")
+    }
+
+    return pyodide.runPython(expr);
+}
 
 export function runFunctionById(id: number, workspace: Array<{ parentId: number, parent: Matrix, selected: Array<{ row: number, col: number }> }>): Array<Matrix> {
     switch (id) {
