@@ -37,7 +37,7 @@
         "src/**/*.vue",
         "tests/**/*.ts",
         "tests/**/*.tsx"
-, "src/services/Matrix.ts", "src/services/PyLoader.js"    ],
+, "src/services/MatrixOperations/Matrix.ts", "src/services/PyLoader.js"    ],
     "exclude": [
         "node_modules"
     ]

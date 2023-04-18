@@ -25,7 +25,7 @@
 </template>
   
 <script>
-import { runFunctionById } from '@/services/Matrix'
+import { runFunctionById } from '@/services/MatrixOperations/Matrix.ts'
 
 export default {
     name: "FunctionChoiceComponent",

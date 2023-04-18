@@ -1,4 +1,4 @@
-import { pyodide } from "./PyLoader";
+import { pyodide } from "../PyLoader";
 
 export class Matrix {
     rowsAmount: number;

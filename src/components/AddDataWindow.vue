@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { Matrix, MatrixInvalidError, evaluateMathWithPython } from "../services/Matrix.ts"
+import { Matrix, MatrixInvalidError, evaluateMathWithPython } from "../services/MatrixOperations/Matrix.ts"
 
 export default {
     name: 'AddDataWindow',
