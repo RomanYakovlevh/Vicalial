@@ -18,7 +18,9 @@
 </template>
 
 <script>
-import { Matrix, MatrixInvalidError, evaluateMathWithPython } from "../services/MatrixOperations/Matrix.ts"
+import { evaluateMathWithPython } from "@/services/HelperFunctions";
+import { NamedMatrix } from "@/services/NamedMatrix";
+import { MatrixInvalidError } from "@/services/MatrixErros";
 
 export default {
     name: 'AddDataWindow',
@@ -33,15 +35,12 @@ export default {
         },
         addNewMatrixAndCloserWindow() {
             //TODO refactor, this logic should be in some service
-            const id = this.$store.state.lastObjectID
-            const name = "object " + id
             try {
                 const list2D = this.$data.textValue.split('\n').map((x) => x.split(',').map(y => evaluateMathWithPython(y)))
 
-                const matrix = new Matrix(list2D);
-
-                this.$store.commit('incrementLastObjectId')
-                this.$emit("newStatementAdded", { id, name, matrix })
+                const matrix = new NamedMatrix(list2D);
+                
+                this.$emit("newStatementAdded", matrix)
                 this.setOpenDataWindow(false)
             } catch (e) {
                 if (e instanceof MatrixInvalidError) {

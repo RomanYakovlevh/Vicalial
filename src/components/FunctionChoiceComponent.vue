@@ -25,7 +25,7 @@
 </template>
   
 <script>
-import { runFunctionById } from '@/services/MatrixOperations/Matrix.ts'
+import { runFunctionById } from '@/services/HelperFunctions'
 
 export default {
     name: "FunctionChoiceComponent",
@@ -42,10 +42,8 @@ export default {
         },
         runFunction() {
             runFunctionById(this.$data.activeFunctionChoiceIndex, this.$props.workspace).forEach(matrix => {
-                const id = this.$store.state.lastObjectID
-                const name = "object " + id
                 this.$store.commit('incrementLastObjectId')
-                this.$emit("newStatementAdded", { id, name, matrix })
+                this.$emit("newStatementAdded", matrix)
             })
             this.$emit("workspaceUpdate", [])
         },

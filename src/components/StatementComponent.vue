@@ -2,11 +2,12 @@
     <div class="holder">
         <button class="st-cmp-del-button" @click="deleteStatementAndWorkspaceEntries">✖</button>
         <div class="stt">
-            <div contenteditable="true" style="margin-right: 1em" @input="onStatementNameEdit">{{ statement.name }}</div> =
+            <div contenteditable="true" style="margin-right: 1em" @input="onStatementNameEdit">{{ statement.name }}</div> = 
+            <div style="margin: 0em 1em 0em 1em"> {{ statement.getRelative() }} </div>
         </div>
         <table ref="matrix" class="matrix">
             <tr>
-                <th v-for="col in statement.matrix.columnsAmount" :key="col">
+                <th v-for="col in statement.columnsAmount" :key="col">
                     <button class="row-col-selector-btn" @click="onColButtonClick(col - 1)"
                         @mouseover="onColMouseOver(col - 1)" @mouseout="onColMouseOut()">⏺</button>
                 </th>
@@ -15,7 +16,7 @@
             </tr>
             <tr v-for="(row, rowIndex) in getMatrixAccordingToFormatter()" :key="rowIndex">
                 <td v-for="(item, colIndex) in row" :style="cellStyle(rowIndex, colIndex)"
-                    :key="rowIndex * statement.matrix.columnsAmount + colIndex"
+                    :key="rowIndex * statement.columnsAmount + colIndex"
                     @click="onSingleMouseClick(rowIndex, colIndex)" @mouseover="onSingleMouseOver(rowIndex, colIndex)"
                     @mouseout="onSingleMouseOut()">
                     <div class="hld">{{ item }}</div>
@@ -26,7 +27,7 @@
                 </td>
             </tr>
         </table>
-        <FunctionChoiceComponent v-if="workspace.filter(x => x.parentId === statement.id).length !== 0"
+        <FunctionChoiceComponent v-if="workspace.filter(x => x.parent.id === statement.id).length !== 0"
             :workspace="workspace" @new-statement-added="newStatementAdded" @workspace-update="onWorkspaceUpdate">
         </FunctionChoiceComponent>
     </div>
@@ -51,7 +52,8 @@ export default {
     methods: {
         onStatementNameEdit() {
             const newText = event.target.value
-            this.$emit("statementUpdated", { id: this.statement.id, name: newText, matrix: this.statement.matrix })
+            this.statement.changeNameUnsafe(newText)
+            this.$emit("statementUpdated", this.statement)
         },
         deleteStatementAndWorkspaceEntries() {
             const newWorkspace = this.$props.workspace.filter(x => x.parentId !== this.statement.id)
@@ -64,10 +66,10 @@ export default {
         onRowButtonClick(rowIndex) {
             console.log('Button clicked! ', rowIndex);
             var selected = []
-            for (var i = 0; i < this.statement.matrix.columnsAmount; i++) {
+            for (var i = 0; i < this.statement.columnsAmount; i++) {
                 selected.push({ row: rowIndex, col: i })
             }
-            const newWorkspace = [...this.$props.workspace, { parentId: this.statement.id, parent: this.statement.matrix, selected }]
+            const newWorkspace = [...this.$props.workspace, {parent: this.statement, selected }]
             this.$emit("workspaceUpdate", newWorkspace)
         },
         onRowMouseOver(rowIndex) {
@@ -81,10 +83,10 @@ export default {
         onColButtonClick(colIndex) { //Dunno why but in template in line with <th v-for="col in statement.matrix.columnsAmount" :key="col"> indexing by some reason starts with 1
             //console.log('Button clicked! ', colIndex);
             var selected = []
-            for (var i = 0; i < this.statement.matrix.rowsAmount; i++) {
+            for (var i = 0; i < this.statement.rowsAmount; i++) {
                 selected.push({ row: i, col: colIndex })
             }
-            const newWorkspace = [...this.$props.workspace, { parentId: this.statement.id, parent: this.statement.matrix, selected }]
+            const newWorkspace = [...this.$props.workspace, {parent: this.statement, selected }]
             this.$emit("workspaceUpdate", newWorkspace)
         },
         onColMouseOver(colIndex) {
@@ -98,12 +100,12 @@ export default {
         onAllButtonClick() {
             // console.log('All Button clicked! ');
             var selected = []
-            for (var i = 0; i < this.statement.matrix.rowsAmount; i++) {
-                for (var j = 0; j < this.statement.matrix.columnsAmount; j++) {
+            for (var i = 0; i < this.statement.rowsAmount; i++) {
+                for (var j = 0; j < this.statement.columnsAmount; j++) {
                     selected.push({ row: i, col: j })
                 }
             }
-            const newWorkspace = [...this.$props.workspace, { parentId: this.statement.id, parent: this.statement.matrix, selected }]
+            const newWorkspace = [...this.$props.workspace, { parent: this.statement, selected }]
             this.$emit("workspaceUpdate", newWorkspace)
         },
         onAllMouseOver() {
@@ -115,7 +117,7 @@ export default {
             //console.log(this.$data.mouseoverCol)
         },
         onSingleMouseClick(rowIndex, colIndex) {
-            const newWorkspace = [...this.$props.workspace, { parentId: this.statement.id, parent: this.statement.matrix, selected: [{ row: rowIndex, col: colIndex }] }]
+            const newWorkspace = [...this.$props.workspace, {parent: this.statement, selected: [{ row: rowIndex, col: colIndex }] }]
             this.$emit("workspaceUpdate", newWorkspace)
         },
         onSingleMouseOver(rowIndex, colIndex) {
@@ -139,7 +141,7 @@ export default {
                     };
                 } else if (this.$props.workspace
                     .filter((w) => {
-                        return w.parentId === this.statement.id
+                        return w.parent.id === this.statement.id
                     })
                     .filter((w) => {
                         return w.selected.filter((s) => {
@@ -162,9 +164,9 @@ export default {
         getMatrixAccordingToFormatter() {
             return () => {
                 if (this.$store.state.formatStyle === 0) {
-                    return this.statement.matrix.asList2D
+                    return this.statement.asList2D
                 } else if (this.$store.state.formatStyle === 1) {
-                    return this.statement.matrix.asList2DFractions.map(row => row.map(item => {
+                    return this.statement.asList2DFractions.map(row => row.map(item => {
                         if (item.denominator === 1) {
                             return item.numerator
                         } else {
@@ -172,7 +174,7 @@ export default {
                         }
                     }))
                 } else {
-                    return this.statement.matrix.asList2D
+                    return this.statement.asList2D
                 }
             }
 
