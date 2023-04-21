@@ -13,6 +13,6 @@ export class MatrixElemWiseMultiplication extends NamedMatrix {
 
 
     getRelative() {
-        return this.parentLeft.getName() + " .+ " + this.parentRight.getName()
+        return this.parentLeft.getName() + " .* " + this.parentRight.getName()
     }
 }

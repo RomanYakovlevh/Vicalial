@@ -48,7 +48,7 @@ export function runFunctionById(id: number, workspace: Array<{parent: NamedMatri
             //Replace
             const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
             const res = workspace[0].parent.setElementsBySelection(workspace[0].selected, e2)
-            return [res]
+            return [new NamedMatrix(res.asList2D)]
         }
         case 6: {
             //Swap
@@ -60,7 +60,7 @@ export function runFunctionById(id: number, workspace: Array<{parent: NamedMatri
             } else {
                 resArr[0] = resArr[0].setElementsBySelection(workspace[1].selected, e1)
             }
-            return resArr
+            return resArr.map(x => new NamedMatrix(x.asList2D))
         }
         case 7:
             break
@@ -68,7 +68,7 @@ export function runFunctionById(id: number, workspace: Array<{parent: NamedMatri
             break
         case 9: {
             const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
-            return [new Matrix([[e1.rowsAmount, e1.columnsAmount]])]
+            return [new NamedMatrix([[e1.rowsAmount, e1.columnsAmount]])]
         }
         case 10: {
             const allSelections = workspace.reduce((acc, x) => {
@@ -76,7 +76,7 @@ export function runFunctionById(id: number, workspace: Array<{parent: NamedMatri
                     { parentId: acc.parent.id, parent: acc.parent, selected: acc.selected.concat(x.selected) } :
                     acc
             }).selected
-            return [workspace[0].parent.extractElemsAsMatrix(allSelections)]
+            return [new NamedMatrix(workspace[0].parent.extractElemsAsMatrix(allSelections).asList2D)]
         }
         case 16: {
             const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)

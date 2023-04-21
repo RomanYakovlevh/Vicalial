@@ -7,20 +7,25 @@
         <div class="tab-contents">
             <div v-for="(tab, index) in tabs" :key="index" v-show="isTabActive(index)"
                 :class="{ active: index === activeTabIndex }">
-                <button v-for="(op, j) in tab.content" :key="j" @click="activeFunctionChoiceIndex = op.id">
-                    {{ op.name }}
-                </button>
+                <div class="function-buttons">
+                    <button class="function-button" v-for="(op, j) in tab.content" :key="j"
+                        @click="activeFunctionChoiceIndex = op.id">
+                        {{ op.name }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
     <div v-if="activeFunctionChoiceIndex !== -1" class="fun-arg-sel">
-        {{ allFunctions.find(x => x.id === activeFunctionChoiceIndex).name }}:
-        <div v-for="i in Array.from({ length: allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum }, (_, index) => index)"
-            :key="i">
-            {{ this.pullFromWorkspace(i) }},
+        <h3>{{ allFunctions.find(x => x.id === activeFunctionChoiceIndex).name }}:</h3>
+        <div class="function-arguments">
+            <div v-for="i in Array.from({ length: allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum }, (_, index) => index)"
+                :key="i">
+                {{ this.pullFromWorkspace(i) }},
+            </div>
         </div>
-        <button v-if="allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum <= workspace.length"
-            @click="runFunction()">Apply</button>
+        <button v-show="allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum <= workspace.length"
+            @click="runFunction()" class="apply-button">Apply</button>
     </div>
 </template>
   
@@ -68,7 +73,7 @@ export default {
             { id: 13, shorthand: "*", name: "Export Excel", argNum: 1 },
             { id: 14, shorthand: "T", name: "Export .txt", argNum: 1 },
             { id: 15, shorthand: "^-1", name: "To Abstract", argNum: 1 },
-            { id: 16, shorthand: "*", name: "Element-wise multiply", argNum: 2 }]
+            { id: 16, shorthand: "*", name: "Element-wise product", argNum: 2 }]
         };
     },
     computed: {
@@ -98,55 +103,137 @@ export default {
 }
 </script>
   
-<style>
+<style scoped lang="scss">
 .tabs {
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: #f2f2f2;
     height: 100%;
     padding: 5px;
     border-radius: 10px;
     font-size: small;
-}
 
-.tab-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 10px;
-}
+    .tab-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 10px;
 
-.tab-buttons button {
-    border: none;
-    background-color: transparent;
-    padding: 8px 12px;
-    margin-right: 10px;
-    cursor: pointer;
-}
+        button {
+            border: none;
+            background-color: transparent;
+            padding: 8px 12px;
+            margin-right: 10px;
+            cursor: pointer;
 
-.tab-buttons button.active {
-    background-color: gray;
-    border-radius: 10px;
-}
+            &.active {
+                background-color: #444444;
+                color: white;
+                border-radius: 10px;
+            }
+        }
+    }
 
-.tab-contents {
-    width: 100%;
-}
+    .tab-contents {
+        width: 100%;
 
-.tab-contents>div:not(.active) {
-    display: none;
-}
+        >div:not(.active) {
+            display: none;
+        }
 
-.tab-contents>div:first-child {
-    display: block;
-}
+        >div:first-child {
+            display: block;
+        }
 
-.fun-arg-sel {
-    display: flex;
-    flex-direction: row;
-    margin: 1%;
+        .function-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: white;
+            border-radius: 10px;
+        }
+
+        .function-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 50px;
+            margin: 5px;
+            padding: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            color: #444;
+            font-size: small;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+
+        }
+
+        .function-button:hover {
+            transform: scale(1.05);
+            background-color: #e2e2e2;
+        }
+
+        .function-button:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .function-button.selected {
+            background-color: #007bff;
+            color: white;
+        }
+    }
+
+    .fun-arg-sel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 10px 0;
+
+        h3 {
+            margin-bottom: 10px;
+            font-size: medium;
+            font-weight: bold;
+        }
+
+        .function-arguments {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: small;
+
+            div {
+                margin: 0 5px;
+            }
+        }
+
+        .apply-button {
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: small;
+            font-weight: bold;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+
+            &:hover {
+                background-color: #0062cc;
+            }
+        }
+    }
+
 }
 </style>
   

@@ -4,7 +4,7 @@ export default createStore({
     state: {
         isOpenAddDataWindow: false,
         lastObjectID: 0,
-        formatStyle: 0 // 0 - long float, 1 - fraction
+        formatStyle: 1 // 0 - long float, 1 - fraction
     },
     getters: {},
     mutations: {

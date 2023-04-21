@@ -2,8 +2,8 @@
     <div class="holder">
         <button class="st-cmp-del-button" @click="deleteStatementAndWorkspaceEntries">✖</button>
         <div class="stt">
-            <div contenteditable="true" style="margin-right: 1em" @input="onStatementNameEdit">{{ statement.name }}</div> = 
-            <div style="margin: 0em 1em 0em 1em"> {{ statement.getRelative() }} </div>
+            <div contenteditable="true" @input="onStatementNameEdit">{{ statement.name }}</div> = 
+            <div> {{ statement.getRelative() }} </div>
         </div>
         <table ref="matrix" class="matrix">
             <tr>
@@ -193,7 +193,7 @@ export default {
 };
 </script>
   
-<style>
+<style scoped lang="scss">
 @import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
 
 .holder {
@@ -218,6 +218,10 @@ export default {
     margin: 1%;
     display: flex;
     flex-direction: row;
+    
+    div {
+        margin: 0em 1em 0em 1em
+    }
 }
 
 .cnt-cell {
