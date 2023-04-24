@@ -22,9 +22,19 @@
         <button class="btn">Third Button</button>
     </div>
     <h2>Tabs</h2>
-    <img alt="Tabs screenshot" src="../assets/tabs_screenshot.png">
+    <img alt="Tabs screenshot" :src="imageSrc" />
 </template>
-<script></script>
+<script>
+import tabsImage from '@/assets/tabs.png';
+
+export default {
+  data() {
+    return {
+      imageSrc: tabsImage
+    }
+  }
+}
+</script>
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
 
