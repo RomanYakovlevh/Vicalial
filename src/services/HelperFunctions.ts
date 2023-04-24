@@ -8,6 +8,7 @@ import { MatrixTransposition } from "./MatrixOperations/MatrixTransposition";
 import { MatrixInversion } from "./MatrixOperations/MatrixInversion";
 import { MatrixElemWiseMultiplication } from "./MatrixOperations/MatrixElemWiseMultiplication";
 import { NamedMatrix } from "./NamedMatrix";
+import { MatrixSelection } from "./MatrixOperations/MatrixSelection";
 
 export function evaluateMathWithPython(expr: string): number {
     const regex = /^[0-9+\-*/^().\s]+$/;
@@ -19,41 +20,41 @@ export function evaluateMathWithPython(expr: string): number {
     return pyodide.runPython(expr);
 }
 
-export function runFunctionById(id: number, workspace: Array<{parent: NamedMatrix, selected: Array<{ row: number, col: number }> }>): Array<Matrix> {
+export function runFunctionById(id: number, workspace: Array<{ parent: NamedMatrix, selected: Array<{ row: number, col: number }> }>): Array<Matrix> {
     switch (id) {
         case 0: {
-            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
-            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
             return [new MatrixAddition(e1, e2)]
         }
         case 1: {
-            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
-            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
             return [new MatrixSubstraction(e1, e2)]
         }
         case 2: {
-            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
-            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
             return [new MatrixMultiplication(e1, e2)]
         }
         case 3: {
-            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
             return [new MatrixTransposition(e1)]
         }
         case 4: {
-            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
             return [new MatrixInversion(e1)]
         }
         case 5: {
             //Replace
-            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
             const res = workspace[0].parent.setElementsBySelection(workspace[0].selected, e2)
             return [new NamedMatrix(res.asList2D)]
         }
         case 6: {
             //Swap
-            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
-            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
             const resArr = [workspace[0].parent.setElementsBySelection(workspace[0].selected, e2)]
             if (workspace[0].parent.id !== workspace[1].parent.id) {
                 resArr.push(workspace[1].parent.setElementsBySelection(workspace[1].selected, e1))
@@ -67,20 +68,22 @@ export function runFunctionById(id: number, workspace: Array<{parent: NamedMatri
         case 8:
             break
         case 9: {
-            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
+            //Size
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
             return [new NamedMatrix([[e1.rowsAmount, e1.columnsAmount]])]
         }
         case 10: {
+            //Select
             const allSelections = workspace.reduce((acc, x) => {
                 return acc.parent.id === x.parent.id ?
                     { parentId: acc.parent.id, parent: acc.parent, selected: acc.selected.concat(x.selected) } :
                     acc
             }).selected
-            return [new NamedMatrix(workspace[0].parent.extractElemsAsMatrix(allSelections).asList2D)]
+            return [new MatrixSelection(workspace[0].parent, allSelections)]
         }
         case 16: {
-            const e1 = workspace[0].parent.extractElemsAsMatrix(workspace[0].selected)
-            const e2 = workspace[1].parent.extractElemsAsMatrix(workspace[1].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
             return [new MatrixElemWiseMultiplication(e1, e2)]
         }
     }
@@ -141,4 +144,9 @@ export function inversion(arg1: Matrix) {
         "mx = numpy.matrix(x) \n" +
         "result = numpy.linalg.inv(mx).tolist()")
     return pyodide.globals.get('result').toJs()
+}
+
+export function select(arg1: Matrix, cellsToExtract: Array<{ row: number, col: number }>) {
+    const groupedMap = arg1.groupSelectionByRow(cellsToExtract)
+    return Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => arg1.asList2D[row][col]))
 }

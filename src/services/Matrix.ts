@@ -78,11 +78,7 @@ export class Matrix {
         return new Matrix(res.asList2D)
     }
 
-    extractElemsAsMatrix(cellsToExtract: Array<{ row: number, col: number }>) {
-        const groupedMap = this.groupSelectionByRow(cellsToExtract)
-        return new Matrix(Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => this.asList2D[row][col])))
-    }
-
+    
     toString() {
         let res = ""
         this.asList2D.forEach((row, i) => {

@@ -53,6 +53,8 @@ Simple mathematical exprssion should be possible to be done quicker and easier.
 
 Add functions: slice, mapRows, mapColumns, replace map with mathElements, appendRows, appendColumns
 
+Make MatrixSelection describe selection in rectangular case
+
 3, 2, -5, -1
 2, -1, 3, 13
 1, 2, -1, 9
