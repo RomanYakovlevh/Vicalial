@@ -1,6 +1,7 @@
 <template>
   <nav>
-    <router-link to="/">Calculator</router-link>
+    <router-link to="/">Calculator</router-link> | 
+    <router-link to="/styleguide">StyleGuide</router-link>
   </nav>
   <router-view/>
 </template>
