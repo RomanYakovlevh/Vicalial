@@ -62,6 +62,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
 .floating-window {
     position: fixed;
     z-index: 9999;
@@ -88,7 +89,7 @@ export default {
     .txt-box {
         height: 300px;
         width: 100%;
-        font-family: "Courier New", Courier, monospace;
+        font-family: 'Roboto Mono', monospace;
         font-size: 16px;
         line-height: 1.5;
         padding: 10px;
