@@ -19,7 +19,7 @@ export class MatrixSelection extends NamedMatrix {
     describeSelection() {
         if (this.selection.filter(x => x.col === this.selection[0].col).length === this.selection.length) {
             if (this.selection.length === this.parent.rowsAmount) {
-                return "(:, " + this.selection[0].col + ")"
+                return "[]:, " + this.selection[0].col + "]"
             } else {
                 let minRow = Number.MAX_SAFE_INTEGER
                 let maxRow = Number.MIN_SAFE_INTEGER
@@ -31,11 +31,11 @@ export class MatrixSelection extends NamedMatrix {
                         maxRow = v.row
                     }
                 })
-                return "(" + minRow + ".." + maxRow + ", " + this.selection[0].col + ")"
+                return "[" + minRow + ":" + maxRow + ", " + this.selection[0].col + "]"
             }
         } else if (this.selection.filter(x => x.row === this.selection[0].row).length === this.selection.length) {
             if (this.selection.length === this.parent.columnsAmount) {
-                return "(" + this.selection[0].row + ", :)"
+                return "[" + this.selection[0].row + ", :]"
             } else {
                 let minCol = Number.MAX_SAFE_INTEGER
                 let maxCol = Number.MIN_SAFE_INTEGER
@@ -47,16 +47,16 @@ export class MatrixSelection extends NamedMatrix {
                         maxCol = v.col
                     }
                 })
-                return "(" + this.selection[0].col + ", " + minCol + ".." + maxCol + ")"
+                return "[" + this.selection[0].col + ", " + minCol + ":" + maxCol + "]"
             }
         } else {
-            let acc = "("
+            let acc = "["
 
             this.selection.forEach(v => {
                 acc += "(" + v.row + ", " + v.col + ")"
             })
 
-            return acc + ")"
+            return acc + "]"
         }
     }
 
