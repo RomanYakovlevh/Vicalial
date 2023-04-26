@@ -19,7 +19,7 @@ export class MatrixSelection extends NamedMatrix {
     describeSelection() {
         if (this.selection.filter(x => x.col === this.selection[0].col).length === this.selection.length) {
             if (this.selection.length === this.parent.rowsAmount) {
-                return "[]:, " + this.selection[0].col + "]"
+                return "[:, " + this.selection[0].col + "]"
             } else {
                 let minRow = Number.MAX_SAFE_INTEGER
                 let maxRow = Number.MIN_SAFE_INTEGER
