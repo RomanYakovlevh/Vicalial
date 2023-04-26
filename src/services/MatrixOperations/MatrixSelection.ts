@@ -1,53 +1,47 @@
 import { Matrix } from "../Matrix";
-import { addition, select } from "../HelperFunctions";
+import { select } from "../HelperFunctions";
 import { NamedMatrix } from "../NamedMatrix";
 
 export class MatrixSelection extends NamedMatrix {
     parent: Matrix
     selection: Array<{ row: number, col: number }>
+    selectionDescription: string //this cache is created because vue likes to call getRelative() on each touch of user onto statement
     constructor(matrix: Matrix, cellsToExtract: Array<{ row: number, col: number }>) {
         super(select(matrix, cellsToExtract))
         this.parent = matrix
         this.selection = cellsToExtract
+        this.selectionDescription = this.describeSelection()
     }
 
 
     getRelative() {
-        return this.parent.getName() + "" + this.describeSelection()
+        return this.parent.getName() + "" + this.selectionDescription
     }
 
-    describeSelection() {
-        if (this.selection.filter(x => x.col === this.selection[0].col).length === this.selection.length) {
-            if (this.selection.length === this.parent.rowsAmount) {
-                return "[:, " + this.selection[0].col + "]"
-            } else {
-                let minRow = Number.MAX_SAFE_INTEGER
-                let maxRow = Number.MIN_SAFE_INTEGER
-                this.selection.forEach(v => {
-                    if (v.row < minRow) {
-                        minRow = v.row
-                    }
-                    if  (v.row > maxRow) {
-                        maxRow = v.row
-                    }
-                })
-                return "[" + minRow + ":" + maxRow + ", " + this.selection[0].col + "]"
+    describeSelection(): string {
+        const v = this.verifySelection()
+        if (v !== false) {
+            if (v.upperLeft.minRow === v.lowerRight.maxRow && v.upperLeft.minCol === v.lowerRight.maxCol) {
+                return "[" + v.upperLeft.minRow + ", " + v.upperLeft.minCol + "]"
             }
-        } else if (this.selection.filter(x => x.row === this.selection[0].row).length === this.selection.length) {
-            if (this.selection.length === this.parent.columnsAmount) {
-                return "[" + this.selection[0].row + ", :]"
+            else if (v.upperLeft.minRow === 0 && v.upperLeft.minCol === 0
+                && v.lowerRight.maxRow === this.parent.rowsAmount - 1 && v.lowerRight.maxCol === this.parent.columnsAmount - 1) {
+                return ""
+            } else if (v.upperLeft.minRow === v.lowerRight.maxRow) {
+                if (v.upperLeft.minCol === 0 && v.lowerRight.maxCol === this.parent.columnsAmount - 1) {
+                    return "[" + v.upperLeft.minRow + ", :]"
+                } else {
+                    return "[" + v.upperLeft.minRow + ", " + v.upperLeft.minCol + ":" + v.lowerRight.maxCol + "]"
+                }
+
+            } else if (v.upperLeft.minCol === v.lowerRight.maxCol) {
+                if (v.upperLeft.minRow === 0 && v.lowerRight.maxRow === this.parent.rowsAmount - 1) {
+                    return "[:, " + v.upperLeft.minCol + "]"
+                } else {
+                    return "[" + v.upperLeft.minRow + ":" + v.lowerRight.maxRow + ", " + v.upperLeft.minCol + "]"
+                }
             } else {
-                let minCol = Number.MAX_SAFE_INTEGER
-                let maxCol = Number.MIN_SAFE_INTEGER
-                this.selection.forEach(v => {
-                    if (v.col < minCol) {
-                        minCol = v.col
-                    }
-                    if  (v.col > maxCol) {
-                        maxCol = v.col
-                    }
-                })
-                return "[" + this.selection[0].col + ", " + minCol + ":" + maxCol + "]"
+                return "[" + v.upperLeft.minRow + ":" + v.lowerRight.maxRow + ", " + v.upperLeft.minCol + ":" + v.lowerRight.maxCol + "]"
             }
         } else {
             let acc = "["
@@ -58,6 +52,33 @@ export class MatrixSelection extends NamedMatrix {
 
             return acc + "]"
         }
+
+    }
+
+    verifySelection(): { upperLeft: { minRow: number, minCol: number }, lowerRight: { maxRow: number, maxCol: number } } | false {
+        let maxRow = Number.MIN_SAFE_INTEGER
+        let minRow = Number.MAX_SAFE_INTEGER
+        let maxCol = Number.MIN_SAFE_INTEGER
+        let minCol = Number.MAX_SAFE_INTEGER
+
+        this.selection.forEach((x) => {
+            if (x.row > maxRow) {
+                maxRow = x.row
+            }
+            if (x.row < minRow) {
+                minRow = x.row
+            }
+            if (x.col > maxCol) {
+                maxCol = x.col
+            }
+            if (x.col < minCol) {
+                minCol = x.col
+            }
+        })
+
+        console.log((maxRow - minRow + 1) * (maxCol - minCol + 1))
+
+        return (maxRow - minRow + 1) * (maxCol - minCol + 1) === this.selection.length ? { upperLeft: { minRow, minCol }, lowerRight: { maxRow, maxCol } } : false
     }
 
     getName() {
