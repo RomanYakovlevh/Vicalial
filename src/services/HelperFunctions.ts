@@ -9,6 +9,9 @@ import { MatrixInversion } from "./MatrixOperations/MatrixInversion";
 import { MatrixElemWiseMultiplication } from "./MatrixOperations/MatrixElemWiseMultiplication";
 import { NamedMatrix } from "./NamedMatrix";
 import { MatrixSelection } from "./MatrixOperations/MatrixSelection";
+import { MatrixReplace } from "./MatrixOperations/MatrixReplace";
+import { MatrixSwap } from "./MatrixOperations/MatrixSwap";
+import { MatrixSize } from "./MatrixOperations/MatrixSize";
 
 export function evaluateMathWithPython(expr: string): number {
     const regex = /^[0-9+\-*/^().\s]+$/;
@@ -46,31 +49,23 @@ export function runFunctionById(id: number, workspace: Array<{ parent: NamedMatr
             return [new MatrixInversion(e1)]
         }
         case 5: {
-            //Replace
-            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
-            const res = workspace[0].parent.setElementsBySelection(workspace[0].selected, e2)
-            return [new NamedMatrix(res.asList2D)]
+            return [new MatrixReplace(workspace[0].parent, workspace[1].parent, workspace[0].selected, workspace[1].selected)]
         }
         case 6: {
             //Swap
-            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
-            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
-            const resArr = [workspace[0].parent.setElementsBySelection(workspace[0].selected, e2)]
-            if (workspace[0].parent.id !== workspace[1].parent.id) {
-                resArr.push(workspace[1].parent.setElementsBySelection(workspace[1].selected, e1))
+            if (workspace[0].parent.equals(workspace[1].parent)) {
+                return [new MatrixSwap(workspace[0].parent, workspace[1].parent, workspace[0].selected, workspace[1].selected)]
             } else {
-                resArr[0] = resArr[0].setElementsBySelection(workspace[1].selected, e1)
+                return [new MatrixReplace(workspace[0].parent, workspace[1].parent, workspace[0].selected, workspace[1].selected),
+                new MatrixReplace(workspace[1].parent, workspace[0].parent, workspace[1].selected, workspace[0].selected)]
             }
-            return resArr.map(x => new NamedMatrix(x.asList2D))
         }
         case 7:
             break
         case 8:
             break
         case 9: {
-            //Size
-            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
-            return [new NamedMatrix([[e1.rowsAmount, e1.columnsAmount]])]
+            return [new MatrixSize(workspace[0].parent, workspace[0].selected)]
         }
         case 10: {
             //Select
@@ -147,6 +142,63 @@ export function inversion(arg1: Matrix) {
 }
 
 export function select(arg1: Matrix, cellsToExtract: Array<{ row: number, col: number }>) {
-    const groupedMap = arg1.groupSelectionByRow(cellsToExtract)
+    const groupedMap = groupSelectionByRow(cellsToExtract)
     return Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => arg1.asList2D[row][col]))
+}
+
+export function replace(arg1: Matrix, arg1Selection: Array<{ row: number, col: number }>, arg2: Matrix, arg2Selection: Array<{ row: number, col: number }>) {
+    const e2 = new MatrixSelection(arg2, arg2Selection)
+    return setElementsBySelection(arg1, arg1Selection, e2)
+}
+
+export function swap(arg1: Matrix, arg1Selection: Array<{ row: number, col: number }>, arg2: Matrix, arg2Selection: Array<{ row: number, col: number }>) {
+    const e1 = new MatrixSelection(arg1, arg1Selection)
+    const e2 = new MatrixSelection(arg2, arg2Selection)
+    let res = setElementsBySelection(arg1, arg1Selection, e2)
+
+    if (!arg1.equals(arg2)) {
+        //resArr.push(setElementsBySelection(arg2, arg2Selection, e1))
+        throw new Error("Tried to swap between matrixes")
+    } else {
+        res = setElementsBySelection(new Matrix(res), arg2Selection, e1)
+    }
+
+    return res
+}
+
+export function groupSelectionByRow(cellsToExtract: Array<{ row: number, col: number }>) {
+    const groupedMap: Map<number, Array<{ row: number, col: number }>> = new Map()
+    cellsToExtract.slice().sort(function (a, b) {
+        if (a.row - b.row !== 0) {
+            return a.row - b.row
+        } else {
+            return a.col - b.col
+        }
+    }).forEach(({ row, col }) => {
+        const arr = groupedMap.get(row)
+        if (arr === undefined) {
+            groupedMap.set(row, new Array({ row, col }))
+        } else {
+            arr.push({ row, col })
+            groupedMap.set(row, arr)
+        }
+
+    })
+
+    return groupedMap
+}
+
+export function setElementsBySelection(parent: Matrix, selection: Array<{ row: number, col: number }>, setTo: Matrix) {
+    const groupedMap = groupSelectionByRow(selection)
+    const groupedArray = Array.from(groupedMap.values())
+    if (groupedArray.map(x => x.length !== setTo.columnsAmount).reduce((prev, cur) => prev || cur) || groupedArray.length !== setTo.rowsAmount) {
+        throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
+    }
+    const res = parent.copy() // This can be pre-filled 2d array but i got lazy. TODO: rewrite
+    groupedArray.forEach((row, i) => {
+        row.forEach((item, j) => {
+            res.asList2D[item.row][item.col] = setTo.asList2D[i][j]
+        })
+    })
+    return res.asList2D
 }

@@ -17,10 +17,19 @@ export class NamedMatrix extends Matrix {
         return this.name
     }
 
-    
+
     getRelative() {
         return ""
     }
+
+    equals(arg1: Matrix) {
+        if (arg1 instanceof NamedMatrix) {
+            return this.id === arg1.id
+        } else {
+            return super.equals(arg1)
+        }
+    }
+
 
     changeNameUnsafe(newName: string) {
         this.name = newName

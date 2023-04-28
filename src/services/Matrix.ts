@@ -41,41 +41,18 @@ export class Matrix {
         return ""
     }
 
-    groupSelectionByRow(cellsToExtract: Array<{ row: number, col: number }>) {
-        const groupedMap: Map<number, Array<{ row: number, col: number }>> = new Map()
-        cellsToExtract.slice().sort(function (a, b) {
-            if (a.row - b.row !== 0) {
-                return a.row - b.row
-            } else {
-                return a.col - b.col
-            }
-        }).forEach(({ row, col }) => {
-                const arr = groupedMap.get(row)
-                if (arr === undefined) {
-                    groupedMap.set(row, new Array({ row, col }))
-                } else {
-                    arr.push({ row, col })
-                    groupedMap.set(row, arr)
-                }
-
-            })
-
-        return groupedMap
-    }
-
-    setElementsBySelection(selection: Array<{ row: number, col: number }>, setTo: Matrix) {
-        const groupedMap = this.groupSelectionByRow(selection)
-        const groupedArray = Array.from(groupedMap.values())
-        if (groupedArray.map(x => x.length !== setTo.columnsAmount).reduce((prev, cur) => prev || cur) || groupedArray.length !== setTo.rowsAmount) {
-            throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
+    equals(arg1: Matrix) {
+        if (this.columnsAmount !== arg1.columnsAmount || this.rowsAmount !== arg1.rowsAmount) {
+            return false
         }
-        const res = this.copy() // This can be pre-filled 2d array but i got lazy. TODO: rewrite
-        groupedArray.forEach((row, i) => {
+        this.asList2D.forEach((row, i) => {
             row.forEach((item, j) => {
-                res.asList2D[item.row][item.col] = setTo.asList2D[i][j]
+                if (item !== arg1.asList2D[i][j]) {
+                    return false
+                }
             })
         })
-        return new Matrix(res.asList2D)
+        return true
     }
 
     
