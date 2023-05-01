@@ -1,31 +1,44 @@
 <template>
     <div class="tabs">
         <div class="tab-buttons">
-            <button v-for="(tab, index) in tabs" :key="index" @click="activeTabIndex = index"
+            <button v-for="(tab, index) in tabs" :key="index" @click="this.activeTabIndex = index"
                 :class="{ active: index === activeTabIndex }">{{ tab.title }}</button>
         </div>
         <div class="tab-contents">
-            <div v-for="(tab, index) in tabs" :key="index" v-show="isTabActive(index)"
+            <div v-for="(tab, index) in  tabs " :key="index" v-show="isTabActive(index)"
                 :class="{ active: index === activeTabIndex }">
                 <div class="function-buttons">
-                    <button class="function-button" v-for="(op, j) in tab.content" :key="j"
-                        @click="activeFunctionChoiceIndex = op.id">
+                    <button class="function-button" v-for="(op, j) in  tab.content " :key="j"
+                        @click="activeFunctionChoiceIndex = op.id; error = ''">
                         {{ op.name }}
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    <div v-if="activeFunctionChoiceIndex !== -1" class="fun-arg-sel">
-        <h3>{{ allFunctions.find(x => x.id === activeFunctionChoiceIndex).name }}:</h3>
-        <div class="function-arguments">
-            <div v-for="i in Array.from({ length: allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum }, (_, index) => index)"
-                :key="i">
-                {{ this.pullFromWorkspace(i) }},
+    <div>
+        <v-card class="error-msg" v-if=" error !== '' ">Calculation is impossible.
+            <button class="apply-button" @click=" dialog = true ">More</button> <button class="apply-button"
+                @click=" error = '' ">✖</button></v-card>
+        <v-dialog v-model=" dialog " width="auto">
+            <v-card>
+                <v-card-text>{{ error }}</v-card-text>
+                <v-card-actions>
+                    <button class="apply-button" @click=" dialog = false ">Close</button>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <div v-if=" activeFunctionChoiceIndex !== -1 " class="fun-arg-sel">
+            <h3>{{ allFunctions.find(x => x.id === activeFunctionChoiceIndex).name }}:</h3>
+            <div class="function-arguments">
+                <div v-for=" i  in  Array.from({ length: allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum }, (_, index) => index) "
+                    :key=" i ">
+                    {{ this.pullFromWorkspace(i) }},
+                </div>
             </div>
+            <button v-show=" allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum <= workspace.length "
+                @click=" runFunction() " class="apply-button">Apply</button>
         </div>
-        <button v-show="allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum <= workspace.length"
-            @click="runFunction()" class="apply-button">Apply</button>
     </div>
 </template>
   
@@ -46,17 +59,24 @@ export default {
             }
         },
         runFunction() {
-            runFunctionById(this.$data.activeFunctionChoiceIndex, this.$props.workspace).forEach(matrix => {
-                this.$store.commit('incrementLastObjectId')
-                this.$emit("newStatementAdded", matrix)
-            })
-            this.$emit("workspaceUpdate", [])
+            try {
+                runFunctionById(this.$data.activeFunctionChoiceIndex, this.$props.workspace).forEach(matrix => {
+                    this.$store.commit('incrementLastObjectId')
+                    this.$emit("newStatementAdded", matrix)
+                })
+                this.$emit("workspaceUpdate", [])
+            } catch (e) {
+                this.error = e.toString()
+            }
+
         },
     },
     data() {
         return {
             activeTabIndex: 0,
             activeFunctionChoiceIndex: -1,
+            error: "",
+            dialog: false,
             allFunctions: [{ id: 0, shorthand: "+", name: "Addition", argNum: 2 },
             { id: 1, shorthand: "-", name: "Subtraction", argNum: 2 },
             { id: 2, shorthand: "*", name: "Multiplication", argNum: 2 },
@@ -99,11 +119,36 @@ export default {
             ]
         }
     },
-    emits: ['newStatementAdded', 'workspaceUpdate']
+    emits: ['newStatementAdded', 'workspaceUpdate', 'error']
 }
 </script>
   
 <style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
+
+.error-msg {
+    padding: 5px;
+    border: 4px solid red;
+    font-family: 'Roboto Mono', monospace;
+    font-size: small;
+}
+
+.apply-button {
+    border: none;
+    border-radius: 5px;
+    background-color: #ffcd29;
+    color: #000;
+    font-size: small;
+    font-weight: bold;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        background-color: #e0ac00;
+    }
+}
+
 .tabs {
     display: flex;
     flex-direction: column;
@@ -127,6 +172,12 @@ export default {
             padding: 8px 12px;
             margin-right: 10px;
             cursor: pointer;
+
+            &:hover {
+                transform: scale(1.05);
+                background-color: #e2e2e2;
+                border-radius: 10px;
+            }
 
             &.active {
                 background-color: #444444;
@@ -217,21 +268,7 @@ export default {
             }
         }
 
-        .apply-button {
-            border: none;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: #fff;
-            font-size: small;
-            font-weight: bold;
-            padding: 5px 10px;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
 
-            &:hover {
-                background-color: #0062cc;
-            }
-        }
     }
 
 }

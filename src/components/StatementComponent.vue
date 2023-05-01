@@ -2,7 +2,7 @@
     <div class="holder">
         <button class="st-cmp-del-button" @click="deleteStatementAndWorkspaceEntries">✖</button>
         <div class="stt">
-            <div contenteditable="true" @input="onStatementNameEdit">{{ statement.name }}</div> = 
+            <div contenteditable="true" @input="onStatementNameEdit">{{ statement.name }}</div> =
             <div> {{ statement.getRelative() }} </div>
         </div>
         <table ref="matrix" class="matrix">
@@ -16,9 +16,8 @@
             </tr>
             <tr v-for="(row, rowIndex) in getMatrixAccordingToFormatter()" :key="rowIndex">
                 <td v-for="(item, colIndex) in row" :style="cellStyle(rowIndex, colIndex)"
-                    :key="rowIndex * statement.columnsAmount + colIndex"
-                    @click="onSingleMouseClick(rowIndex, colIndex)" @mouseover="onSingleMouseOver(rowIndex, colIndex)"
-                    @mouseout="onSingleMouseOut()">
+                    :key="rowIndex * statement.columnsAmount + colIndex" @click="onSingleMouseClick(rowIndex, colIndex)"
+                    @mouseover="onSingleMouseOver(rowIndex, colIndex)" @mouseout="onSingleMouseOut()">
                     <div class="hld">{{ item }}</div>
                 </td>
                 <td>
@@ -69,7 +68,7 @@ export default {
             for (var i = 0; i < this.statement.columnsAmount; i++) {
                 selected.push({ row: rowIndex, col: i })
             }
-            const newWorkspace = [...this.$props.workspace, {parent: this.statement, selected }]
+            const newWorkspace = [...this.$props.workspace, { parent: this.statement, selected }]
             this.$emit("workspaceUpdate", newWorkspace)
         },
         onRowMouseOver(rowIndex) {
@@ -86,7 +85,7 @@ export default {
             for (var i = 0; i < this.statement.rowsAmount; i++) {
                 selected.push({ row: i, col: colIndex })
             }
-            const newWorkspace = [...this.$props.workspace, {parent: this.statement, selected }]
+            const newWorkspace = [...this.$props.workspace, { parent: this.statement, selected }]
             this.$emit("workspaceUpdate", newWorkspace)
         },
         onColMouseOver(colIndex) {
@@ -117,7 +116,7 @@ export default {
             //console.log(this.$data.mouseoverCol)
         },
         onSingleMouseClick(rowIndex, colIndex) {
-            const newWorkspace = [...this.$props.workspace, {parent: this.statement, selected: [{ row: rowIndex, col: colIndex }] }]
+            const newWorkspace = [...this.$props.workspace, { parent: this.statement, selected: [{ row: rowIndex, col: colIndex }] }]
             this.$emit("workspaceUpdate", newWorkspace)
         },
         onSingleMouseOver(rowIndex, colIndex) {
@@ -218,7 +217,7 @@ export default {
     margin: 1%;
     display: flex;
     flex-direction: row;
-    
+
     div {
         margin: 0em 1em 0em 1em
     }

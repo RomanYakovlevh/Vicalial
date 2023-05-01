@@ -6,8 +6,8 @@ export class MatrixSelection extends NamedMatrix {
     parent: Matrix
     selection: Array<{ row: number, col: number }>
     selectionDescription: string //this cache is created because vue likes to call getRelative() on each touch of user onto statement
-    constructor(matrix: Matrix, cellsToExtract: Array<{ row: number, col: number }>) {
-        super(select(matrix, cellsToExtract))
+    constructor(matrix: Matrix, cellsToExtract: Array<{ row: number, col: number }>, supressed: boolean = false) {
+        super(select(matrix, cellsToExtract), supressed)
         this.parent = matrix
         this.selection = cellsToExtract
         this.selectionDescription = this.describeSelection()

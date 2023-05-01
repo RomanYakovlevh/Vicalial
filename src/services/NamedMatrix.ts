@@ -6,11 +6,15 @@ let lastMatrixId = 0
 export class NamedMatrix extends Matrix {
     id: number;
     name: string;
-    constructor(list2D: Array<Array<number>>, name: string | undefined = undefined) {
+    constructor(list2D: Array<Array<number>>, supressed: boolean = false) {
         super(list2D)
-        this.id = lastMatrixId
-        lastMatrixId++
-        this.name = name === undefined ? "object " + this.id : name
+        if (!supressed) {
+            this.id = lastMatrixId
+            lastMatrixId++
+        } else {
+            this.id = -1
+        }
+        this.name = "object " + this.id
     }
 
     getName() {

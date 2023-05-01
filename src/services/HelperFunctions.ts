@@ -26,26 +26,26 @@ export function evaluateMathWithPython(expr: string): number {
 export function runFunctionById(id: number, workspace: Array<{ parent: NamedMatrix, selected: Array<{ row: number, col: number }> }>): Array<Matrix> {
     switch (id) {
         case 0: {
-            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
-            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected, true)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected, true)
             return [new MatrixAddition(e1, e2)]
         }
         case 1: {
-            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
-            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected, true)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected, true)
             return [new MatrixSubstraction(e1, e2)]
         }
         case 2: {
-            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
-            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected, true)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected, true)
             return [new MatrixMultiplication(e1, e2)]
         }
         case 3: {
-            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected, true)
             return [new MatrixTransposition(e1)]
         }
         case 4: {
-            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected, true)
             return [new MatrixInversion(e1)]
         }
         case 5: {
@@ -77,8 +77,8 @@ export function runFunctionById(id: number, workspace: Array<{ parent: NamedMatr
             return [new MatrixSelection(workspace[0].parent, allSelections)]
         }
         case 16: {
-            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected)
-            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected)
+            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected, true)
+            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected, true)
             return [new MatrixElemWiseMultiplication(e1, e2)]
         }
     }
@@ -141,19 +141,24 @@ export function inversion(arg1: Matrix) {
     return pyodide.globals.get('result').toJs()
 }
 
+export function extractErrorMessage(traceback: string): string {
+    const errorMessage = traceback.match(/^[^\n]*/)?.[0] ?? traceback;
+    return errorMessage.trim();
+  }
+
 export function select(arg1: Matrix, cellsToExtract: Array<{ row: number, col: number }>) {
     const groupedMap = groupSelectionByRow(cellsToExtract)
     return Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => arg1.asList2D[row][col]))
 }
 
 export function replace(arg1: Matrix, arg1Selection: Array<{ row: number, col: number }>, arg2: Matrix, arg2Selection: Array<{ row: number, col: number }>) {
-    const e2 = new MatrixSelection(arg2, arg2Selection)
+    const e2 = new MatrixSelection(arg2, arg2Selection, true)
     return setElementsBySelection(arg1, arg1Selection, e2)
 }
 
 export function swap(arg1: Matrix, arg1Selection: Array<{ row: number, col: number }>, arg2: Matrix, arg2Selection: Array<{ row: number, col: number }>) {
-    const e1 = new MatrixSelection(arg1, arg1Selection)
-    const e2 = new MatrixSelection(arg2, arg2Selection)
+    const e1 = new MatrixSelection(arg1, arg1Selection, true)
+    const e2 = new MatrixSelection(arg2, arg2Selection, true)
     let res = setElementsBySelection(arg1, arg1Selection, e2)
 
     if (!arg1.equals(arg2)) {
