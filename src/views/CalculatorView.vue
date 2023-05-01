@@ -10,7 +10,7 @@
                 </StatementComponent>
             </div>
         </div>
-        <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="updateWorkspace" />
+        <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="updateWorkspace" @new-statement-added="pushStatement"/>
     </div>
 </template>
 

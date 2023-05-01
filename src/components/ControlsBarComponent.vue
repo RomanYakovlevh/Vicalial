@@ -1,25 +1,42 @@
 <template>
     <div class="bottom-bar">
-        <button class="btn" @click=setOpenDataWindow(true)>Add data</button>
+        <button class="btn" @click="dialog = true">Add data</button>
         <button class="btn" @click="clearWorkspace">Deselect</button>
         <div class="frmt-as-cbc-text"> Format as: </div>
         <button class="btn" @click="this.$store.state.formatStyle = 0">Long Float</button>
         <button class="btn" @click="this.$store.state.formatStyle = 1">Fraction</button>
     </div>
+    <v-dialog v-model="dialog" width="auto">
+      <AddDataWindow2 @close-dialog="dialog = false" @new-statement-added="onNewStatementAdded"></AddDataWindow2>
+    </v-dialog>
 </template>
 
 <script>
+
+import AddDataWindow2 from './AddDataWindow2.vue'
+
 export default {
     name: 'ControlsBarComponent',
+    data () {
+      return {
+        dialog: false,
+      }
+    },
+    components: {
+      AddDataWindow2
+    },
     methods: {
         setOpenDataWindow(value) {
             this.$store.commit('setOpenDataWindow', value)
         },
         clearWorkspace() {
             this.$emit('workspaceUpdate', [])
+        },
+        onNewStatementAdded(statement) {
+          this.$emit('newStatementAdded', statement)
         }
     },
-    emits: ['workspaceUpdate']
+    emits: ['workspaceUpdate', 'newStatementAdded']
 }
 </script>
 
