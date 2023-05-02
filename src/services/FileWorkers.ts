@@ -26,8 +26,9 @@ async function parseCSV(x: any): Promise<any> {
         Papa.parse(x, {
             complete: (results) => {
                 console.log(results.data);
-                results.data.pop() //Removing last element, which supposed to be empty
-                resolve(results.data);
+                const res = results.data.map(x => x instanceof Array? x.filter(y => y !== '') : []).filter(x => x.length !== 0)
+                //Removing empty elements
+                resolve(res);
             },
             header: false,
         });
