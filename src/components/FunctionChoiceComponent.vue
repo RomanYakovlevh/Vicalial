@@ -5,10 +5,10 @@
                 :class="{ active: index === activeTabIndex }">{{ tab.title }}</button>
         </div>
         <div class="tab-contents">
-            <div v-for="(tab, index) in  tabs " :key="index" v-show="isTabActive(index)"
+            <div v-for="(tab, index) in   tabs  " :key="index" v-show="isTabActive(index)"
                 :class="{ active: index === activeTabIndex }">
                 <div class="function-buttons">
-                    <button class="function-button" v-for="(op, j) in  tab.content " :key="j"
+                    <button class="function-button" v-for="(op, j) in   tab.content  " :key="j"
                         @click="activeFunctionChoiceIndex = op.id; error = ''">
                         {{ op.name }}
                     </button>
@@ -18,20 +18,20 @@
     </div>
     <div>
         <v-card class="error-msg" v-if=" error !== '' ">Calculation is impossible.
-            <button class="apply-button" @click=" dialog = true ">More</button> <button class="apply-button"
+            <button class="apply-button" @click=" showMoreInfoAboutErrorDialog = true ">More</button> <button class="apply-button"
                 @click=" error = '' ">✖</button></v-card>
-        <v-dialog v-model=" dialog " width="auto">
+        <v-dialog v-model=" showMoreInfoAboutErrorDialog " width="auto">
             <v-card>
                 <v-card-text>{{ error }}</v-card-text>
                 <v-card-actions>
-                    <button class="apply-button" @click=" dialog = false ">Close</button>
+                    <button class="apply-button" @click=" showMoreInfoAboutErrorDialog = false ">Close</button>
                 </v-card-actions>
             </v-card>
         </v-dialog>
         <div v-if=" activeFunctionChoiceIndex !== -1 " class="fun-arg-sel">
             <h3>{{ allFunctions.find(x => x.id === activeFunctionChoiceIndex).name }}:</h3>
             <div class="function-arguments">
-                <div v-for=" i  in  Array.from({ length: allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum }, (_, index) => index) "
+                <div v-for="  i   in   Array.from({ length: allFunctions.find(x => x.id === activeFunctionChoiceIndex).argNum }, (_, index) => index)  "
                     :key=" i ">
                     {{ this.pullFromWorkspace(i) }},
                 </div>
@@ -40,15 +40,23 @@
                 @click=" runFunction() " class="apply-button">Apply</button>
         </div>
     </div>
+    <v-dialog v-model="exportMatrixDialog" width="auto"> 
+        <ExportMatrix @close-dialog="exportMatrixDialog = false" :matrix="selectFormatted()"></ExportMatrix>
+    </v-dialog>
 </template>
   
 <script>
-import { runFunctionById } from '@/services/HelperFunctions'
+import { runFunctionById, getFormattedMatrix } from '@/services/HelperFunctions'
+import ExportMatrix from './ExportMatrix.vue'
+import { MatrixSelection } from '@/services/MatrixOperations/MatrixSelection'
 
 export default {
     name: "FunctionChoiceComponent",
     props: {
         workspace: { require: true, type: Array }
+    },
+    components: {
+        ExportMatrix
     },
     methods: {
         pullFromWorkspace(i) {
@@ -58,15 +66,24 @@ export default {
                 return "-"
             }
         },
+        selectFormatted() {
+            const matrix = new MatrixSelection(this.workspace[0].parent, this.workspace[0].selected, true)
+            return getFormattedMatrix(this.$store.state.formatStyle, matrix)
+        },
         runFunction() {
-            try {
-                runFunctionById(this.$data.activeFunctionChoiceIndex, this.$props.workspace).forEach(matrix => {
-                    this.$store.commit('incrementLastObjectId')
-                    this.$emit("newStatementAdded", matrix)
-                })
-                this.$emit("workspaceUpdate", [])
-            } catch (e) {
-                this.error = e.toString()
+
+            if (this.$data.activeFunctionChoiceIndex === 12) {
+                this.exportMatrixDialog = true
+            } else {
+                try {
+                    runFunctionById(this.$data.activeFunctionChoiceIndex, this.$props.workspace).forEach(matrix => {
+                        this.$store.commit('incrementLastObjectId')
+                        this.$emit("newStatementAdded", matrix)
+                    })
+                    this.$emit("workspaceUpdate", [])
+                } catch (e) {
+                    this.error = e.toString()
+                }
             }
 
         },
@@ -76,7 +93,8 @@ export default {
             activeTabIndex: 0,
             activeFunctionChoiceIndex: -1,
             error: "",
-            dialog: false,
+            showMoreInfoAboutErrorDialog: false,
+            exportMatrixDialog: false,
             allFunctions: [{ id: 0, shorthand: "+", name: "Addition", argNum: 2 },
             { id: 1, shorthand: "-", name: "Subtraction", argNum: 2 },
             { id: 2, shorthand: "*", name: "Multiplication", argNum: 2 },
@@ -89,9 +107,7 @@ export default {
             { id: 9, shorthand: "^-1", name: "Size", argNum: 1 },
             { id: 10, shorthand: "+", name: "Selection", argNum: 0 }, //Technically it should be infinity, but we dont support that yet
             { id: 11, shorthand: "+", name: "Plot", argNum: 1 },
-            { id: 12, shorthand: "-", name: "Export LaTex", argNum: 1 },
-            { id: 13, shorthand: "*", name: "Export Excel", argNum: 1 },
-            { id: 14, shorthand: "T", name: "Export .txt", argNum: 1 },
+            { id: 12, shorthand: "-", name: "Export", argNum: 1 },
             { id: 15, shorthand: "^-1", name: "To Abstract", argNum: 1 },
             { id: 16, shorthand: "*", name: "Element-wise product", argNum: 2 }]
         };
@@ -114,7 +130,7 @@ export default {
                 },
                 {
                     title: "Other",
-                    content: this.allFunctions.filter((x) => new Array(11, 12, 13, 14, 15).findIndex(y => y === x.id) !== -1),
+                    content: this.allFunctions.filter((x) => new Array(11, 12, 15).findIndex(y => y === x.id) !== -1),
                 },
             ]
         }

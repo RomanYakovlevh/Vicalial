@@ -207,3 +207,19 @@ export function setElementsBySelection(parent: Matrix, selection: Array<{ row: n
     })
     return res.asList2D
 }
+
+export function getFormattedMatrix(formatStyle: number, matrix: Matrix) {
+    if (formatStyle === 0) {
+        return matrix.asList2D
+    } else if (formatStyle === 1) {
+        return matrix.asList2DFractions.map(row => row.map(item => {
+            if (item.denominator === 1) {
+                return item.numerator
+            } else {
+                return item.numerator + "/" + item.denominator
+            }
+        }))
+    } else {
+        return matrix.asList2D
+    }
+}

@@ -2,7 +2,7 @@
     <h1>Typography</h1>
     <div style="font-family: Avenir, Helvetica, Arial, sans-serif;">font-family: Avenir, Helvetica, Arial, sans-serif; - for
         most purposes</div>
-    <div class="robot-mono">font-family: 'Roboto Mono', monospace; - for numerical/scientific data</div>
+    <div class="roboto-mono">font-family: 'Roboto Mono', monospace; - for numerical/scientific data</div>
     <h1>Iconography</h1>
     Temporarily using unicode-emojis.
     Already used symbols: ✖ ⏺ ◼

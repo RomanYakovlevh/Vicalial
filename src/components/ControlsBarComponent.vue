@@ -7,13 +7,13 @@
         <button class="btn" @click="this.$store.state.formatStyle = 1">Fraction</button>
     </div>
     <v-dialog v-model="dialog" width="auto">
-      <AddDataWindow2 @close-dialog="dialog = false" @new-statement-added="onNewStatementAdded"></AddDataWindow2>
+      <AddDataWindow @close-dialog="dialog = false" @new-statement-added="onNewStatementAdded"></AddDataWindow>
     </v-dialog>
 </template>
 
 <script>
 
-import AddDataWindow2 from './AddDataWindow2.vue'
+import AddDataWindow from './AddDataWindow.vue'
 
 export default {
     name: 'ControlsBarComponent',
@@ -23,7 +23,7 @@ export default {
       }
     },
     components: {
-      AddDataWindow2
+      AddDataWindow
     },
     methods: {
         setOpenDataWindow(value) {

@@ -1,7 +1,6 @@
 <template>
     <div v-if="!hasPyodideLoaded" style="font-size: 3em">Loading...</div>
     <div v-if="hasPyodideLoaded">
-        <AddDataWindow @new-statement-added="pushStatement" />
         <div class="statement-components-list">
             <div class="greeting" v-for="s in getStatements" :key=s.id>
                 <StatementComponent :statement=s :workspace=workspace @workspace-update="updateWorkspace"
@@ -16,7 +15,6 @@
 
 <script>
 import ControlsBarComponent from "@/components/ControlsBarComponent.vue";
-import AddDataWindow from "@/components/AddDataWindow.vue";
 import StatementComponent from "@/components/StatementComponent.vue";
 import { reactiveState } from "@/services/PyLoader";
 
@@ -24,8 +22,7 @@ export default {
     name: 'CalculatorView',
     components: {
         StatementComponent,
-        ControlsBarComponent,
-        AddDataWindow
+        ControlsBarComponent
     },
     data() {
         return {

@@ -34,6 +34,7 @@
   
 <script>
 import FunctionChoiceComponent from "@/components/FunctionChoiceComponent.vue"
+import { getFormattedMatrix } from "@/services/HelperFunctions";
 
 export default {
     name: 'StatementComponent',
@@ -162,19 +163,7 @@ export default {
         },
         getMatrixAccordingToFormatter() {
             return () => {
-                if (this.$store.state.formatStyle === 0) {
-                    return this.statement.asList2D
-                } else if (this.$store.state.formatStyle === 1) {
-                    return this.statement.asList2DFractions.map(row => row.map(item => {
-                        if (item.denominator === 1) {
-                            return item.numerator
-                        } else {
-                            return item.numerator + "/" + item.denominator
-                        }
-                    }))
-                } else {
-                    return this.statement.asList2D
-                }
+                return getFormattedMatrix(this.$store.state.formatStyle, this.statement)
             }
 
         },

@@ -55,6 +55,12 @@ Add functions: slice, mapRows, mapColumns, replace map with mathElements, append
 
 Optimize cellStyles() function in StatementComponent
 
+In FileWorkers.ts, it would prbably be meaningful to be more permissive to imperfections in user-submitted data, like extra emty elements on the ends/beginnings of lines
+
+Make something like MatrixPreview component, i think it would be useful in a lot of places, like during export for example.
+
+Allow user to choose format of saving.
+
 
 
 3, 2, -5, -1
