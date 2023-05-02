@@ -11,7 +11,7 @@
 
 <script>
 import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 export default {
     name: 'AddFromFile',
@@ -23,7 +23,8 @@ export default {
     methods: {
         async addNewMatrixAndCloserWindow() {
             //TODO refactor, this logic should be in some service
-            const r = await this.files.map(async (x) => {
+            let r
+            (await this.files.map(async (x) => {
 
                 const fileType = x.type
 
@@ -42,21 +43,30 @@ export default {
                     return res
 
                 } else if (fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                    console.log('Started xlsx: ' + x)
                     // handle Excel file
-                    const workbook = XLSX.read(x, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const sheet = workbook.Sheets[sheetName];
-                    const arrayData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
-                    console.log("xlsx: " + arrayData);
+                    // Load the workbook from file
+                    const workbook = new ExcelJS.Workbook();
+                    await workbook.xlsx.load(x);
+
+                    // Get the first worksheet
+                    const worksheet = workbook.worksheets[0];
+
+                    // Convert worksheet data to JSON
+                    const data = worksheet.getSheetValues().slice(1).map(row => row.slice(1));
+
+                    console.log(data); // Your JSON data
+                    return data
                 } else if (fileType === 'application/json') {
                     // handle JSON file
                 } else if (fileType === "application/x-tex") {
                     // handle other file types
                 }
                 return ""
+            }))[0].then(x => {
+                r = x
+                console.log("r: " + r)
             })
-
-            console.log("r: " + r)
 
             /*
                         try {
