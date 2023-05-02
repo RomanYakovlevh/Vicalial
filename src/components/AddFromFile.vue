@@ -1,20 +1,86 @@
 <template>
     <v-card-subtitle>Upload or drop files in following formats</v-card-subtitle>
-    <v-file-input 
-        label=".xlx .xlsx .txt .csv .json .tex"
-        accept=".csv, .txt, .json, .sql, .tex, .latex, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
-        prepend-icon=""
-        variant="underlined"
-        v-model="files"></v-file-input>
+    <v-file-input label=".xlsx .txt .csv .json .tex"
+        accept=".csv, .txt, .json, .tex, .latex, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        prepend-icon="" variant="underlined" v-model="files"></v-file-input>
+    <v-card-actions class="buttons">
+        <v-btn class="btn confirm" @click="addNewMatrixAndCloserWindow">Confirm</v-btn>
+        <v-btn class="btn cancel" @click="closeDialog">Cancel</v-btn>
+    </v-card-actions>
 </template>
 
-<script lang="ts">
+<script>
+import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 
 export default {
     name: 'AddFromFile',
-    data () {
+    data() {
         return {
             files: []
+        }
+    },
+    methods: {
+        async addNewMatrixAndCloserWindow() {
+            //TODO refactor, this logic should be in some service
+            const r = await this.files.map(async (x) => {
+
+                const fileType = x.type
+
+                if (fileType === 'text/csv') {
+                    // handle CSV file
+                    let res = ""
+
+                    await Papa.parse(x, {
+                        complete: (results) => {
+                            console.log(results.data);
+                            // results.data is an array of arrays, where each inner array represents a row of the CSV file
+                            res = results
+                        },
+                        header: false, // if the CSV file has a header row, set this to true to convert each row to an object with keys corresponding to the header columns
+                    });
+                    return res
+
+                } else if (fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                    // handle Excel file
+                    const workbook = XLSX.read(x, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const arrayData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+                    console.log("xlsx: " + arrayData);
+                } else if (fileType === 'application/json') {
+                    // handle JSON file
+                } else if (fileType === "application/x-tex") {
+                    // handle other file types
+                }
+                return ""
+            })
+
+            console.log("r: " + r)
+
+            /*
+                        try {
+                const list2D = this.$data.textValue.split('\n').map((x) => x.split(',').map(y => evaluateMathWithPython(y)))
+
+                const matrix = new NamedMatrix(list2D);
+
+                this.$emit("newStatementAdded", matrix)
+                this.$emit("closeDialog")
+            } catch (e) {
+                if (e instanceof MatrixInvalidError) {
+                    this.$data.textValue = "temp: " + e.message
+                } else {
+                    throw e
+                }
+            }
+            */
+
+
+
+
+        },
+        closeDialog() {
+            this.$emit('closeDialog')
         }
     },
     emits: ['closeDialog', 'newStatementAdded']

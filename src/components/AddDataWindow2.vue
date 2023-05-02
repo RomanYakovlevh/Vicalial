@@ -18,7 +18,7 @@
                 </v-window-item>
 
                 <v-window-item value="From file">
-                    <AddFromFile/>
+                    <AddFromFile @close-dialog="closeDialog" @new-statement-added="newStatementAdded"/>
                 </v-window-item>
 
                 <v-window-item value="Generator">
