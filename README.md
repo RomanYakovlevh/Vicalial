@@ -61,6 +61,8 @@ Make something like MatrixPreview component, i think it would be useful in a lot
 
 Allow user to choose format of saving.
 
+Repair selectedStyle() temporal solution in MatrixView
+
 
 
 3, 2, -5, -1

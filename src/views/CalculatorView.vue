@@ -2,32 +2,42 @@
     <div v-if="!hasPyodideLoaded" style="font-size: 3em">Loading...</div>
     <div v-if="hasPyodideLoaded">
         <div class="statement-components-list">
-            <div class="greeting" v-for="s in getStatements" :key=s.id>
-                <StatementComponent :statement=s :workspace=workspace @workspace-update="updateWorkspace"
-                    @new-statement-added="pushStatement" @statement-deleted="deleteStatement"
-                    @statement-updated="onStatementUpdated">
-                </StatementComponent>
+            <div v-for="s in getStatements" :key=s.id>
+                <StatementComponent2 :matrix="s" :workspace="workspace" @workspace-push="pushWorkspace" />
             </div>
         </div>
-        <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="updateWorkspace" @new-statement-added="pushStatement"/>
+        <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="updateWorkspace"
+            @new-statement-added="pushStatement" />
     </div>
 </template>
 
 <script>
+/*
+                <StatementComponent :statement=s :workspace=workspace @workspace-update="updateWorkspace"
+                    @new-statement-added="pushStatement" @statement-deleted="deleteStatement"
+                    @statement-updated="onStatementUpdated">
+                </StatementComponent>
+
+*/
+
+
 import ControlsBarComponent from "@/components/ControlsBarComponent.vue";
-import StatementComponent from "@/components/StatementComponent.vue";
+//import StatementComponent from "@/components/StatementComponent.vue";
 import { reactiveState } from "@/services/PyLoader";
+import StatementComponent2 from "@/components/StatementComponent2.vue";
+import { Workspace } from "@/services/Workspace";
 
 export default {
     name: 'CalculatorView',
     components: {
-        StatementComponent,
-        ControlsBarComponent
+        //StatementComponent,
+        ControlsBarComponent,
+        StatementComponent2
     },
     data() {
         return {
             statements: [],
-            workspace: new Array()
+            workspace: new Workspace()
         }
     },
     computed: {
@@ -49,6 +59,10 @@ export default {
             this.$data.workspace = workspaceModified
             //console.log(this.$data.workspace)
         },
+        pushWorkspace(n) {
+            this.workspace.list.push(n)
+            console.log(this.workspace.list.length)
+        },
         deleteStatement(stId) {
             this.$data.statements = this.$data.statements.filter(x => x.id !== stId)
         },
@@ -60,11 +74,6 @@ export default {
 </script>
 
 <style>
-.greeting {
-    color: red;
-    font-weight: bold;
-}
-
 .statement-components-list {
     padding-bottom: 10%;
 }

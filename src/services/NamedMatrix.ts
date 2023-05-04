@@ -14,7 +14,7 @@ export class NamedMatrix extends Matrix {
         } else {
             this.id = -1
         }
-        this.name = "object " + this.id
+        this.name = "object_" + this.id
     }
 
     getName() {
