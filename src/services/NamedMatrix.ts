@@ -1,7 +1,7 @@
 //Temporary crutch, intil we invent good type system.
 import { Matrix } from "./Matrix";
 
-let lastMatrixId = 0
+let lastMatrixId = 1
 
 export class NamedMatrix extends Matrix {
     id: number;
@@ -14,7 +14,7 @@ export class NamedMatrix extends Matrix {
         } else {
             this.id = -1
         }
-        this.name = "object_" + this.id
+        this.name = "M" + this.id
     }
 
     getName() {

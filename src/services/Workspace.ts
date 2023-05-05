@@ -2,12 +2,17 @@ import { NamedMatrix } from "./NamedMatrix";
 
 
 export interface SelectionType {
+    getDescription(): string 
 }
 
 export class RowSelection implements SelectionType {
     row: number
     constructor(row: number) {
         this.row = row
+    }
+
+    getDescription(): string {
+        return "[" + this.row + ", :]"
     }
 }
 
@@ -16,9 +21,16 @@ export class ColSelection implements SelectionType {
     constructor(col: number) {
         this.col = col
     }
+    getDescription(): string {
+        return "[:, " + this.col+ "]"
+    }
 }
 
-export class AllSelection implements SelectionType { }
+export class AllSelection implements SelectionType { 
+    getDescription(): string {
+        return ""
+    }
+}
 
 export class CellSelection implements SelectionType {
     row: number
@@ -26,6 +38,10 @@ export class CellSelection implements SelectionType {
     constructor(row: number, col: number) {
         this.row = row
         this.col = col
+    }
+
+    getDescription(): string {
+        return "[" + this.row + ", " + this.col+ "]"
     }
 }
 
@@ -80,5 +96,9 @@ export class WorkspaceEntry {
     constructor(parent: NamedMatrix, selection: SelectionType) {
         this.parent = parent
         this.selection = selection
+    }
+
+    getDescription() {
+        return this.parent.getName() + "" + this.selection.getDescription()
     }
 }

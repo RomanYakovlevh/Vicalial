@@ -63,7 +63,7 @@ Allow user to choose format of saving.
 
 Repair selectedStyle() temporal solution in MatrixView
 
-
+In StatementComponent (second) make MatrixMethodTabs somehow collapsable
 
 3, 2, -5, -1
 2, -1, 3, 13

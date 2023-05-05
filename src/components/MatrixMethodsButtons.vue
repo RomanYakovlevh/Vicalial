@@ -1,7 +1,8 @@
 <template>
-    <v-sheet>
+    <v-sheet class="mmb-sheet">
+        <div class="subtext">choose function</div>
         <v-btn size="small" variant="tonal" v-for="(m, i) in methods.top" :key="i" class="ma-1" @click="buttonClick(m.name())">{{ m.name() }}</v-btn>
-        <v-combobox label="More methods" density="compact" v-model="value" :items="methods.all().map(x => x.name())"
+        <v-combobox label="More functions" density="compact" v-model="value" :items="methods.all().map(x => x.name())"
                 class="ma-1" variant="outlined" @update:model-value="comboxChange" :color="comboxColor()"></v-combobox>
     </v-sheet>
 </template>
@@ -23,6 +24,9 @@ export default {
     },
     methods: {
         comboxChange() {
+            if (this.value === '') {
+                this.value = null
+            }
             if (this.value !== null && this.methods.all().map(x => x.name()).filter(x => x === this.value.trim()).length === 0) {
                 this.$data.incorrectComboxValue = true
             } else {
@@ -53,4 +57,13 @@ export default {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.mmb-sheet {
+background-color: #ddd;
+}
+
+.subtext {
+    color: #999;
+    align-content:start;
+}
+</style>
