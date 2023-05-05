@@ -1,15 +1,16 @@
 <template>
-    <v-card variant="tonal" class="d-flex flex-row">
+    <v-card variant="tonal" class="d-flex flex-row ma-1">
         <v-btn icon="✖" variant="tonal" class="align-self-center ma-3">
             ✖
         </v-btn>
-        <div :style="nameModelStyle()">
+        <div :style="nameModelStyle()" class="align-self-center my-auto" >
             <v-text-field class="align-self-center my-auto" variant='plain' v-model="matrixNameModel" />
         </div>
         <div class="align-self-center my-auto mx-3">
             = {{ matrix.getRelative() }}
         </div>
-        <matrix-viewer :matrix="matrix" :workspace="workspace" @workspace-push="onWorkspacePush"></matrix-viewer>
+        <matrix-viewer :matrix="matrix" :workspace="workspace" :workspace-version="workspaceVersion" @workspace-push="onWorkspacePush"/>
+        <matrix-methods-tabs @method-chosen=""/>
     </v-card>
 </template>
 
@@ -17,6 +18,7 @@
 import { NamedMatrix } from '@/services/NamedMatrix';
 import { Workspace } from '@/services/Workspace';
 import MatrixViewer from './MatrixViewer.vue';
+import MatrixMethodsTabs from './MatrixMethodsTabs.vue';
 
 //style="border: 1px solid black;"
 export default {
@@ -25,6 +27,7 @@ export default {
     }),
     components: {
         MatrixViewer,
+        MatrixMethodsTabs
     },
     props: {
         matrix: {
@@ -33,6 +36,9 @@ export default {
         },
         workspace: {
             type: Workspace,
+            required: true
+        },
+        workspaceVersion: {
             required: true
         }
     },

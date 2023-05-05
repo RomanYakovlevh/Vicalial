@@ -30,7 +30,7 @@ import { getFormattedMatrix } from '@/services/HelperFunctions';
 export default {
     data() {
         return {
-            cellStyles: { rows: [], cols: [], cells: [[]], all: Boolean }
+            cellStyles: { rows: [], cols: [], cells: [[]], all: {} }
         };
     },
     props: {
@@ -39,6 +39,9 @@ export default {
         },
         workspace: {
             type: Workspace,
+            required: true
+        },
+        workspaceVersion: {
             required: true
         }
     },
@@ -86,10 +89,12 @@ export default {
         },
 
         onAllMouseOver() {
+            console.log(this.$data.cellStyles.all)
             this.$data.cellStyles.all.hover = true
             //console.log(this.$data.mouseoverCol)
         },
         onAllMouseOut() {
+            console.log(this.$data.cellStyles.all)
             this.$data.cellStyles.all.hover = false
             //console.log(this.$data.mouseoverCol)
         },
@@ -104,38 +109,38 @@ export default {
         selectedStyle() {
             const newVal = this.$props.workspace
             if (newVal instanceof Workspace) {
-                    this.$data.cellStyles.all = newVal.getSelectedAllFor(this.matrix.id)
+                this.$data.cellStyles.all.selected = newVal.getSelectedAllFor(this.matrix.id)
 
-                    const selectedRows = newVal.getSelectedRowsFor(this.matrix.id)
-                    for (let i = 0; i < this.$data.cellStyles.rows.length; i++) {
-                        this.$data.cellStyles.rows[i].selected = false;
-                    }
-                    for (let i = 0; i < selectedRows.length; i++) {
-                        const sel = selectedRows[i]
-                        this.$data.cellStyles.rows[sel].selected = true;
-                    }
+                const selectedRows = newVal.getSelectedRowsFor(this.matrix.id)
+                for (let i = 0; i < this.$data.cellStyles.rows.length; i++) {
+                    this.$data.cellStyles.rows[i].selected = false;
+                }
+                for (let i = 0; i < selectedRows.length; i++) {
+                    const sel = selectedRows[i]
+                    this.$data.cellStyles.rows[sel].selected = true;
+                }
 
-                    const selectedCols = newVal.getSelectedColsFor(this.matrix.id)
-                    for (let i = 0; i < this.$data.cellStyles.cols.length; i++) {
-                        this.$data.cellStyles.cols[i].selected = false;
-                    }
-                    for (let i = 0; i < selectedCols.length; i++) {
-                        const sel = selectedCols[i]
-                        this.$data.cellStyles.cols[sel].selected = true;
-                    }
+                const selectedCols = newVal.getSelectedColsFor(this.matrix.id)
+                for (let i = 0; i < this.$data.cellStyles.cols.length; i++) {
+                    this.$data.cellStyles.cols[i].selected = false;
+                }
+                for (let i = 0; i < selectedCols.length; i++) {
+                    const sel = selectedCols[i]
+                    this.$data.cellStyles.cols[sel].selected = true;
+                }
 
-                    const selectedCells = newVal.getSelectedCellsFor(this.matrix.id)
-                    for (let i = 0; i < this.$data.cellStyles.cells.length; i++) {
-                        const element = this.$data.cellStyles.cells[i];
-                        for (let j = 0; j < element.length; j++) {
-                            this.$data.cellStyles.cells[i][j].selected = false;
-                        }
-                    }
-                    for (let i = 0; i < selectedCells.length; i++) {
-                        const element = selectedCells[i];
-                        this.$data.cellStyles.cells[element.row][element.col].selected = true;
+                const selectedCells = newVal.getSelectedCellsFor(this.matrix.id)
+                for (let i = 0; i < this.$data.cellStyles.cells.length; i++) {
+                    const element = this.$data.cellStyles.cells[i];
+                    for (let j = 0; j < element.length; j++) {
+                        this.$data.cellStyles.cells[i][j].selected = false;
                     }
                 }
+                for (let i = 0; i < selectedCells.length; i++) {
+                    const element = selectedCells[i];
+                    this.$data.cellStyles.cells[element.row][element.col].selected = true;
+                }
+            }
         }
     },
     computed: {
@@ -148,14 +153,13 @@ export default {
         },
         cellStyle() {
             return (rowIndex, colIndex) => {
-                this.selectedStyle()
                 //console.log("r: " + rowIndex + " c: " + colIndex + ", all: " + this.$data.cellStyles.all.hover + " row: " + this.$data.cellStyles.rows[rowIndex].hover + " col: " + this.$data.cellStyles.cols[colIndex].hover + " cell: " + this.$data.cellStyles.cells[rowIndex][colIndex].hover)
                 if (this.$data.cellStyles.all.selected ||
                     this.$data.cellStyles.rows[rowIndex].selected ||
                     this.$data.cellStyles.cols[colIndex].selected ||
                     this.$data.cellStyles.cells[rowIndex][colIndex].selected) {
                     return {
-                        backgroundColor: "white",
+                        "background-color": "white",
                         border: "1px solid black"
                     };
                 } else if (this.$data.cellStyles.all.hover ||
@@ -163,12 +167,12 @@ export default {
                     this.$data.cellStyles.cols[colIndex].hover ||
                     this.$data.cellStyles.cells[rowIndex][colIndex].hover) {
                     return {
-                        backgroundColor: "grey",
+                        "background-color": "grey",
                         border: "1px solid grey"
                     };
                 } else {
                     return {
-                        backgroundColor: "white",
+                        "background-color": "white",
                         border: "1px solid white"
                     };
                 }
@@ -176,10 +180,10 @@ export default {
         },
     },
     watch: {
-        workspace: {
+        workspaceVersion: {
             immediate: true,
-            handler() {
-                console.log("Workspace updated")
+            handler(nv) {
+                console.log("Workspace updated, version: " + nv)
                 this.selectedStyle()
             }
         }
@@ -197,6 +201,8 @@ export default {
     margin: 0% 1% 1% 1%;
     border: 0px solid #999999;
     font-family: 'Roboto Mono', monospace;
+    height: fit-content;
+    align-self: center;
 }
 
 .row-col-selector-btn {
@@ -208,5 +214,9 @@ export default {
 
 .row-col-selector-btn:hover {
     background-color: #d6d5d2;
+}
+
+.hld {
+    margin: 3px 8px 3px 8px;
 }
 </style>

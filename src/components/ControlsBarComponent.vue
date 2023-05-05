@@ -30,7 +30,7 @@ export default {
             this.$store.commit('setOpenDataWindow', value)
         },
         clearWorkspace() {
-            this.$emit('workspaceUpdate', [])
+            this.$emit('workspaceUpdate')
         },
         onNewStatementAdded(statement) {
           this.$emit('newStatementAdded', statement)
