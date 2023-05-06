@@ -1,8 +1,16 @@
+import { set } from "vue-demi";
+import { Matrix } from "./Matrix";
 import { NamedMatrix } from "./NamedMatrix";
 
 
 export interface SelectionType {
-    getDescription(): string 
+    getDescription(): string
+
+    getFrom(other: Array<Array<number>>): Array<Array<number>>
+
+    setForWith(matrix: number[][], setTo: number[][]): number[][]
+
+    getAsIndexesFor(matrix: number[][]): Array<{ row: number, col: number }>
 }
 
 export class RowSelection implements SelectionType {
@@ -14,6 +22,27 @@ export class RowSelection implements SelectionType {
     getDescription(): string {
         return "[" + this.row + ", :]"
     }
+
+    getFrom(other: Array<Array<number>>): Array<Array<number>> {
+        return [other[this.row]]
+    }
+
+    setForWith(matrix: number[][], setTo: number[][]): number[][] {
+        const rx = this.getFrom(matrix)
+        if (1 !== setTo.length || rx[0].length !== setTo[0].length) {
+            throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
+        }
+        const res = matrix.map(x => x.slice())
+        res[this.row] = setTo[0]
+        return res
+    }
+
+    getAsIndexesFor(matrix: number[][]): { row: number; col: number; }[] {
+        return matrix[this.row].map((x, i) => {
+            x; //<-- Just so i dowsnt throw error un unused variables
+            return { row: this.row, col: i }
+        })
+    }
 }
 
 export class ColSelection implements SelectionType {
@@ -22,13 +51,59 @@ export class ColSelection implements SelectionType {
         this.col = col
     }
     getDescription(): string {
-        return "[:, " + this.col+ "]"
+        return "[:, " + this.col + "]"
+    }
+
+    getFrom(other: number[][]) {
+        return other.map(x => [x[this.col]])
+    }
+
+    setForWith(matrix: number[][], setTo: number[][]): number[][] {
+        const rx = this.getFrom(matrix)
+        if (rx.length !== setTo.length || 1 !== setTo[0].length) {
+            throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
+        }
+        let res = matrix.map(x => x.slice())
+        res = res.map((x, i) => {
+            x[this.col] = setTo[i][0]
+            return x
+        })
+        return res
+    }
+
+    getAsIndexesFor(matrix: number[][]): { row: number; col: number; }[] {
+        return matrix.map((x, i) => {
+            x; //<-- for no eror
+            return { row: i, col: this.col }
+        })
     }
 }
 
-export class AllSelection implements SelectionType { 
+export class AllSelection implements SelectionType {
     getDescription(): string {
         return ""
+    }
+
+    getFrom(other: number[][]): number[][] {
+        return other
+    }
+
+    setForWith(matrix: number[][], setTo: number[][]): number[][] {
+        const rx = this.getFrom(matrix)
+        const lx = setTo
+        if (rx.length !== lx.length || rx[0].length !== lx[0].length) {
+            throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
+        }
+
+        return setTo.map(x => x.slice())
+    }
+
+    getAsIndexesFor(matrix: number[][]): { row: number; col: number; }[] {
+        return matrix.map((x, i) => {
+            return x.map((_, j) => {
+                return { row: i, col: j }
+            })
+        }).flat()
     }
 }
 
@@ -41,7 +116,25 @@ export class CellSelection implements SelectionType {
     }
 
     getDescription(): string {
-        return "[" + this.row + ", " + this.col+ "]"
+        return "[" + this.row + ", " + this.col + "]"
+    }
+
+    getFrom(other: number[][]): number[][] {
+        return [[other[this.row][this.col]]]
+    }
+
+    setForWith(matrix: number[][], setTo: number[][]): number[][] {
+        if (1 !== setTo.length || 1 !== setTo[0].length) {
+            throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
+        }
+
+        let res = matrix.map(x => x.slice())
+        res[this.row][this.col] = setTo[0][0]
+        return res
+    }
+
+    getAsIndexesFor(_: number[][]): { row: number; col: number; }[] {
+        return [{row: this.row, col: this.col}]
     }
 }
 
@@ -76,7 +169,7 @@ export class Workspace {
     getSelectedCellsFor(parentId: number) {
         const r = this.list.filter(e => e.parent.id === parentId && e.selection instanceof CellSelection).map(x => {
             if (x.selection instanceof CellSelection) {
-                return {row: x.selection.row, col: x.selection.col}
+                return { row: x.selection.row, col: x.selection.col }
             } else {
                 throw new Error('x.selection was not CellSelection instance')
             }
@@ -100,5 +193,13 @@ export class WorkspaceEntry {
 
     getDescription() {
         return this.parent.getName() + "" + this.selection.getDescription()
+    }
+
+    asList2D() {
+        return this.selection.getFrom(this.parent.asList2D)
+    }
+
+    getSelectionsAsIndexes() {
+
     }
 }

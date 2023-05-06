@@ -12,7 +12,8 @@
         <matrix-viewer :matrix="matrix" :workspace="workspace" :workspace-version="workspaceVersion"
             @workspace-push="onWorkspacePush" />
         <matrix-methods-tabs @method-chosen="onMethodChosen" />
-        <method-arguments v-if="chosenMethod !== undefined" :matrix-method="chosenMethod" :workspace="workspace" />
+        <method-arguments v-if="chosenMethod !== undefined" :matrix-method="chosenMethod" :workspace="workspace"
+            @clear-workspace="onClearWorkspace" @statement-added="onStatementAdded" />
     </v-sheet>
 </template>
 
@@ -64,6 +65,12 @@ export default {
         },
         onMethodChosen(name) {
             this.chosenMethod = findFunctionByName(name)
+        },
+        onClearWorkspace() {
+            this.$emit('clearWorkspace')
+        },
+        onStatementAdded(st) {
+            this.$emit('statementAdded', st)
         }
     },
     computed: {
@@ -78,7 +85,7 @@ export default {
     mounted() {
         this.$data.matrixNameModel = this.$props.matrix.name
     },
-    emits: ["workspacePush"]
+    emits: ["workspacePush", 'clearWorkspace', 'statementAdded']
 }
 </script>
 

@@ -1,4 +1,17 @@
-import { number } from "echarts"
+
+import { Workspace } from "./Workspace"
+import { Matrix } from "./Matrix"
+import { MatrixSelection } from "./MatrixOperations/MatrixSelection"
+import { MatrixAddition } from "./MatrixOperations/MatrixAddition"
+import { pyodide } from "./PyLoader"
+import { MatrixSubstraction } from "./MatrixOperations/MatrixSubstraction"
+import { MatrixMultiplication } from "./MatrixOperations/MatrixMultiplication"
+import { MatrixTransposition } from "./MatrixOperations/MatrixTransposition"
+import { MatrixInversion } from "./MatrixOperations/MatrixInversion"
+import { MatrixElemWiseMultiplication } from "./MatrixOperations/MatrixElemWiseMultiplication"
+import { MatrixReplace } from "./MatrixOperations/MatrixReplace"
+import { MatrixSwap } from "./MatrixOperations/MatrixSwap"
+import { MatrixSize } from "./MatrixOperations/MatrixSize"
 
 export interface MatrixMethodGroups { }
 
@@ -49,6 +62,8 @@ export interface MatrixMethod {
     arguments(): { selections: number, replaceInParent: Boolean, mutateSelf: Boolean }
 
     symbol(): {type: number, value: string} // 0 - stands for prefix, 1 - midfx (only for 2 args), 2 - postfix
+
+    execute(workspace: Workspace): Array<Matrix>
 }
 
 export class AddMethod implements MatrixMethod {
@@ -66,6 +81,10 @@ export class AddMethod implements MatrixMethod {
 
     symbol(): { type: number; value: string } {
         return {type: 1, value: "+"}
+    }
+
+    execute(workspace: Workspace): Array<Matrix> {
+        return [new MatrixAddition(workspace.list[0], workspace.list[1])]
     }
 }
 
@@ -85,6 +104,10 @@ export class SubtractMethod implements MatrixMethod {
     symbol(): { type: number; value: string } {
         return {type: 1, value: "-"}
     }
+
+    execute(workspace: Workspace): Array<Matrix> {
+        return [new MatrixSubstraction(workspace.list[0], workspace.list[1])]
+    }
 }
 
 export class MultiplyMethod implements MatrixMethod {
@@ -102,6 +125,10 @@ export class MultiplyMethod implements MatrixMethod {
 
     symbol(): { type: number; value: string } {
         return {type: 1, value: "*"}
+    }
+
+    execute(workspace: Workspace): Array<Matrix> {
+        return [new MatrixMultiplication(workspace.list[0], workspace.list[1])]
     }
 }
 
@@ -121,6 +148,10 @@ export class TransposeMethod implements MatrixMethod {
     symbol(): { type: number; value: string } {
         return {type: 2, value: "^T"}
     }
+
+    execute(workspace: Workspace): Matrix[] {
+        return [new MatrixTransposition(workspace.list[0])]
+    }
 }
 
 export class InverseMethod implements MatrixMethod {
@@ -138,6 +169,10 @@ export class InverseMethod implements MatrixMethod {
 
     symbol(): { type: number; value: string } {
         return {type: 2, value: "^-1"}
+    }
+
+    execute(workspace: Workspace): Matrix[] {
+        return [new MatrixInversion(workspace.list[0])]
     }
 }
 
@@ -157,6 +192,10 @@ export class ElementWiseProductMethod implements MatrixMethod {
     symbol(): { type: number; value: string } {
         return {type: 1, value: ".*"}
     }
+
+    execute(workspace: Workspace): Array<Matrix> {
+        return [new MatrixElemWiseMultiplication(workspace.list[0], workspace.list[1])]
+    }
 }
 
 export class ReplaceMethod implements MatrixMethod {
@@ -174,6 +213,10 @@ export class ReplaceMethod implements MatrixMethod {
 
     symbol(): { type: number; value: string } {
         return {type: 0, value: "replace"}
+    }
+
+    execute(workspace: Workspace): Matrix[] {
+        return [new MatrixReplace(workspace.list[0], workspace.list[1])]
     }
 }
 
@@ -193,6 +236,14 @@ export class SwapMethod implements MatrixMethod {
     symbol(): { type: number; value: string } {
         return {type: 0, value: "swap"}
     }
+
+    execute(workspace: Workspace): Matrix[] {
+        if (workspace.list[0].parent.id !== workspace.list[1].parent.id) {
+            return [new MatrixReplace(workspace.list[0], workspace.list[1]), new MatrixReplace(workspace.list[1], workspace.list[0])]
+        } else {
+            return [new MatrixSwap(workspace.list[0], workspace.list[1])]
+        }
+    }
 }
 
 export class SizeMethod implements MatrixMethod {
@@ -211,6 +262,10 @@ export class SizeMethod implements MatrixMethod {
     symbol(): { type: number; value: string } {
         return {type: 0, value: "size of"}
     }
+
+    execute(workspace: Workspace): Matrix[] {
+        return [new MatrixSize(workspace.list[0])]
+    }
 }
 
 export class SelectMethod implements MatrixMethod {
@@ -228,6 +283,10 @@ export class SelectMethod implements MatrixMethod {
 
     symbol(): { type: number; value: string } {
         return {type: 0, value: "select"}
+    }
+
+    execute(workspace: Workspace): Matrix[] {
+        return [new MatrixSelection(workspace.list)]
     }
 }
 

@@ -75,7 +75,7 @@
         </div>
 
         <v-card-actions>
-            <v-btn density="compact">Apply</v-btn>
+            <v-btn density="compact" @click="onApplyClick">Apply</v-btn>
         </v-card-actions>
     </v-sheet>
 </template>
@@ -115,8 +115,14 @@ export default {
         }
     },
     methods: {
-        
-    }
+        onApplyClick() {
+            this.matrixMethod.execute(this.workspace).forEach(element => {
+                this.$emit('statementAdded', element)
+            });
+            this.$emit('clearWorkspace')
+        }
+    },
+    emits: ['statementAdded', 'clearWorkspace']
 }
 </script>
 

@@ -26,9 +26,9 @@ export function evaluateMathWithPython(expr: string): number {
 export function runFunctionById(id: number, workspace: Array<{ parent: NamedMatrix, selected: Array<{ row: number, col: number }> }>): Array<Matrix> {
     switch (id) {
         case 0: {
-            const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected, true)
-            const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected, true)
-            return [new MatrixAddition(e1, e2)]
+            //const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected, true)
+            //const e2 = new MatrixSelection(workspace[1].parent, workspace[1].selected, true)
+            return [] //[new MatrixAddition(e1, e2)]
         }
         case 1: {
             const e1 = new MatrixSelection(workspace[0].parent, workspace[0].selected, true)

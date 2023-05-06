@@ -1,90 +1,32 @@
 import { Matrix } from "../Matrix";
-import { swap } from "../HelperFunctions";
 import { NamedMatrix } from "../NamedMatrix";
+import { WorkspaceEntry } from "../Workspace";
 
 export class MatrixSwap extends NamedMatrix {
-    parentLeft: Matrix
-    parentRight: Matrix
-    selectionFromLeft: Array<{ row: number, col: number }>
-    selectionFromRight: Array<{ row: number, col: number }>
-    selectionFromLeftDescription: string //this cache is created because vue likes to call getRelative() on each touch of user onto statement
-    selectionFromRightDescription: string
-    constructor(matrixLeft: Matrix, matrixRight: Matrix, selectionFromLeft: Array<{ row: number, col: number }>, selectionFromRight: Array<{ row: number, col: number }>) {
-        super(swap(matrixLeft, selectionFromLeft, matrixRight, selectionFromRight))
+    parentLeft: WorkspaceEntry
+    parentRight: WorkspaceEntry
+    constructor(matrixLeft: WorkspaceEntry, matrixRight: WorkspaceEntry) {
+        super(swap(matrixLeft, matrixRight))
         this.parentLeft = matrixLeft
         this.parentRight = matrixRight
-        this.selectionFromLeft = selectionFromLeft
-        this.selectionFromRight = selectionFromRight
-        this.selectionFromLeftDescription = this.describeSelection(this.parentLeft, this.selectionFromLeft)
-        this.selectionFromRightDescription = this.describeSelection(this.parentRight, this.selectionFromRight)
     }
 
 
     getRelative() {
-        return this.parentLeft.getName() + "" + this.selectionFromLeftDescription + " swapped with " + this.parentRight.getName() + "" + this.selectionFromRightDescription
+        return this.parentLeft.getDescription() + " swapped with " + this.parentRight.getDescription()
     }
 
-    describeSelection(parent: Matrix, selection: Array<{ row: number, col: number }>): string {
-        const v = this.verifySelection(parent, selection)
-        if (v !== false) {
-            if (v.upperLeft.minRow === v.lowerRight.maxRow && v.upperLeft.minCol === v.lowerRight.maxCol) {
-                return "[" + v.upperLeft.minRow + ", " + v.upperLeft.minCol + "]"
-            }
-            else if (v.upperLeft.minRow === 0 && v.upperLeft.minCol === 0
-                && v.lowerRight.maxRow === parent.rowsAmount - 1 && v.lowerRight.maxCol === parent.columnsAmount - 1) {
-                return ""
-            } else if (v.upperLeft.minRow === v.lowerRight.maxRow) {
-                if (v.upperLeft.minCol === 0 && v.lowerRight.maxCol === parent.columnsAmount - 1) {
-                    return "[" + v.upperLeft.minRow + ", :]"
-                } else {
-                    return "[" + v.upperLeft.minRow + ", " + v.upperLeft.minCol + ":" + v.lowerRight.maxCol + "]"
-                }
+}
 
-            } else if (v.upperLeft.minCol === v.lowerRight.maxCol) {
-                if (v.upperLeft.minRow === 0 && v.lowerRight.maxRow === parent.rowsAmount - 1) {
-                    return "[:, " + v.upperLeft.minCol + "]"
-                } else {
-                    return "[" + v.upperLeft.minRow + ":" + v.lowerRight.maxRow + ", " + v.upperLeft.minCol + "]"
-                }
-            } else {
-                return "[" + v.upperLeft.minRow + ":" + v.lowerRight.maxRow + ", " + v.upperLeft.minCol + ":" + v.lowerRight.maxCol + "]"
-            }
-        } else {
-            let acc = "["
+function swap(arg1: WorkspaceEntry, arg2: WorkspaceEntry) {
+    let res = arg1.selection.setForWith(arg1.parent.asList2D, arg2.parent.asList2D)
 
-            selection.forEach(v => {
-                acc += "(" + v.row + ", " + v.col + ")"
-            })
-
-            return acc + "]"
-        }
-
+    if (!arg1.parent.equals(arg2.parent)) {
+        //resArr.push(setElementsBySelection(arg2, arg2Selection, e1))
+        throw new Error("Tried to swap between matrixes")
+    } else {
+        res = arg2.selection.setForWith(res, arg1.parent.asList2D)
     }
 
-    verifySelection(parent: Matrix, selection: Array<{ row: number, col: number }>): { upperLeft: { minRow: number, minCol: number }, lowerRight: { maxRow: number, maxCol: number } } | false {
-        let maxRow = Number.MIN_SAFE_INTEGER
-        let minRow = Number.MAX_SAFE_INTEGER
-        let maxCol = Number.MIN_SAFE_INTEGER
-        let minCol = Number.MAX_SAFE_INTEGER
-
-        selection.forEach((x) => {
-            if (x.row > maxRow) {
-                maxRow = x.row
-            }
-            if (x.row < minRow) {
-                minRow = x.row
-            }
-            if (x.col > maxCol) {
-                maxCol = x.col
-            }
-            if (x.col < minCol) {
-                minCol = x.col
-            }
-        })
-
-        console.log((maxRow - minRow + 1) * (maxCol - minCol + 1))
-
-        return (maxRow - minRow + 1) * (maxCol - minCol + 1) === selection.length ? { upperLeft: { minRow, minCol }, lowerRight: { maxRow, maxCol } } : false
-    }
-
+    return res
 }
