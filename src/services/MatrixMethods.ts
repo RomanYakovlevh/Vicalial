@@ -32,7 +32,7 @@ export class CodeMethodGroup implements MatrixMethodGroups {
     top: Array<MatrixMethod>
     rest: Array<MatrixMethod>
     constructor() {
-        this.top = [new ReplaceMethod, new SwapMethod, new SizeMethod, new SelectMethod, new SliceMethod]
+    this.top = [new ReplaceMethod, new SwapMethod, new SizeMethod, new SelectMethod/*, new SliceMethod*/]
         this.rest = [new AppendRowsMethod, new AppendColumnsMethod]
     }
 
@@ -290,6 +290,7 @@ export class SelectMethod implements MatrixMethod {
     }
 }
 
+/*
 export class SliceMethod implements MatrixMethod {
     name(): string {
         return "Slice"
@@ -307,6 +308,8 @@ export class SliceMethod implements MatrixMethod {
         return {type: 0, value: "slice"}
     }
 }
+*/
+
 
 export class AppendRowsMethod implements MatrixMethod {
     name(): string {
