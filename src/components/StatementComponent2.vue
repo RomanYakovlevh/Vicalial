@@ -4,7 +4,7 @@
             ✖
         </v-btn>
         <div :style="nameModelStyle()" class="align-self-center my-auto">
-            <v-text-field class="align-self-center my-auto" variant='plain' v-model="matrixNameModel" counter="20" />
+            <v-text-field class="align-self-center my-auto" variant='plain' v-model="matrixNameModel" @update:model-value="onStatementNameUpdate" counter="20" />
         </div>
         <div class="align-self-center my-auto mx-3">
             = {{ matrix.getRelative() }}
@@ -66,13 +66,18 @@ export default {
         },
         onDeleteStatement(id) {
             this.$emit('deleteStatement', id)
+        },
+        onStatementNameUpdate() {
+            const name = this.$data.matrixNameModel
+            this.$props.matrix.changeNameUnsafe(name)
+            this.$emit('statementUpdated', this.$props.matrix)
         }
     },
     computed: {
         nameModelStyle() {
             return () => {
                 return {
-                    width: this.$data.matrixNameModel.length + "rem",
+                    width: (this.$data.matrixNameModel.length * 0.7) + "rem",
                 }
             }
         }
@@ -80,7 +85,7 @@ export default {
     mounted() {
         this.$data.matrixNameModel = this.$props.matrix.name
     },
-    emits: ["workspacePush", 'clearWorkspace', 'statementAdded', 'deleteStatement']
+    emits: ["workspacePush", 'clearWorkspace', 'statementAdded', 'deleteStatement', 'statementUpdated']
 }
 </script>
 

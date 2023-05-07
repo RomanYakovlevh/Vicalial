@@ -3,7 +3,9 @@
     <div v-if="hasPyodideLoaded">
         <div class="statement-components-list">
             <div v-for="s in getStatements" :key=s.id>
-                <StatementComponent2 :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion" @workspace-push="onPushWorkspace" @clear-workspace="onClearWorkspace" @statement-added="pushStatement" @delete-statement="onDeleteStatement"/>
+                <StatementComponent2 :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion"
+                    @workspace-push="onPushWorkspace" @clear-workspace="onClearWorkspace" @statement-added="pushStatement"
+                    @delete-statement="onDeleteStatement" @statement-updated="onStatementUpdated" />
             </div>
         </div>
         <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="onClearWorkspace"

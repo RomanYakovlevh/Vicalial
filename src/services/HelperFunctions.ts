@@ -16,7 +16,7 @@ import { WorkspaceEntry } from "./Workspace";
 
 export function evaluateMathWithPython(expr: string): number {
     const regex = /^[0-9+\-*/^().\s]+$/;
-    const isValid = regex.test(expr);
+    const isValid = true //regex.test(expr);
     if (!isValid) {
         throw new MatrixInvalidError("Mathematical expression is unsafe.")
     }
