@@ -13,8 +13,6 @@
         <div class="d-flex flex-row ml-3">
             <v-checkbox v-if="matrixMethod.arguments().replaceInParent" v-model="replaceInParent" label="In parent"
                 hide-details></v-checkbox>
-            <v-checkbox v-if="matrixMethod.arguments().mutateSelf" v-model="mutateSelf" label="Mutate self"
-                hide-details></v-checkbox>
         </div>
 
         <div v-if="matrixMethod.arguments().selections === -1">
@@ -23,7 +21,7 @@
             </div>
         </div>
 
-        <div v-if="matrixMethod.arguments().selections >= 0">
+        <div v-if="matrixMethod.arguments().selections >= 0" class="mx-5">
             <span v-if="matrixMethod.arguments().selections === 2 && matrixMethod.symbol().type === 1">
                 <span class="subtext">&lpar;</span>
                 <button size="small" variant="tonal" class="ma-1"
@@ -33,7 +31,8 @@
                     </div>
                     <div class="text-none text-subtitle-1" v-if="0 < workspace.list.length">
                         <input style="width: 40px; background-color: white; border-radius: 4px; padding-left: 4px;"
-                            class="ma-1" />{{ workspace.list[0].getDescription() }}
+                            class="ma-1" v-model="model[0]" v-if="matrixMethod.arguments().appendagesOn" />{{
+                                workspace.list[0].getDescription() }}
                     </div>
                 </button>
                 <span class="subtext">&rpar;</span> {{ matrixMethod.symbol().value }} <span class="subtext">&lpar;</span>
@@ -44,7 +43,8 @@
                     </div>
                     <div class="text-none text-subtitle-1" v-if="1 < workspace.list.length">
                         <input style="width: 40px; background-color: white; border-radius: 4px; padding-left: 4px;"
-                            class="ma-1" />{{ workspace.list[1].getDescription() }}
+                            class="ma-1" v-model="model[1]" v-if="matrixMethod.arguments().appendagesOn" />{{
+                                workspace.list[1].getDescription() }}
                     </div>
                 </button>
                 <span class="subtext">&rpar;</span>
@@ -62,7 +62,8 @@
                         </div>
                         <div class="text-none text-subtitle-1" v-if="i <= workspace.list.length">
                             <input style="width: 40px; background-color: white; border-radius: 4px; padding-left: 4px;"
-                                class="ma-1" />{{ workspace.list[i - 1].getDescription() }}
+                                class="ma-1" v-model="model[i - 1]" v-if="matrixMethod.arguments().appendagesOn" />{{
+                                    workspace.list[i - 1].getDescription() }}
                         </div>
                     </button>
                     <span v-if="i < matrixMethod.arguments().selections">, </span>
@@ -78,10 +79,17 @@
             <v-btn density="compact" @click="onApplyClick">Apply</v-btn>
         </v-card-actions>
     </v-sheet>
+    <v-dialog v-model="exportMatrixDialog" width="auto">
+        <ExportMatrix @close-dialog="onCloseDialog" :matrix="selectFormatted()"></ExportMatrix>
+    </v-dialog>
 </template>
 
 <script>
+
 import { Workspace } from '@/services/Workspace';
+import ExportMatrix from './ExportMatrix.vue';
+import { Matrix } from '@/services/Matrix';
+import { getFormattedMatrix } from '@/services/HelperFunctions'
 
 /*
         <div v-if="matrixMethod.arguments().selections >= 0">
@@ -100,6 +108,9 @@ import { Workspace } from '@/services/Workspace';
 
 export default {
     name: 'MethodArguments',
+    components: {
+        ExportMatrix
+    },
     props: {
         matrixMethod: { required: true },
         workspace: {
@@ -109,16 +120,29 @@ export default {
     },
     data() {
         return {
-            model: "sds",
+            model: [null, null, null, null],
             replaceInParent: false,
-            mutateSelf: false
+            exportMatrixDialog: false
         }
     },
     methods: {
         onApplyClick() {
-            this.matrixMethod.execute(this.workspace).forEach(element => {
-                this.$emit('statementAdded', element)
-            });
+            if (this.matrixMethod.name() === "Export") {
+                this.$data.exportMatrixDialog = true
+            }
+            else {
+                this.matrixMethod.execute(this.workspace, this.$data.replaceInParent, this.$data.model).forEach(element => {
+                    this.$emit('statementAdded', element)
+                });
+                this.$emit('clearWorkspace')
+            }
+        },
+        selectFormatted() {
+            const matrix = new Matrix(this.workspace.list[0].asList2D())
+            return getFormattedMatrix(this.$store.state.formatStyle, matrix)
+        },
+        onCloseDialog() {
+            this.$data.exportMatrixDialog = false
             this.$emit('clearWorkspace')
         }
     },
@@ -136,5 +160,4 @@ export default {
 .subtext {
     color: #bbb;
     align-content: start;
-}
-</style>
+}</style>

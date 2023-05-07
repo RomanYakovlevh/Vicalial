@@ -12,6 +12,8 @@ import { MatrixElemWiseMultiplication } from "./MatrixOperations/MatrixElemWiseM
 import { MatrixReplace } from "./MatrixOperations/MatrixReplace"
 import { MatrixSwap } from "./MatrixOperations/MatrixSwap"
 import { MatrixSize } from "./MatrixOperations/MatrixSize"
+import { MatrixAppendRows } from "./MatrixOperations/MatrixAppendRows"
+import { MatrixAppendCols } from "./MatrixOperations/MatrixAppendCols"
 
 export interface MatrixMethodGroups { }
 
@@ -32,8 +34,8 @@ export class CodeMethodGroup implements MatrixMethodGroups {
     top: Array<MatrixMethod>
     rest: Array<MatrixMethod>
     constructor() {
-    this.top = [new ReplaceMethod, new SwapMethod, new SizeMethod, new SelectMethod/*, new SliceMethod*/]
-        this.rest = [/*new AppendRowsMethod, new AppendColumnsMethod*/]
+        this.top = [new ReplaceMethod, new SwapMethod, new SizeMethod, new SelectMethod/*, new SliceMethod*/]
+        this.rest = [new AppendRowsMethod, new AppendColumnsMethod]
     }
 
     all() {
@@ -54,17 +56,20 @@ export class OtherMethodGroup implements MatrixMethodGroups {
     }
 }
 
+type argumentsSet = { selections: number, replaceInParent: Boolean, mutateSelf: Boolean, appendagesOn: Boolean }
 export interface MatrixMethod {
     name(): string
 
     desription(): string
 
-    arguments(): { selections: number, replaceInParent: Boolean, mutateSelf: Boolean }
+    arguments(): argumentsSet
 
-    symbol(): {type: number, value: string} // 0 - stands for prefix, 1 - midfx (only for 2 args), 2 - postfix
+    symbol(): { type: number, value: string } // 0 - stands for prefix, 1 - midfx (only for 2 args), 2 - postfix
 
-    execute(workspace: Workspace): Array<Matrix>
+    execute(workspace: Workspace, inParent: Boolean, appendages: string[]): Array<Matrix>
 }
+
+
 
 export class AddMethod implements MatrixMethod {
     name(): string {
@@ -75,16 +80,16 @@ export class AddMethod implements MatrixMethod {
         return "Adds two matrices/selections of compatible size."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 2, replaceInParent: true, mutateSelf: true }
+    arguments(): argumentsSet {
+        return { selections: 2, replaceInParent: true, mutateSelf: true, appendagesOn: true }
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 1, value: "+"}
+        return { type: 1, value: "+" }
     }
 
-    execute(workspace: Workspace): Array<Matrix> {
-        return [new MatrixAddition(workspace.list[0], workspace.list[1])]
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Array<Matrix> {
+        return [new MatrixAddition(workspace.list[0], workspace.list[1], inParent, appendages)]
     }
 }
 
@@ -97,16 +102,16 @@ export class SubtractMethod implements MatrixMethod {
         return "Subtracts two matrices/selections of compatible size."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 2, replaceInParent: true, mutateSelf: true }
+    arguments(): argumentsSet {
+        return { selections: 2, replaceInParent: true, mutateSelf: true, appendagesOn: true }
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 1, value: "-"}
+        return { type: 1, value: "-" }
     }
 
-    execute(workspace: Workspace): Array<Matrix> {
-        return [new MatrixSubstraction(workspace.list[0], workspace.list[1])]
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Array<Matrix> {
+        return [new MatrixSubstraction(workspace.list[0], workspace.list[1], inParent, appendages)]
     }
 }
 
@@ -119,16 +124,16 @@ export class MultiplyMethod implements MatrixMethod {
         return "Multiplies two matrices/selections of compatible size."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 2, replaceInParent: false, mutateSelf: false }
+    arguments(): argumentsSet {
+        return { selections: 2, replaceInParent: false, mutateSelf: false, appendagesOn: true }
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 1, value: "*"}
+        return { type: 1, value: "*" }
     }
 
-    execute(workspace: Workspace): Array<Matrix> {
-        return [new MatrixMultiplication(workspace.list[0], workspace.list[1])]
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Array<Matrix> {
+        return [new MatrixMultiplication(workspace.list[0], workspace.list[1], appendages)]
     }
 }
 
@@ -141,16 +146,16 @@ export class TransposeMethod implements MatrixMethod {
         return "Transposes matrix or selection."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 1, replaceInParent: false, mutateSelf: true }
+    arguments(): argumentsSet {
+        return { selections: 1, replaceInParent: false, mutateSelf: true, appendagesOn: true }
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 2, value: "^T"}
+        return { type: 2, value: "^T" }
     }
 
-    execute(workspace: Workspace): Matrix[] {
-        return [new MatrixTransposition(workspace.list[0])]
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
+        return [new MatrixTransposition(workspace.list[0], appendages)]
     }
 }
 
@@ -163,16 +168,16 @@ export class InverseMethod implements MatrixMethod {
         return "Inverses square matrix or selection."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 1, replaceInParent: false, mutateSelf: true }
+    arguments(): argumentsSet {
+        return { selections: 1, replaceInParent: false, mutateSelf: true, appendagesOn: true }
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 2, value: "^-1"}
+        return { type: 2, value: "^-1" }
     }
 
-    execute(workspace: Workspace): Matrix[] {
-        return [new MatrixInversion(workspace.list[0])]
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
+        return [new MatrixInversion(workspace.list[0], appendages)]
     }
 }
 
@@ -185,16 +190,16 @@ export class ElementWiseProductMethod implements MatrixMethod {
         return "Multiplies element-wise two matrices/selections of compatible size."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 2, replaceInParent: true, mutateSelf: true }
+    arguments(): argumentsSet {
+        return { selections: 2, replaceInParent: true, mutateSelf: true, appendagesOn: true }
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 1, value: ".*"}
+        return { type: 1, value: ".*" }
     }
 
-    execute(workspace: Workspace): Array<Matrix> {
-        return [new MatrixElemWiseMultiplication(workspace.list[0], workspace.list[1])]
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Array<Matrix> {
+        return [new MatrixElemWiseMultiplication(workspace.list[0], workspace.list[1], inParent, appendages)]
     }
 }
 
@@ -207,15 +212,15 @@ export class ReplaceMethod implements MatrixMethod {
         return "Replaces selection from first argument with selection from second argument. Returns whole parent of first selection with replacement."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 2, replaceInParent: false, mutateSelf: true }
+    arguments(): argumentsSet {
+        return { selections: 2, replaceInParent: false, mutateSelf: true, appendagesOn: false }
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 0, value: "replace"}
+        return { type: 0, value: "replace" }
     }
 
-    execute(workspace: Workspace): Matrix[] {
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
         return [new MatrixReplace(workspace.list[0], workspace.list[1])]
     }
 }
@@ -229,15 +234,15 @@ export class SwapMethod implements MatrixMethod {
         return "Swaps places of selections from first and second argument."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 2, replaceInParent: false, mutateSelf: true }
+    arguments(): argumentsSet {
+        return { selections: 2, replaceInParent: false, mutateSelf: true, appendagesOn: false }
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 0, value: "swap"}
+        return { type: 0, value: "swap" }
     }
 
-    execute(workspace: Workspace): Matrix[] {
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
         if (workspace.list[0].parent.id !== workspace.list[1].parent.id) {
             return [new MatrixReplace(workspace.list[0], workspace.list[1]), new MatrixReplace(workspace.list[1], workspace.list[0])]
         } else {
@@ -255,15 +260,15 @@ export class SizeMethod implements MatrixMethod {
         return "Returns 1-by-2 matrix where left element equals to amount of rows in selection/matrix, and right element is equal to amount of columns."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 1, replaceInParent: false, mutateSelf: false }
+    arguments(): argumentsSet {
+        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false }
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 0, value: "size of"}
+        return { type: 0, value: "size of" }
     }
 
-    execute(workspace: Workspace): Matrix[] {
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
         return [new MatrixSize(workspace.list[0])]
     }
 }
@@ -277,15 +282,15 @@ export class SelectMethod implements MatrixMethod {
         return "Takes any amount of selections as arguments, as long as they all are from the same matrix, and returns new matrix made out of these selections."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: -1, replaceInParent: false, mutateSelf: true } //-1 stands for infinity
+    arguments(): argumentsSet {
+        return { selections: -1, replaceInParent: false, mutateSelf: true, appendagesOn: false } //-1 stands for infinity
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 0, value: "select"}
+        return { type: 0, value: "select" }
     }
 
-    execute(workspace: Workspace): Matrix[] {
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
         return [new MatrixSelection(workspace.list)]
     }
 }
@@ -308,6 +313,7 @@ export class SliceMethod implements MatrixMethod {
         return {type: 0, value: "slice"}
     }
 }
+*/
 
 export class AppendRowsMethod implements MatrixMethod {
     name(): string {
@@ -318,12 +324,16 @@ export class AppendRowsMethod implements MatrixMethod {
         return "Appends sideways two matrices/selections of same row amount."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 2, replaceInParent: false, mutateSelf: true } // 
+    arguments(): argumentsSet {
+        return { selections: 2, replaceInParent: false, mutateSelf: true, appendagesOn: false } // 
     }
 
     symbol(): { type: number; value: string } {
-        return {type: 0, value: "append rows"}
+        return { type: 0, value: "append rows" }
+    }
+
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
+        return [new MatrixAppendRows(workspace.list[0], workspace.list[1])]
     }
 }
 
@@ -336,16 +346,19 @@ export class AppendColumnsMethod implements MatrixMethod {
         return "Appends vertically two matrices/selections of same columns amount."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 2, replaceInParent: false, mutateSelf: true } // 
+    arguments(): argumentsSet {
+        return { selections: 2, replaceInParent: false, mutateSelf: true, appendagesOn: false } // 
     }
 
 
     symbol(): { type: number; value: string } {
-        return {type: 0, value: "append columns"}
+        return { type: 0, value: "append columns" }
+    }
+
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
+        return [new MatrixAppendCols(workspace.list[0], workspace.list[1])]
     }
 }
-*/
 
 
 
@@ -359,16 +372,16 @@ export class PlotMethod implements MatrixMethod {
         return "Plots matrix/selection."
     }
 
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 1, replaceInParent: false, mutateSelf: false } // 
+    arguments(): argumentsSet {
+        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } // 
     }
 
 
     symbol(): { type: number; value: string } {
-        return {type: 0, value: "plot"}
+        return { type: 0, value: "plot" }
     }
 
-    execute(workspace: Workspace): Matrix[] {
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
         return []
     }
 }
@@ -381,17 +394,17 @@ export class ExportMethod implements MatrixMethod {
     desription(): string {
         return "Allows to export matrix or selection in downloadable formats."
     }
-    
-    arguments(): { selections: number; replaceInParent: Boolean; mutateSelf: Boolean } {
-        return { selections: 1, replaceInParent: false, mutateSelf: false } // 
+
+    arguments(): argumentsSet {
+        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } // 
     }
 
 
     symbol(): { type: number; value: string } {
-        return {type: 0, value: "export"}
+        return { type: 0, value: "export" }
     }
 
-    execute(workspace: Workspace): Matrix[] {
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
         return []
     }
 }

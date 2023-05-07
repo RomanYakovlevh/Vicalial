@@ -12,6 +12,7 @@ import { MatrixSelection } from "./MatrixOperations/MatrixSelection";
 import { MatrixReplace } from "./MatrixOperations/MatrixReplace";
 import { MatrixSwap } from "./MatrixOperations/MatrixSwap";
 import { MatrixSize } from "./MatrixOperations/MatrixSize";
+import { WorkspaceEntry } from "./Workspace";
 
 export function evaluateMathWithPython(expr: string): number {
     const regex = /^[0-9+\-*/^().\s]+$/;
@@ -226,5 +227,18 @@ export function getFormattedMatrix(formatStyle: number, matrix: Matrix) {
         }))
     } else {
         return matrix.asList2D
+    }
+}
+
+export function getAppengadeByIndex(appendages: string[], i: number) {
+    return appendages[i] !== undefined && appendages[i] !== null ? appendages[i] : ""
+}
+
+export function getFullParent(appendage: string, parent: WorkspaceEntry) {
+    const a = appendage !== undefined && appendage !== null ? appendage : ""
+    if (a !== '') {
+        return "(" + a + " " + parent.getDescription() + ")"
+    } else {
+        return parent.getDescription()
     }
 }

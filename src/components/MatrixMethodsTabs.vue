@@ -19,18 +19,31 @@
                 </v-window-item>
             </v-window>
     </v-sheet>
+    <method-arguments v-if="chosenMethod !== undefined" :matrix-method="chosenMethod" :workspace="workspace"
+            @clear-workspace="onClearWorkspace" @statement-added="onStatementAdded" />
 </template>
 
 <script>
 import MatrixMethodsButtons from './MatrixMethodsButtons.vue';
 import { allMethodGroups } from '@/services/MatrixMethods';
+import MethodArguments from './MethodArguments.vue';
+import { Workspace } from '@/services/Workspace';
+import { findFunctionByName } from '@/services/MatrixMethods';
 
 export default {
     data: () => ({
         tab: null,
+        chosenMethod: undefined
     }),
+    props: {
+        workspace: {
+            type: Workspace,
+            required: true
+        }
+    },
     components: {
-        MatrixMethodsButtons
+        MatrixMethodsButtons,
+        MethodArguments
     },
     methods: {
         mathMethodGroupConstruct() {
@@ -43,10 +56,16 @@ export default {
             return allMethodGroups.other
         },
         onMethodChosen(name) {
-            this.$emit('methodChosen', name)
+            this.chosenMethod = findFunctionByName(name)
+        },
+        onClearWorkspace() {
+            this.$emit('clearWorkspace')
+        },
+        onStatementAdded(st) {
+            this.$emit('statementAdded', st)
         }
     },
-    emit: ['methodChosen']
+    emits: ['clearWorkspace', 'statementAdded']
 }
 
 </script>

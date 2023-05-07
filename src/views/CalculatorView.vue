@@ -3,7 +3,7 @@
     <div v-if="hasPyodideLoaded">
         <div class="statement-components-list">
             <div v-for="s in getStatements" :key=s.id>
-                <StatementComponent2 :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion" @workspace-push="onPushWorkspace" @clear-workspace="onClearWorkspace" @statement-added="pushStatement"/>
+                <StatementComponent2 :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion" @workspace-push="onPushWorkspace" @clear-workspace="onClearWorkspace" @statement-added="pushStatement" @delete-statement="onDeleteStatement"/>
             </div>
         </div>
         <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="onClearWorkspace"
@@ -65,11 +65,11 @@ export default {
             this.workspace.list = []
             this.workspaceVersion++
         },
-        deleteStatement(stId) {
-            this.$data.workspace.list = this.$data.workspace.list.filter(x => x.id !== stId)
+        onDeleteStatement(stId) {
+            this.$data.statements = this.$data.statements.filter(x => x.id !== stId)
         },
         onStatementUpdated(statement) {
-            this.$data.workspace.list[this.$data.workspace.list.findIndex(x => x.id === statement.id)] = statement
+            this.$data.statements[this.$data.statements.findIndex(x => x.id === statement.id)] = statement
         }
     }
 }
