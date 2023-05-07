@@ -1,4 +1,4 @@
-import { Matrix } from "../Matrix";
+
 import { NamedMatrix } from "../NamedMatrix";
 import { WorkspaceEntry } from "../Workspace";
 import { pyodide } from "../PyLoader";
@@ -27,6 +27,6 @@ function addition(arg1: WorkspaceEntry, arg2: WorkspaceEntry): Array<Array<numbe
     pyodide.runPython(
         "mx = numpy.matrix(x) \n" +
         "my = numpy.matrix(y) \n" +
-        "result = numpy.add(mx" + xSelect + ", my" + ySelect + ").tolist()")
+        "result = ensureMatrix(numpy.add(mx" + xSelect + ", my" + ySelect + "))")
     return pyodide.globals.get('result').toJs()
 }

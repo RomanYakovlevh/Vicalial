@@ -25,6 +25,6 @@ function elemWiseMultiplication(arg1: WorkspaceEntry, arg2: WorkspaceEntry): Arr
     pyodide.runPython(
         "mx = numpy.matrix(x) \n" +
         "my = numpy.matrix(y) \n" +
-        "result = numpy.multiply(mx" + xSelect + ", my" + ySelect + ").tolist()")
+        "result = ensureMatrix(numpy.multiply(mx" + xSelect + ", my" + ySelect + "))")
     return pyodide.globals.get('result').toJs()
 }

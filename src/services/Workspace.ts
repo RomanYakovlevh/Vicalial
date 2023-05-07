@@ -38,6 +38,7 @@ export class RowSelection implements SelectionType {
     }
 
     getAsIndexesFor(matrix: number[][]): { row: number; col: number; }[] {
+        console.log(matrix)
         return matrix[this.row].map((x, i) => {
             x; //<-- Just so i dowsnt throw error un unused variables
             return { row: this.row, col: i }
@@ -61,7 +62,7 @@ export class ColSelection implements SelectionType {
     setForWith(matrix: number[][], setTo: number[][]): number[][] {
         const rx = this.getFrom(matrix)
         if (rx.length !== setTo.length || 1 !== setTo[0].length) {
-            throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
+            throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with: rx.length: " + rx.length + ", setTo.length: " + setTo.length + ", setTo[0].length: " + setTo[0].length)
         }
         let res = matrix.map(x => x.slice())
         res = res.map((x, i) => {
@@ -128,7 +129,7 @@ export class CellSelection implements SelectionType {
             throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
         }
 
-        let res = matrix.map(x => x.slice())
+        const res = matrix.map(x => x.slice())
         res[this.row][this.col] = setTo[0][0]
         return res
     }

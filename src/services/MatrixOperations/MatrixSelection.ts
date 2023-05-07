@@ -8,8 +8,8 @@ export class MatrixSelection extends NamedMatrix {
     constructor(parents: WorkspaceEntry[], supressed: boolean = false) {
         const etalon = parents[0].parent.id
         parents = parents.filter(x => x.parent.id === etalon)
-        const selections = parents.map(x => x.selection.getAsIndexesFor(x.asList2D())).flat()
-        super(select(parents[0].asList2D(), selections), supressed)
+        const selections = parents.map(x => x.selection.getAsIndexesFor(x.parent.asList2D)).flat()
+        super(select(parents[0].parent.asList2D, selections), supressed)
         this.selections = selections
         this.parents = parents
     }

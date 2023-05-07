@@ -25,6 +25,6 @@ function multiplication(arg1: WorkspaceEntry, arg2: WorkspaceEntry): Array<Array
     pyodide.runPython(
         "mx = numpy.matrix(x) \n" +
         "my = numpy.matrix(y) \n" +
-        "result = numpy.matmul(mx" + xSelect + ", my" + ySelect + ").tolist()")
+        "result = ensureMatrix(numpy.matmul(mx" + xSelect + ", my" + ySelect + "))")
     return pyodide.globals.get('result').toJs()
 }

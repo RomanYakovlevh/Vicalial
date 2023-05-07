@@ -23,6 +23,7 @@ export function evaluateMathWithPython(expr: string): number {
     return pyodide.runPython(expr);
 }
 
+/*
 export function runFunctionById(id: number, workspace: Array<{ parent: NamedMatrix, selected: Array<{ row: number, col: number }> }>): Array<Matrix> {
     switch (id) {
         case 0: {
@@ -84,6 +85,30 @@ export function runFunctionById(id: number, workspace: Array<{ parent: NamedMatr
     }
     throw new Error("This operation is not implemented yet.")
 }
+
+
+export function replace(arg1: Matrix, arg1Selection: Array<{ row: number, col: number }>, arg2: Matrix, arg2Selection: Array<{ row: number, col: number }>) {
+    const e2 = new MatrixSelection(arg2, arg2Selection, true)
+    return setElementsBySelection(arg1, arg1Selection, e2)
+}
+
+export function swap(arg1: Matrix, arg1Selection: Array<{ row: number, col: number }>, arg2: Matrix, arg2Selection: Array<{ row: number, col: number }>) {
+    const e1 = new MatrixSelection(arg1, arg1Selection, true)
+    const e2 = new MatrixSelection(arg2, arg2Selection, true)
+    let res = setElementsBySelection(arg1, arg1Selection, e2)
+
+    if (!arg1.equals(arg2)) {
+        //resArr.push(setElementsBySelection(arg2, arg2Selection, e1))
+        throw new Error("Tried to swap between matrixes")
+    } else {
+        res = setElementsBySelection(new Matrix(res), arg2Selection, e1)
+    }
+
+    return res
+}
+*/
+
+
 
 export function addition(arg1: Matrix, arg2: Matrix) {
     pyodide.globals.set("x", arg1.toString())
@@ -149,26 +174,6 @@ export function extractErrorMessage(traceback: string): string {
 export function select(arg1: Matrix, cellsToExtract: Array<{ row: number, col: number }>) {
     const groupedMap = groupSelectionByRow(cellsToExtract)
     return Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => arg1.asList2D[row][col]))
-}
-
-export function replace(arg1: Matrix, arg1Selection: Array<{ row: number, col: number }>, arg2: Matrix, arg2Selection: Array<{ row: number, col: number }>) {
-    const e2 = new MatrixSelection(arg2, arg2Selection, true)
-    return setElementsBySelection(arg1, arg1Selection, e2)
-}
-
-export function swap(arg1: Matrix, arg1Selection: Array<{ row: number, col: number }>, arg2: Matrix, arg2Selection: Array<{ row: number, col: number }>) {
-    const e1 = new MatrixSelection(arg1, arg1Selection, true)
-    const e2 = new MatrixSelection(arg2, arg2Selection, true)
-    let res = setElementsBySelection(arg1, arg1Selection, e2)
-
-    if (!arg1.equals(arg2)) {
-        //resArr.push(setElementsBySelection(arg2, arg2Selection, e1))
-        throw new Error("Tried to swap between matrixes")
-    } else {
-        res = setElementsBySelection(new Matrix(res), arg2Selection, e1)
-    }
-
-    return res
 }
 
 export function groupSelectionByRow(cellsToExtract: Array<{ row: number, col: number }>) {
