@@ -24,7 +24,7 @@
         <div v-if="matrixMethod.arguments().selections >= 0" class="mx-5">
             <span v-if="matrixMethod.arguments().selections === 2 && matrixMethod.symbol().type === 1">
                 <span class="subtext">&lpar;</span>
-                <button size="small" variant="tonal" class="ma-1"
+                <button size="small" variant="tonal" class="ma-1" @click="selectionExplanationMessage()"
                     style="background-color: #ccc; border-radius: 4px; padding: 5px 10px 5px 10px">
                     <div v-if="0 >= workspace.list.length">
                         Select...
@@ -36,7 +36,7 @@
                     </div>
                 </button>
                 <span class="subtext">&rpar;</span> {{ matrixMethod.symbol().value }} <span class="subtext">&lpar;</span>
-                <button size="small" variant="tonal" class="ma-1"
+                <button size="small" variant="tonal" class="ma-1" @click="selectionExplanationMessage()"
                     style="background-color: #ccc; border-radius: 4px; padding: 5px 10px 5px 10px">
                     <div v-if="1 >= workspace.list.length">
                         Select...
@@ -55,7 +55,7 @@
                 </span>
                 <span class="subtext">&lpar;</span>
                 <span v-for="i in matrixMethod.arguments().selections" :key="i">
-                    <button size="small" variant="tonal" class="ma-1"
+                    <button size="small" variant="tonal" class="ma-1" @click="selectionExplanationMessage()"
                         style="background-color: #ccc; border-radius: 4px; padding: 5px 10px 5px 10px">
                         <div v-if="i > workspace.list.length">
                             Select...
@@ -127,15 +127,20 @@ export default {
     },
     methods: {
         onApplyClick() {
-            if (this.matrixMethod.name() === "Export") {
-                this.$data.exportMatrixDialog = true
+            try {
+                if (this.matrixMethod.name() === "Export") {
+                    this.$data.exportMatrixDialog = true
+                }
+                else {
+                    this.matrixMethod.execute(this.workspace, this.$data.replaceInParent, this.$data.model).forEach(element => {
+                        this.$emit('statementAdded', element)
+                    });
+                    this.$emit('clearWorkspace')
+                }
+            } catch (e) {
+                this.$store.commit('setOpenSnackBar', { title: 'Operation is impossible', moreInfo: e.message, kind: 'Error' })
             }
-            else {
-                this.matrixMethod.execute(this.workspace, this.$data.replaceInParent, this.$data.model).forEach(element => {
-                    this.$emit('statementAdded', element)
-                });
-                this.$emit('clearWorkspace')
-            }
+
         },
         selectFormatted() {
             const matrix = new Matrix(this.workspace.list[0].asList2D())
@@ -144,6 +149,9 @@ export default {
         onCloseDialog() {
             this.$data.exportMatrixDialog = false
             this.$emit('clearWorkspace')
+        },
+        selectionExplanationMessage() {
+            this.$store.commit('setOpenSnackBar', { title: 'To add selection to the argument, press on any matrix cell, round buttons to select row or column, or square button to select whole matrix.', moreInfo: 'Just do it.', kind: 'Explanation' })
         }
     },
     emits: ['statementAdded', 'clearWorkspace']
@@ -160,4 +168,5 @@ export default {
 .subtext {
     color: #bbb;
     align-content: start;
-}</style>
+}
+</style>

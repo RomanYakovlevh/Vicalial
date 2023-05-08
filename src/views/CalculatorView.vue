@@ -11,6 +11,7 @@
         <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="onClearWorkspace"
             @new-statement-added="pushStatement" />
     </div>
+    <UniversalSnackBarComponentVue></UniversalSnackBarComponentVue>
 </template>
 
 <script>
@@ -28,13 +29,15 @@ import ControlsBarComponent from "@/components/ControlsBarComponent.vue";
 import { reactiveState } from "@/services/PyLoader";
 import StatementComponent2 from "@/components/StatementComponent2.vue";
 import { Workspace } from "@/services/Workspace";
+import UniversalSnackBarComponentVue from "@/components/UniversalSnackBarComponent.vue";
 
 export default {
     name: 'CalculatorView',
     components: {
         //StatementComponent,
         ControlsBarComponent,
-        StatementComponent2
+        StatementComponent2,
+        UniversalSnackBarComponentVue
     },
     data() {
         return {

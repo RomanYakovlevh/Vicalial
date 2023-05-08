@@ -18,7 +18,7 @@
 <script>
 import { evaluateMathWithPython } from "@/services/HelperFunctions";
 import { NamedMatrix } from "@/services/NamedMatrix";
-import { MatrixInvalidError } from "@/services/MatrixErros";
+//import { MatrixInvalidError } from "@/services/MatrixErros";
 
 export default {
     name: 'AddAnyExpression',
@@ -33,11 +33,17 @@ export default {
                 this.$emit("newStatementAdded", matrix)
                 this.$emit("closeDialog")
             } catch (e) {
-                if (e instanceof MatrixInvalidError) {
-                    this.$data.textValue = "temp: " + e.message
+                console.log(e.message)
+                this.$store.commit('setOpenSnackBar', {title: 'Invalid matrix', moreInfo: "" + e.message, kind: 'Error'})
+                /*
+                                if (e instanceof MatrixInvalidError) {
+                    //this.$data.textValue = "temp: " + e.message
+
                 } else {
                     throw e
                 }
+                */
+
             }
 
 
