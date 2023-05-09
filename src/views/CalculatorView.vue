@@ -1,6 +1,15 @@
 <template>
     <div v-if="!hasPyodideLoaded" style="font-size: 3em">Loading...</div>
     <div v-if="hasPyodideLoaded">
+        <div v-if="statements.length === 0" class="ma-auto">
+            Welcome to visual calculator for linear algebra and operational analysis!
+            ***TODO: list thing that one can do here***
+            As a first step, you might want to...
+            <v-btn class="btn" @click="dialog = true">Add data</v-btn>
+            <v-dialog v-model="dialog" width="auto">
+                <AddDataWindow @close-dialog="dialog = false" @new-statement-added="pushStatement"></AddDataWindow>
+            </v-dialog>
+        </div>
         <div class="statement-components-list">
             <div v-for="s in getStatements" :key=s.id>
                 <StatementComponent2 :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion"
@@ -43,7 +52,8 @@ export default {
         return {
             statements: [],
             workspace: new Workspace(),
-            workspaceVersion: 0
+            workspaceVersion: 0,
+            dialog: false
         }
     },
     computed: {
