@@ -65,6 +65,15 @@ Repair selectedStyle() temporal solution in MatrixView
 
 In StatementComponent (second) make MatrixMethodTabs somehow collapsable
 
+Scipy that supports linprog is going to be deprecated soon ,we have to change it to different function
+
 3, 2, -5, -1
 2, -1, 3, 13
 1, 2, -1, 9
+
+
+
+0, 1, -5, -1, 3
+27, 1, -1, 0, 3
+8, 1,-6,-1, 5
+20, 1, -2, 1, 2

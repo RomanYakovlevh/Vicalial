@@ -214,7 +214,7 @@ export function setElementsBySelection(parent: Matrix, selection: Array<{ row: n
     return res.asList2D
 }
 
-export function getFormattedMatrix(formatStyle: number, matrix: Matrix) {
+export function getFormattedMatrix(formatStyle: number, matrix: Matrix){
     if (formatStyle === 0) {
         return matrix.asList2D
     } else if (formatStyle === 1) {

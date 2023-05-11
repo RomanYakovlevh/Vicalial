@@ -1,28 +1,20 @@
 <template>
     <v-sheet variant="tonal" class="d-flex flex-row ma-1 sc2-sheet">
-        <v-btn icon="✖" variant="tonal" class="align-self-center ma-3" @click="onDeleteStatement(matrix.id)">
+        <v-btn icon="✖" variant="tonal" class="align-self-center ma-3" @click="onDeleteStatement(plotC.id)">
             ✖
         </v-btn>
-        <div :style="nameModelStyle()" class="align-self-center my-auto">
-            <v-text-field class="align-self-center my-auto" variant='plain' v-model="matrixNameModel" counter="20" />
-        </div>
         <div class="align-self-center my-auto mx-3">
-            = {{ matrix.getRelative() }}
+            plot for {{ plotC.parent.getDescription() }}
         </div>
-        <matrix-viewer :matrix="matrix" :workspace="workspace" :workspace-version="workspaceVersion"
-            @workspace-push="onWorkspacePush" />
-        <matrix-methods-tabs v-if="workspace.list.length !== 0 && workspace.list[0].parent.id === matrix.id"
-            :workspace="workspace" @clear-workspace="onClearWorkspace" @statement-added="onStatementAdded" />
+        <div ref="chart" style="height: 300%; width: 100%;" class="ma-4"></div>
     </v-sheet>
 </template>
 
+<script setup>
+</script>
+
 <script>
-import { NamedMatrix } from '@/services/NamedMatrix';
-import { Workspace } from '@/services/Workspace';
-import MatrixViewer from './MatrixViewer.vue';
-import MatrixMethodsTabs from './MatrixMethodsTabs.vue';
-
-
+import * as echarts from 'echarts';
 /*
         <v-sheet v-if="chosenMethod !== undefined" class="ma-sheet ma-2">
             <v-btn icon="◁" variant="tonal" class="align-self-center ma-3" @click="chosenMethod=undefined">
@@ -34,53 +26,112 @@ import MatrixMethodsTabs from './MatrixMethodsTabs.vue';
 
 //style="border: 1px solid black;"
 export default {
-    data: () => ({
-        matrixNameModel: 'unknown',
-    }),
+    data() {
+        return {
+        }
+    },
     components: {
-        MatrixViewer,
-        MatrixMethodsTabs,
     },
     props: {
-        matrix: {
-            type: NamedMatrix,
+        plotC: {
             required: true,
         },
-        workspace: {
-            type: Workspace,
-            required: true
-        },
-        workspaceVersion: {
-            required: true
-        }
     },
     methods: {
-        onWorkspacePush(we) {
-            this.$emit("workspacePush", we)
-        },
-        onClearWorkspace() {
-            this.$emit('clearWorkspace')
-        },
-        onStatementAdded(st) {
-            this.$emit('statementAdded', st)
-        },
         onDeleteStatement(id) {
+            console.log(id)
             this.$emit('deleteStatement', id)
-        }
+        },
     },
     computed: {
-        nameModelStyle() {
-            return () => {
-                return {
-                    width: this.$data.matrixNameModel.length + "rem",
-                }
-            }
-        }
     },
     mounted() {
-        this.$data.matrixNameModel = this.$props.matrix.name
+        const chart = echarts.init(this.$refs.chart);
+
+        const option = {
+            legend: {},
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: '{value}'
+                },
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: '{value}'
+                },
+            },
+            dataZoom: [
+                {
+                    type: 'inside',
+                    start: 0,
+                    end: 100,
+                    filterMode: 'filter'
+                },
+                {
+                    type: 'slider',
+                    start: 0,
+                    end: 100,
+                    filterMode: 'filter'
+                },
+                {
+                    type: 'slider',
+                    yAxisIndex: [0],
+                    filterMode: 'filter'
+                }
+            ],
+            series: []
+        };
+
+        const matrix = this.$props.plotC.parent.asList2D()
+        console.log(matrix)
+
+        for (let i = 0; i < matrix.length; i++) {
+            const data = [];
+
+            const func = (x) => {
+                let v = 0;
+                for (let j = 0; j < matrix[i].length; j++) {
+                    const c = matrix[i][j];
+                    v += c * Math.pow(x, matrix[i].length - j - 1);
+                }
+                return v
+            }
+
+            let descr = "";
+            for (let j = 0; j < matrix[i].length; j++) {
+                const c = matrix[i][j]
+                if (j < matrix[i].length - 1) {
+                    descr += c + "x^" + (matrix[i].length - j - 1).toString() + " + ";
+                } else {
+                    descr += c
+                }
+
+            }
+
+
+            for (let x = -30; x <= 30; x += 0.1) {
+                data.push([x, func(x)]);
+            }
+
+            option.series.push({
+                name: descr,
+                type: 'line',
+                data: data,
+                showSymbol: false,
+                lineStyle: {
+                    width: 2
+                }
+            });
+        }
+
+        chart.setOption(option);
     },
-    emits: ["workspacePush", 'clearWorkspace', 'statementAdded', 'deleteStatement']
+    emits: ['deleteStatement']
 }
 </script>
 

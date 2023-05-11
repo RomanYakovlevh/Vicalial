@@ -14,6 +14,8 @@ import { MatrixSwap } from "./MatrixOperations/MatrixSwap"
 import { MatrixSize } from "./MatrixOperations/MatrixSize"
 import { MatrixAppendRows } from "./MatrixOperations/MatrixAppendRows"
 import { MatrixAppendCols } from "./MatrixOperations/MatrixAppendCols"
+import { PlotStatement } from "./NamedMatrix"
+import { MatrixLPMinimize } from "./MatrixOperations/MatrixLPMinimize"
 
 export interface MatrixMethodGroups { }
 
@@ -22,7 +24,7 @@ export class MathMethodGroup implements MatrixMethodGroups {
     rest: Array<MatrixMethod>
     constructor() {
         this.top = [new AddMethod, new SubtractMethod, new MultiplyMethod, new TransposeMethod, new InverseMethod]
-        this.rest = [new ElementWiseProductMethod]
+        this.rest = [new ElementWiseProductMethod, new LinearProgrammingMinimizeMethod]
     }
 
     all() {
@@ -66,7 +68,7 @@ export interface MatrixMethod {
 
     symbol(): { type: number, value: string } // 0 - stands for prefix, 1 - midfx (only for 2 args), 2 - postfix
 
-    execute(workspace: Workspace, inParent: Boolean, appendages: string[]): Array<Matrix>
+    execute(workspace: Workspace, inParent: Boolean, appendages: string[]): Array<Matrix> | Array<PlotStatement>
 }
 
 
@@ -381,8 +383,8 @@ export class PlotMethod implements MatrixMethod {
         return { type: 0, value: "plot" }
     }
 
-    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
-        return []
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []) {
+        return [new PlotStatement(workspace.list[0])]
     }
 }
 
@@ -406,6 +408,30 @@ export class ExportMethod implements MatrixMethod {
 
     execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
         return []
+    }
+}
+
+
+export class LinearProgrammingMinimizeMethod implements MatrixMethod {
+    name(): string {
+        return "Linear Programming: Minimize"
+    }
+
+    desription(): string {
+        return "Takes matrix as if it is a simplex table, and find minimum of a objective function (that is derived from first row of the matrix)."
+    }
+
+    arguments(): argumentsSet {
+        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } // 
+    }
+
+
+    symbol(): { type: number; value: string } {
+        return { type: 0, value: "minimize " }
+    }
+
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
+        return [new MatrixLPMinimize(workspace.list[0])]
     }
 }
 

@@ -4,8 +4,8 @@
         <v-container fluid fill-height  v-if="statements.length === 0">
             <v-row align="center" justify="center">
                 <v-col cols="12" sm="8" md="6" lg="4" class="text-center">
-                    <h2 class="text-lg mb-4 grey--text" color="grey">Welcome to visual calculator for linear algebra and operational
-                        analysis!</h2>
+                    <h2 class="text-lg mb-4 grey--text" color="grey">Welcome to Visual Calculator for Linear Algebra and Operational
+                        Analysis!</h2>
                     <p class="mb-4 grey--text">As a first step, you might want to...</p>
                     <v-btn class="btn primary" large @click="dialog = true">Add Data</v-btn>
                 </v-col>
@@ -16,9 +16,10 @@
         </v-container>
         <div class="statement-components-list">
             <div v-for="s in getStatements" :key=s.id>
-                <StatementComponent2 :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion"
+                <StatementComponent2 v-if="s.type === 'NamedMatrix'" :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion"
                     @workspace-push="onPushWorkspace" @clear-workspace="onClearWorkspace" @statement-added="pushStatement"
                     @delete-statement="onDeleteStatement" @statement-updated="onStatementUpdated" />
+                    <PlotComponent v-if="s.type==='PlotStatement'" :plot-c="s" @delete-statement="onDeleteStatement" ></PlotComponent>
             </div>
         </div>
         <ControlsBarComponent class="cntls-bar-cmp" @workspace-update="onClearWorkspace"
@@ -43,6 +44,8 @@ import { reactiveState } from "@/services/PyLoader";
 import StatementComponent2 from "@/components/StatementComponent2.vue";
 import { Workspace } from "@/services/Workspace";
 import UniversalSnackBarComponentVue from "@/components/UniversalSnackBarComponent.vue";
+import AddDataWindow from "@/components/AddDataWindow.vue";
+import PlotComponent from "@/components/PlotComponent.vue";
 
 export default {
     name: 'CalculatorView',
@@ -50,7 +53,9 @@ export default {
         //StatementComponent,
         ControlsBarComponent,
         StatementComponent2,
-        UniversalSnackBarComponentVue
+        UniversalSnackBarComponentVue,
+        AddDataWindow,
+        PlotComponent
     },
     data() {
         return {

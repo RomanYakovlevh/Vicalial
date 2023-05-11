@@ -1,11 +1,25 @@
 //Temporary crutch, intil we invent good type system.
 import { Matrix } from "./Matrix";
+import { WorkspaceEntry } from "./Workspace";
 
 let lastMatrixId = 1
+
+export class PlotStatement {
+    id: number
+    parent: WorkspaceEntry
+    type: string
+    constructor(parent: WorkspaceEntry) {
+        this.id = lastMatrixId
+        lastMatrixId++
+        this.parent = parent
+        this.type  = 'PlotStatement'
+    }
+}
 
 export class NamedMatrix extends Matrix {
     id: number;
     name: string;
+    type: string
     constructor(list2D: Array<Array<number>>, supressed: boolean = false) {
         super(list2D)
         if (!supressed) {
@@ -15,6 +29,7 @@ export class NamedMatrix extends Matrix {
             this.id = -1
         }
         this.name = "M" + this.id
+        this.type = 'NamedMatrix'
     }
 
     getName() {

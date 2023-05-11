@@ -130,8 +130,7 @@ export default {
             try {
                 if (this.matrixMethod.name() === "Export") {
                     this.$data.exportMatrixDialog = true
-                }
-                else {
+                } else {
                     this.matrixMethod.execute(this.workspace, this.$data.replaceInParent, this.$data.model).forEach(element => {
                         this.$emit('statementAdded', element)
                     });
