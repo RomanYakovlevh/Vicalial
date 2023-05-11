@@ -6,7 +6,11 @@
                     @mouseout="onColMouseOut(col - 1)">⏺</button>
             </th>
             <th> <button class="row-col-selector-btn" @click="onAllButtonClick()" @mouseover="onAllMouseOver()"
-                    @mouseout="onAllMouseOut()">◼</button></th>
+                    @mouseout="onAllMouseOut()">◼</button>
+            </th>
+            <th v-if="workspaceVersion === 0">
+                <span style="color:#aaa"><v-icon>mdi-arrow-left-thick</v-icon>click!</span>
+            </th>
         </tr>
         <tr v-for="(row, rowIndex) in getMatrixAccordingToFormatter()" :key="rowIndex">
             <td v-for="(item, colIndex) in row" :style="cellStyle(rowIndex, colIndex)"
@@ -17,6 +21,9 @@
             <td>
                 <button class="row-col-selector-btn" @click="onRowButtonClick(rowIndex)"
                     @mouseover="onRowMouseOver(rowIndex)" @mouseout="onRowMouseOut(rowIndex)">⏺</button>
+            </td>
+            <td v-if="workspaceVersion === 0">
+                <span style="color:#aaa"><v-icon>mdi-arrow-left-thick</v-icon>click!</span>
             </td>
         </tr>
     </table>

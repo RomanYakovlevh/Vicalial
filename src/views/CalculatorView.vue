@@ -18,7 +18,7 @@
             <div v-for="s in getStatements" :key=s.id>
                 <StatementComponent2 v-if="s.type === 'NamedMatrix'" :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion"
                     @workspace-push="onPushWorkspace" @clear-workspace="onClearWorkspace" @statement-added="pushStatement"
-                    @delete-statement="onDeleteStatement" @statement-updated="onStatementUpdated" />
+                    @delete-statement="onDeleteStatement" @statement-updated="onStatementUpdated" @delete-from-workspace="onDeleteFromWorkspace"/>
                     <PlotComponent v-if="s.type==='PlotStatement'" :plot-c="s" @delete-statement="onDeleteStatement" ></PlotComponent>
             </div>
         </div>
@@ -83,7 +83,7 @@ export default {
         onPushWorkspace(n) {
             this.workspace.list.push(n)
             this.workspaceVersion++
-            console.log(this.workspace.list.length)
+            //console.log(this.workspace.list.length)
         },
         onClearWorkspace() {
             this.workspace.list = []
@@ -94,6 +94,10 @@ export default {
         },
         onStatementUpdated(statement) {
             this.$data.statements[this.$data.statements.findIndex(x => x.id === statement.id)] = statement
+        },
+        onDeleteFromWorkspace(stId) {
+            this.$data.workspace.list = this.$data.workspace.list.filter(x => x.parent.id !== stId)
+            this.workspaceVersion++
         }
     }
 }

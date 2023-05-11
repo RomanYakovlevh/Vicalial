@@ -1,8 +1,7 @@
 <template>
-    <table ref="matrix" class="matrix">
+    <table ref="matrix" class="matrix" style="border: 1px solid black">
         <tr v-for="(row, rowIndex) in matrix" :key="rowIndex">
-            <td v-for="(item, colIndex) in row"
-                :key="rowIndex * matrix.columnsAmount + colIndex">
+            <td v-for="(item, colIndex) in row" :key="colIndex">
                 <div class="hld">{{ item }}</div>
             </td>
         </tr>

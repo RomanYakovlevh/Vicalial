@@ -1,9 +1,9 @@
 <template>
     <v-sheet variant="tonal" class="ma-2 mmt-sheet pa-2">
         <v-tabs v-model="tab" density="compact" size="small">
-            <v-tab value="Math">Math</v-tab>
-            <v-tab value="Code">Code</v-tab>
-            <v-tab value="Other">Other</v-tab>
+            <v-tab value="Math"><v-icon>mdi-calculator-variant</v-icon>Math</v-tab>
+            <v-tab value="Code"><v-icon>mdi-application-braces</v-icon>Code</v-tab>
+            <v-tab value="Other"><v-icon>mdi-tools</v-icon>Other</v-tab>
         </v-tabs>
             <v-window v-model="tab">
                 <v-window-item value="Math">

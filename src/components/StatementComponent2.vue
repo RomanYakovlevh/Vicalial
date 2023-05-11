@@ -4,13 +4,20 @@
             ✖
         </v-btn>
         <div :style="nameModelStyle()" class="align-self-center my-auto">
-            <v-text-field class="align-self-center my-auto" variant='plain' v-model="matrixNameModel" @update:model-value="onStatementNameUpdate" counter="20" />
+            <v-text-field class="align-self-center my-auto" variant='plain' v-model="matrixNameModel"
+                @update:model-value="onStatementNameUpdate" counter="20" />
         </div>
         <div class="align-self-center my-auto mx-3">
             = {{ matrix.getRelative() }}
         </div>
-        <matrix-viewer :matrix="matrix" :workspace="workspace" :workspace-version="workspaceVersion"
-            @workspace-push="onWorkspacePush" />
+        <div>
+            <matrix-viewer :matrix="matrix" :workspace="workspace" :workspace-version="workspaceVersion"
+                @workspace-push="onWorkspacePush" class="ma-3" />
+                <v-btn v-show="workspace.list.filter(x => x.parent.id === matrix.id).length !== 0" variant="tonal" class="mb-3" size='small' @click="onDeleteFromWorkspacebyStId()">
+                    Deselect
+                </v-btn>
+        </div>
+
         <matrix-methods-tabs v-if="workspace.list.length !== 0 && workspace.list[0].parent.id === matrix.id"
             :workspace="workspace" @clear-workspace="onClearWorkspace" @statement-added="onStatementAdded" />
     </v-sheet>
@@ -61,6 +68,9 @@ export default {
         onClearWorkspace() {
             this.$emit('clearWorkspace')
         },
+        onDeleteFromWorkspacebyStId() {
+            this.$emit('deleteFromWorkspace', this.$props.matrix.id)
+        },
         onStatementAdded(st) {
             this.$emit('statementAdded', st)
         },
@@ -85,7 +95,7 @@ export default {
     mounted() {
         this.$data.matrixNameModel = this.$props.matrix.name
     },
-    emits: ["workspacePush", 'clearWorkspace', 'statementAdded', 'deleteStatement', 'statementUpdated']
+    emits: ["workspacePush", 'clearWorkspace', 'statementAdded', 'deleteStatement', 'statementUpdated', 'deleteFromWorkspace']
 }
 </script>
 

@@ -23,7 +23,7 @@ export default {
         addNewMatrixAndCloserWindow() {
             //TODO refactor, this logic should be in some service
             try {
-                const list2D = this.$data.textValue.split('\n').map((x) => x.split(',').map(y => evaluateMathWithPython(y)))
+                const list2D = this.$data.textValue.replace(/\^/g, "**").split('\n').map((x) => x.split(',').map(y => evaluateMathWithPython(y)))
 
                 const matrix = new NamedMatrix(list2D);
 
