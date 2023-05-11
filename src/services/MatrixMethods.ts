@@ -28,7 +28,7 @@ export class MathMethodGroup implements MatrixMethodGroups {
     }
 
     all() {
-        return this.top.concat(this.rest)
+        return this.rest.concat(this.top)
     }
 }
 
@@ -41,7 +41,7 @@ export class CodeMethodGroup implements MatrixMethodGroups {
     }
 
     all() {
-        return this.top.concat(this.rest)
+        return this.rest.concat(this.top)
     }
 }
 
@@ -54,7 +54,7 @@ export class OtherMethodGroup implements MatrixMethodGroups {
     }
 
     all() {
-        return this.top.concat(this.rest)
+        return this.rest.concat(this.top)
     }
 }
 
@@ -418,7 +418,7 @@ export class LinearProgrammingMinimizeMethod implements MatrixMethod {
     }
 
     desription(): string {
-        return "Takes matrix as if it is a simplex table, and find minimum of a objective function (that is derived from first row of the matrix)."
+        return "Takes matrix as if it is a simplex table, and finds minimum of a objective function. Objective function - is a first row of the matrix, constraint coefficients - first column of matrix. Solver treats constrains as if they are equalities."
     }
 
     arguments(): argumentsSet {

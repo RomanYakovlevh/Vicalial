@@ -2,7 +2,6 @@
     <v-card>
         <v-tabs v-model="tab" bg-color="primary">
             <v-tab value="Any expression">Any expression</v-tab>
-            <v-tab value="Manual input">Manual input</v-tab>
             <v-tab value="From file">From file</v-tab>
             <v-tab value="Generator">Generator</v-tab>
         </v-tabs>

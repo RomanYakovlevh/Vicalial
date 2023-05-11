@@ -48,15 +48,18 @@ def minimize_lp(matrix):
     matrix = matrix.tolist()
     # Extract the coefficients of the objective function
     c = matrix[0][1:]
+    print(c)
 
     # Extract the coefficients of the constraints
     A = [row[1:] for row in matrix[1:]]
+    print(A)
 
     # Extract the right-hand sides of the constraints
     b = [row[0] for row in matrix[1:]]
+    print(b)
 
     # Use Scipy's linprog function to solve the linear programming problem
-    res = linprog(c, A_ub=A, b_ub=b, method="revised simplex")
+    res = linprog(c, A_eq=A, b_eq=b)
 
     # Return the values of the decision variables
     return res.x
