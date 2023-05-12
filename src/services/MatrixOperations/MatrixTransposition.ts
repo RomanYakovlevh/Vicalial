@@ -27,6 +27,6 @@ function transposition(arg1: WorkspaceEntry, appendages: string[]): Array<Array<
     pyodide.globals.set('x', arg1.parent.toString())
     pyodide.runPython(
         "mx = numpy.matrix(x) \n" +
-        "result = numpy.transpose(" + a1 + " mx" + xSelect + ").tolist()")
+        "result = numpy.transpose((" + a1 + ")* mx" + xSelect + ").tolist()")
     return pyodide.globals.get('result').toJs()
 }

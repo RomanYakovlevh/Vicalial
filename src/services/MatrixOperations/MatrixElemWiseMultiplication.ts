@@ -38,6 +38,6 @@ function elemWiseMultiplication(arg1: WorkspaceEntry, arg2: WorkspaceEntry, appe
     pyodide.runPython(
         "mx = numpy.matrix(x) \n" +
         "my = numpy.matrix(y) \n" +
-        "result = ensureMatrix(numpy.multiply(" + a1 + " mx" + xSelect + ", " + a2 + " my" + ySelect + "))")
+        "result = ensureMatrix(numpy.multiply((" + a1 + ")* mx" + xSelect + ", (" + a2 + ")* my" + ySelect + "))")
     return pyodide.globals.get('result').toJs()
 }

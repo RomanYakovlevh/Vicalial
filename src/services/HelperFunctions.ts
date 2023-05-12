@@ -231,11 +231,11 @@ export function getFormattedMatrix(formatStyle: number, matrix: Matrix){
 }
 
 export function getAppengadeByIndex(appendages: string[], i: number) {
-    return appendages[i] !== undefined && appendages[i] !== null ? appendages[i] : ""
+    return appendages[i] !== undefined && appendages[i] !== null ? appendages[i] : "1"
 }
 
 export function getFullParent(appendage: string, parent: WorkspaceEntry) {
-    const a = appendage !== undefined && appendage !== null ? appendage : ""
+    const a = appendage !== undefined && appendage !== null ? appendage + " *" : ""
     if (a !== '') {
         return "(" + a + " " + parent.getDescription() + ")"
     } else {

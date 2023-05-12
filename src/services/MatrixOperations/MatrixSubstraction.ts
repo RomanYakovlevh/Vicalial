@@ -37,6 +37,6 @@ function subtraction(arg1: WorkspaceEntry, arg2: WorkspaceEntry, appendages: str
     pyodide.runPython(
         "mx = numpy.matrix(x) \n" +
         "my = numpy.matrix(y) \n" +
-        "result = ensureMatrix(numpy.subtract(" + a1 + " mx" + xSelect + ", " + a2 + " my" + ySelect + "))")
+        "result = ensureMatrix(numpy.subtract((" + a1 + ")* mx" + xSelect + ", (" + a2 + ")* my" + ySelect + "))")
     return pyodide.globals.get('result').toJs()
 }

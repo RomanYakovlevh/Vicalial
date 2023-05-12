@@ -10,10 +10,18 @@
                 {{ matrixMethod.desription() }}
             </v-tooltip>
         </div>
-        <div class="d-flex flex-row ml-3">
-            <v-checkbox v-if="matrixMethod.arguments().replaceInParent" v-model="replaceInParent" label="In parent"
-                hide-details></v-checkbox>
+        <div class="d-flex flex-row ml-3" v-if="matrixMethod.arguments().replaceInParent">
+            <v-checkbox v-model="replaceInParent" @mouseover="inParentTooltip = true" @mouseout="inParentTooltip = false"
+                label="In parent" v-on="on">
+                <v-tooltip activator="parent" location="top">
+                    <span>If checked, first argument
+                        will be replaced inside of its parent with result of this function.
+                    </span>
+                </v-tooltip>
+            </v-checkbox>
         </div>
+        <div class="subtext my-1 mx-3" v-if="matrixMethod.arguments().appendagesOn">you can write coefficients in white
+            boxes</div>
 
         <div v-if="matrixMethod.arguments().selections === -1">
             <div class="mr-2">
@@ -122,7 +130,8 @@ export default {
         return {
             model: [null, null, null, null],
             replaceInParent: false,
-            exportMatrixDialog: false
+            exportMatrixDialog: false,
+            inParentTooltip: false
         }
     },
     methods: {
@@ -165,7 +174,7 @@ export default {
 }
 
 .subtext {
-    color: #bbb;
+    color: #aaa;
     align-content: start;
 }
 </style>
