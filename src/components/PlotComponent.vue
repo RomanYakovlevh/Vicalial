@@ -6,7 +6,7 @@
         <div class="align-self-center my-auto mx-3">
             plot for {{ plotC.parent.getDescription() }}
         </div>
-        <div ref="chart" style="height: 300%; width: 100%;" class="ma-4"></div>
+        <div ref="chart" style="height: 300%; width: 90%;" class="ma-4"></div>
     </v-sheet>
 </template>
 

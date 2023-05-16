@@ -29,9 +29,9 @@ Project is hard-coded to work on matrices, other types of data should also be ad
 
 All checks and conversions for variable creation happen in AddDataWindow.vue, which is inapropriate place.
 
-Solve issue with css locality
+Done: Solve issue with css locality
 
-Bug: There should be only one FunctionChoice component visible at a time. As of now you can select cells from different matrices and that would create more that one FunctionChoice.
+Done: Bug: There should be only one FunctionChoice component visible at a time. As of now you can select cells from different matrices and that would create more that one FunctionChoice.
 
 In some distant future we propably should replace fetching pyodide from jsdelivr to fetching it from our own server. There is also script import in index.html.
 
@@ -43,7 +43,7 @@ Just number of arguments is definetly not enough for function choice. We need li
 
 We hardcode relation selection-parent, but it should be more like parent-child-child-child...
 
-Important for statements to be written from what expression they have come from, otherwise its easy to get super lost.
+Done: Important for statements to be written from what expression they have come from, otherwise its easy to get super lost.
 
 Workspace viewer.
 
@@ -53,11 +53,11 @@ Simple mathematical exprssion should be possible to be done quicker and easier.
 
 Add functions: slice, mapRows, mapColumns, replace map with mathElements, appendRows, appendColumns
 
-Optimize cellStyles() function in StatementComponent
+Done: Optimize cellStyles() function in StatementComponent
 
 In FileWorkers.ts, it would prbably be meaningful to be more permissive to imperfections in user-submitted data, like extra emty elements on the ends/beginnings of lines
 
-Make something like MatrixPreview component, i think it would be useful in a lot of places, like during export for example.
+Done: Make something like MatrixPreview component, i think it would be useful in a lot of places, like during export for example.
 
 Allow user to choose format of saving.
 
@@ -65,7 +65,15 @@ Repair selectedStyle() temporal solution in MatrixView
 
 In StatementComponent (second) make MatrixMethodTabs somehow collapsable
 
-Scipy that supports linprog is going to be deprecated soon ,we have to change it to different function
+Scipy that supports linprog is going to be deprecated?? soon ,we have to change it to different function
+
+Remove everything from console.log
+
+inverse operation sometimes throws error 'Matrix has non-numric elements', while it should be throwing 'Matrix cannot be inversed'
+
+Add explanations to "In parent" checkbox and coeffictient textfield in MatrixArguments
+
+For PlotComponent, make it so in frame of plot are only ponts of intersections of functions and axises.
 
 3, 2, -5, -1
 2, -1, 3, 13

@@ -2,7 +2,7 @@
   <nav>
     <router-link to="/">Calculator</router-link> | 
     <router-link to="/styleguide">StyleGuide</router-link> | 
-    <router-link to="/datavisualisation">DataVisualisation</router-link>
+    <router-link to="/dashboard">DataVisualisation</router-link>
   </nav>
   <router-view/>
 </template>

@@ -82,6 +82,8 @@ async function pyLoad() {
 
 
 
+
+
 export let pyodide
 
 export const reactiveState = reactive({
