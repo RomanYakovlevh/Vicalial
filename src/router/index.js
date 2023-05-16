@@ -32,8 +32,8 @@ const routes = [
         component: () => import(/* webpackChunkName: "about" */ '../views/StyleGuideView.vue')
     },
     {
-        path: '/datavisualisation',
-        name: 'datavisualisation',
+        path: '/dashboard',
+        name: 'dashboard',
         component: () => import('../views/DataVisualisationsView.vue')
     }
 ]
