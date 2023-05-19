@@ -16,6 +16,7 @@ import { MatrixAppendRows } from "./MatrixOperations/MatrixAppendRows"
 import { MatrixAppendCols } from "./MatrixOperations/MatrixAppendCols"
 import { PlotStatement } from "./NamedMatrix"
 import { MatrixLPMinimize } from "./MatrixOperations/MatrixLPMinimize"
+import { MatrixMultiplyByConstant } from "./MatrixOperations/MatrixMultiplyByConstant"
 
 export interface MatrixMethodGroups { }
 
@@ -24,7 +25,7 @@ export class MathMethodGroup implements MatrixMethodGroups {
     rest: Array<MatrixMethod>
     constructor() {
         this.top = [new AddMethod, new SubtractMethod, new MultiplyMethod, new TransposeMethod, new InverseMethod]
-        this.rest = [new ElementWiseProductMethod, new LinearProgrammingMinimizeMethod]
+        this.rest = [new MultiplyByConstant, new ElementWiseProductMethod, new LinearProgrammingMinimizeMethod]
     }
 
     all() {
@@ -72,6 +73,27 @@ export interface MatrixMethod {
 }
 
 
+export class MultiplyByConstant implements MatrixMethod {
+    name(): string {
+        return "Multiply by Constant"
+    }
+
+    desription(): string {
+        return "Alows to multiply any selection by coefficient."
+    }
+
+    arguments(): argumentsSet {
+        return { selections: 1, replaceInParent: true, mutateSelf: true, appendagesOn: true }
+    }
+
+    symbol(): { type: number; value: string } {
+        return { type: 0, value: "" }
+    }
+
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Array<Matrix> {
+        return [new MatrixMultiplyByConstant(workspace.list[0], inParent, appendages)]
+    }
+}
 
 export class AddMethod implements MatrixMethod {
     name(): string {
