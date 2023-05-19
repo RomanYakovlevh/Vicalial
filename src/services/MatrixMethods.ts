@@ -79,7 +79,7 @@ export class MultiplyByConstant implements MatrixMethod {
     }
 
     desription(): string {
-        return "Alows to multiply any selection by coefficient."
+        return "Allows to multiply any selection by coefficient."
     }
 
     arguments(): argumentsSet {
