@@ -2,6 +2,7 @@
     <v-card>
         <v-tabs v-model="tab" bg-color="primary">
             <v-tab value="Any expression">Any expression</v-tab>
+            <v-tab value="Manual input">Manual input</v-tab>
             <v-tab value="From file">From file</v-tab>
             <v-tab value="Generator">Generator</v-tab>
         </v-tabs>
@@ -13,7 +14,7 @@
                 </v-window-item>
 
                 <v-window-item value="Manual input">
-                    Manual input
+                    <AddMatrix/>
                 </v-window-item>
 
                 <v-window-item value="From file">
@@ -70,13 +71,15 @@ import { NamedMatrix } from '@/services/NamedMatrix';
 import AddAnyExpression from './AddAnyExpression.vue'
 import AddFromFile from './AddFromFile.vue';
 import MatrixPreview from './MatrixPreview.vue';
+import AddMatrix from './AddMatrix.vue';
 
 export default {
     name: "AddDataWindow",
     components: {
         AddAnyExpression,
         AddFromFile,
-        MatrixPreview
+        MatrixPreview,
+        AddMatrix
     },
     data: () => ({
         tab: null,
@@ -97,9 +100,9 @@ export default {
                 statement = new NamedMatrix(this.ones(this.dim1, this.dim2))
             } else if (this.text === 'Zeros') {
                 statement = new NamedMatrix(this.zeros(this.dim1, this.dim2))
-            } else if (this.text == 'Eye') {
+            } else if (this.text === 'Eye') {
                 statement = new NamedMatrix(this.eye(this.dim1, this.dim2))
-            } else if (this.text == 'Range') {
+            } else if (this.text === 'Range') {
                 statement = new NamedMatrix(this.range(this.dim1, this.dim2))
             } else {
                 statement = new NamedMatrix(this.ones(this.dim1, this.dim2))
