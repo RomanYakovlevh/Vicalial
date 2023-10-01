@@ -14,7 +14,7 @@
                 </v-window-item>
 
                 <v-window-item value="Manual input">
-                    <AddMatrix/>
+                    <AddMatrix @close-dialog="closeDialog" @new-statement-added="newStatementAdded"/>
                 </v-window-item>
 
                 <v-window-item value="From file">

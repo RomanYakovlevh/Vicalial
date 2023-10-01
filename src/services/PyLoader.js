@@ -10,10 +10,11 @@ from scipy.optimize import linprog
 
 
 def ensureMatrix(M):
+    #print(f'M: {M}, type of M: {type(M)}')
     if type(M) == numpy.matrix:
         return M.tolist()
     else:
-        return [[M]]
+        return [[M.item()]]
 
 
 def sin(degrees):
@@ -68,7 +69,7 @@ def minimize_lp(matrix):
 `
 
 async function pyLoad() {
-    const pyodide = await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.23.2/full" })
+    const pyodide = await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.0/full" })
     // In some distant future we propably should replace fetching pyodide from jsdelivr to fetching it from our own server. There is also script import in index.html.
     await pyodide.loadPackage("micropip");
     const micropip = pyodide.pyimport("micropip");

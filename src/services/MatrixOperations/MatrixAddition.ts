@@ -38,6 +38,7 @@ function addition(arg1: WorkspaceEntry, arg2: WorkspaceEntry, appendages: string
     pyodide.runPython(
         "mx = numpy.matrix(x) \n" +
         "my = numpy.matrix(y) \n" +
-        "result = ensureMatrix(numpy.add((" + a1 + ")* mx" + xSelect + ", (" + a2 + ")* my" + ySelect + "))")
+        "print(f'{mx}, {my}') \n"+
+        "result = ensureMatrix(numpy.add((" + a1 + ")* mx" + xSelect + ", (" + a2 + ")* my" + ySelect + ")) \n")
     return pyodide.globals.get('result').toJs()
 }

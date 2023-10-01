@@ -3,7 +3,7 @@
         <v-snackbar v-model="this.$store.state.snackbar.isOpen" multi-line :timeout="6000">
             {{ title }}
             <template v-slot:actions>
-                <v-btn @click="moreInfoVisible = true" size="small" variant="outlined"
+                <v-btn v-if="moreInfo !== ''" @click="moreInfoVisible = true" size="small" variant="outlined"
                     class="align-self-center ma-3 ml-auto">Description
                     ⓘ</v-btn>
                 <v-btn color="pink" variant="text" @click="closeSnackbar">
@@ -48,7 +48,6 @@ export default ({
         isActive() {
             return () => {
                 const snackbarState = this.$store.state.snackbar
-                console.log(this.$store.state.snackbar)
                 if (snackbarState.isOpen) {
                     this.title = snackbarState.title
                     this.moreInfo = snackbarState.moreInfo

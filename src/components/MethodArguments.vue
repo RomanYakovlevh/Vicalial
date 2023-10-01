@@ -159,7 +159,7 @@ export default {
             this.$emit('clearWorkspace')
         },
         selectionExplanationMessage() {
-            this.$store.commit('setOpenSnackBar', { title: 'To add selection to the argument, press on any matrix cell, round buttons to select row or column, or square button to select whole matrix.', moreInfo: 'Just do it.', kind: 'Explanation' })
+            this.$store.commit('setOpenSnackBar', { title: 'To add selection to the argument, press on any matrix cell, round buttons to select row or column, or square button to select whole matrix.', moreInfo: '', kind: 'Explanation' })
         }
     },
     emits: ['statementAdded', 'clearWorkspace']

@@ -62,53 +62,41 @@ export default {
     },
     methods: {
         onRowButtonClick(rowIndex) {
-            console.log('Button clicked! ', rowIndex);
             this.$emit("workspacePush", new WorkspaceEntry(this.matrix, new RowSelection(rowIndex)))
         },
         onColButtonClick(colIndex) { //Dunno why but in template in line with <th v-for="col in statement.matrix.columnsAmount" :key="col"> indexing by some reason starts with 1
-            //console.log('Button clicked! ', colIndex);
             this.$emit("workspacePush", new WorkspaceEntry(this.matrix, new ColSelection(colIndex)))
         },
         onSingleMouseClick(rowIndex, colIndex) {
             this.$emit("workspacePush", new WorkspaceEntry(this.matrix, new CellSelection(rowIndex, colIndex)))
         },
         onAllButtonClick() {
-            // console.log('All Button clicked! ');
             this.$emit("workspacePush", new WorkspaceEntry(this.matrix, new AllSelection()))
         },
 
         onRowMouseOver(rowIndex) {
             this.$data.cellStyles.rows[rowIndex].hover = true
-            //console.log(this.$data.mouseoverRow)
         },
         onRowMouseOut(rowIndex) {
             this.$data.cellStyles.rows[rowIndex].hover = false
-            //console.log(this.$data.mouseoverRow)
         },
 
         onColMouseOver(colIndex) {
             this.$data.cellStyles.cols[colIndex].hover = true
-            //console.log(this.$data.mouseoverCol)
         },
         onColMouseOut(colIndex) {
             this.$data.cellStyles.cols[colIndex].hover = false
-            //console.log(this.$data.mouseoverCol)
         },
 
         onAllMouseOver() {
-            console.log(this.$data.cellStyles.all)
             this.$data.cellStyles.all.hover = true
-            //console.log(this.$data.mouseoverCol)
         },
         onAllMouseOut() {
-            console.log(this.$data.cellStyles.all)
             this.$data.cellStyles.all.hover = false
-            //console.log(this.$data.mouseoverCol)
         },
 
         onSingleMouseOver(rowIndex, colIndex) {
             this.$data.cellStyles.cells[rowIndex][colIndex].hover = true
-            //console.log(this.$data.mouseOverSingle)
         },
         onSingleMouseOut(rowIndex, colIndex) {
             this.$data.cellStyles.cells[rowIndex][colIndex].hover = false
@@ -189,8 +177,7 @@ export default {
     watch: {
         workspaceVersion: {
             immediate: true,
-            handler(nv) {
-                console.log("Workspace updated, version: " + nv)
+            handler() {
                 this.selectedStyle()
             }
         }
