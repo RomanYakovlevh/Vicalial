@@ -7,7 +7,9 @@ import sympy
 from math import *
 import math
 from scipy.optimize import linprog
+from sympy.parsing.sympy_parser import parse_expr, auto_number, rationalize, auto_symbol
 
+auto_number_and_ratonalize_transformation = (auto_symbol, auto_number, rationalize)
 
 def ensureMatrix(M):
     #print(f'M: {M}, type of M: {type(M)}')
@@ -15,35 +17,6 @@ def ensureMatrix(M):
         return M.tolist()
     else:
         return [[M.item()]]
-
-
-def sin(degrees):
-    radians = math.radians(degrees)
-    return math.sin(radians)
-
-def cos(degrees):
-    radians = math.radians(degrees)
-    return math.cos(radians)
-
-def tan(degrees):
-    radians = math.radians(degrees)
-    return math.tan(radians)
-
-def asin(x):
-    radians = math.asin(x)
-    return math.degrees(radians)
-
-def acos(x):
-    radians = math.acos(x)
-    return math.degrees(radians)
-
-def atan(x):
-    radians = math.atan(x)
-    return math.degrees(radians)
-
-def atan2(y, x):
-    radians = math.atan2(y, x)
-    return math.degrees(radians)
 
 def minimize_lp(matrix):
     matrix = matrix.tolist()
@@ -95,3 +68,35 @@ pyLoad().then(x => {
     pyodide = x
     reactiveState.hasLoaded = true
 })
+
+/* # Unused python code
+
+
+def sin(degrees):
+    radians = math.radians(degrees)
+    return math.sin(radians)
+
+def cos(degrees):
+    radians = math.radians(degrees)
+    return math.cos(radians)
+
+def tan(degrees):
+    radians = math.radians(degrees)
+    return math.tan(radians)
+
+def asin(x):
+    radians = math.asin(x)
+    return math.degrees(radians)
+
+def acos(x):
+    radians = math.acos(x)
+    return math.degrees(radians)
+
+def atan(x):
+    radians = math.atan(x)
+    return math.degrees(radians)
+
+def atan2(y, x):
+    radians = math.atan2(y, x)
+    return math.degrees(radians)
+*/

@@ -25,7 +25,7 @@ export class MatrixSelection extends NamedMatrix {
 
 }
 
-function select(arg1: number[][], cellsToExtract: Array<{ row: number, col: number }>) {
+function select(arg1: string[][], cellsToExtract: Array<{ row: number, col: number }>) {
     const groupedMap = groupSelectionByRow(cellsToExtract)
     return Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => arg1[row][col]))
 }

@@ -18,14 +18,13 @@ export class MatrixInversion extends NamedMatrix {
     }
 }
 
-function transposition(arg1: WorkspaceEntry, appendages: string[]): Array<Array<number>> {
+function transposition(arg1: WorkspaceEntry, appendages: string[]): Array<Array<string>> {
     const xSelect = arg1.selection.getDescription()
 
     const a1 = getAppengadeByIndex(appendages, 0)
 
-    pyodide.globals.set('x', arg1.parent.toString())
     pyodide.runPython(
-        "mx = numpy.matrix(x) \n" +
-        "result = numpy.linalg.inv((" + a1 + ")* mx" + xSelect + ").tolist()")
+        "_mx = numpy.matrix(" + arg1.parent.toString() + ") \n" +
+        "result = numpy.linalg.inv((" + a1 + ")* _mx" + xSelect + ").tolist()")
     return pyodide.globals.get('result').toJs()
 }

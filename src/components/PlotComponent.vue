@@ -97,7 +97,7 @@ export default {
                 let v = 0;
                 for (let j = 0; j < matrix[i].length; j++) {
                     const c = matrix[i][j];
-                    v += c * Math.pow(x, matrix[i].length - j - 1);
+                    v += c * Math.pow(x, matrix[i].length - j - 1); // todo use more precise pow function
                 }
                 return v
             }

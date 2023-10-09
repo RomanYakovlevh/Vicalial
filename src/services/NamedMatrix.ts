@@ -20,7 +20,7 @@ export class NamedMatrix extends Matrix {
     id: number;
     name: string;
     type: string
-    constructor(list2D: Array<Array<number>>, supressed: boolean = false) {
+    constructor(list2D: Array<Array<string>>, supressed: boolean = false) {
         super(list2D)
         if (!supressed) {
             this.id = lastMatrixId

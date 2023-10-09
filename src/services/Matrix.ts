@@ -4,9 +4,9 @@ import { MatrixInvalidError } from "./MatrixErros";
 export class Matrix {
     rowsAmount: number;
     columnsAmount: number;
-    asList2D: number[][];
-    asList2DFractions: {numerator: number, denominator: number}[][];
-    constructor(list2D: Array<Array<number>>) {
+    asList2D: string[][];
+    asList2DFractions: string[][];
+    constructor(list2D: Array<Array<string>>) {
         this.rowsAmount = list2D.length
         this.columnsAmount = list2D[0].length
         const thisLocalized = this;
@@ -16,21 +16,18 @@ export class Matrix {
             if (line.length !== thisLocalized.columnsAmount) {
                 throw new MatrixInvalidError("Matrix has inconsistent amount of elements in rows")
             }
-            return line.forEach(function (item) {
-                if (isNaN(Number(item))) {
-                    throw new MatrixInvalidError("Matrix has non-numeric elements")
-                }
-            })
+            return
         })
         this.asList2D = list2D
         this.asList2DFractions = list2D.map(row => {
             return row.map(item => {
-                pyodide.globals.set("x", item)
-                pyodide.runPython("result = sympy.Rational(x).limit_denominator()")
-                const r = pyodide.globals.get('result').toJs()
-                return {numerator: r.numerator, denominator: r.denominator}
+                return pyodide.runPython(
+                    "str(parse_expr('" + item + "', transformations=auto_number_and_ratonalize_transformation)) \n"
+                    )
             })
         })
+
+        console.log(this.asList2D, this.asList2DFractions)
     }
 
     getName() {
@@ -57,7 +54,8 @@ export class Matrix {
 
     
     toString() {
-        let res = ""
+        /*
+                let res = ""
         this.asList2D.forEach((row, i) => {
             let rowAcc = ""
             row.forEach((item, j) => {
@@ -71,6 +69,23 @@ export class Matrix {
                 res += ";"
             }
         })
+        return res
+        */
+        let res = "["
+        this.asList2D.forEach((row, i) => {
+            let rowAcc = "["
+            row.forEach((item, j) => {
+                rowAcc += item
+                if (j < this.columnsAmount - 1) {
+                    rowAcc += ","
+                }
+            })
+            res += rowAcc + "]"
+            if (i < this.rowsAmount - 1) {
+                res += ","
+            }
+        })
+        res += "]"
         return res
     }
 

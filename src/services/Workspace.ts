@@ -6,11 +6,11 @@ import { NamedMatrix } from "./NamedMatrix";
 export interface SelectionType {
     getDescription(): string
 
-    getFrom(other: Array<Array<number>>): Array<Array<number>>
+    getFrom(other: Array<Array<string>>): Array<Array<string>>
 
-    setForWith(matrix: number[][], setTo: number[][]): number[][]
+    setForWith(matrix: string[][], setTo: string[][]): string[][]
 
-    getAsIndexesFor(matrix: number[][]): Array<{ row: number, col: number }>
+    getAsIndexesFor(matrix: string[][]): Array<{ row: number, col: number }>
 }
 
 export class RowSelection implements SelectionType {
@@ -23,11 +23,11 @@ export class RowSelection implements SelectionType {
         return "[" + this.row + ", :]"
     }
 
-    getFrom(other: Array<Array<number>>): Array<Array<number>> {
+    getFrom(other: Array<Array<string>>): Array<Array<string>> {
         return [other[this.row]]
     }
 
-    setForWith(matrix: number[][], setTo: number[][]): number[][] {
+    setForWith(matrix: string[][], setTo: string[][]): string[][] {
         const rx = this.getFrom(matrix)
         if (1 !== setTo.length || rx[0].length !== setTo[0].length) {
             throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
@@ -37,7 +37,7 @@ export class RowSelection implements SelectionType {
         return res
     }
 
-    getAsIndexesFor(matrix: number[][]): { row: number; col: number; }[] {
+    getAsIndexesFor(matrix: string[][]): { row: number; col: number; }[] {
         console.log(matrix)
         return matrix[this.row].map((x, i) => {
             x; //<-- Just so i dowsnt throw error un unused variables
@@ -55,11 +55,11 @@ export class ColSelection implements SelectionType {
         return "[:, " + this.col + "]"
     }
 
-    getFrom(other: number[][]) {
+    getFrom(other: string[][]) {
         return other.map(x => [x[this.col]])
     }
 
-    setForWith(matrix: number[][], setTo: number[][]): number[][] {
+    setForWith(matrix: string[][], setTo: string[][]): string[][] {
         const rx = this.getFrom(matrix)
         if (rx.length !== setTo.length || 1 !== setTo[0].length) {
             throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with: rx.length: " + rx.length + ", setTo.length: " + setTo.length + ", setTo[0].length: " + setTo[0].length)
@@ -72,7 +72,7 @@ export class ColSelection implements SelectionType {
         return res
     }
 
-    getAsIndexesFor(matrix: number[][]): { row: number; col: number; }[] {
+    getAsIndexesFor(matrix: string[][]): { row: number; col: number; }[] {
         return matrix.map((x, i) => {
             x; //<-- for no eror
             return { row: i, col: this.col }
@@ -85,11 +85,11 @@ export class AllSelection implements SelectionType {
         return ""
     }
 
-    getFrom(other: number[][]): number[][] {
+    getFrom(other: string[][]): string[][] {
         return other
     }
 
-    setForWith(matrix: number[][], setTo: number[][]): number[][] {
+    setForWith(matrix: string[][], setTo: string[][]): string[][] {
         const rx = this.getFrom(matrix)
         const lx = setTo
         if (rx.length !== lx.length || rx[0].length !== lx[0].length) {
@@ -99,7 +99,7 @@ export class AllSelection implements SelectionType {
         return setTo.map(x => x.slice())
     }
 
-    getAsIndexesFor(matrix: number[][]): { row: number; col: number; }[] {
+    getAsIndexesFor(matrix: string[][]): { row: number; col: number; }[] {
         return matrix.map((x, i) => {
             return x.map((_, j) => {
                 return { row: i, col: j }
@@ -120,11 +120,11 @@ export class CellSelection implements SelectionType {
         return "[" + this.row + ", " + this.col + "]"
     }
 
-    getFrom(other: number[][]): number[][] {
+    getFrom(other: string[][]): string[][] {
         return [[other[this.row][this.col]]]
     }
 
-    setForWith(matrix: number[][], setTo: number[][]): number[][] {
+    setForWith(matrix: string[][], setTo: string[][]): string[][] {
         if (1 !== setTo.length || 1 !== setTo[0].length) {
             throw new Error("Dimension of matrix to replace doesn't match with dimensions of matrix to be replaced with.")
         }
@@ -134,7 +134,7 @@ export class CellSelection implements SelectionType {
         return res
     }
 
-    getAsIndexesFor(_: number[][]): { row: number; col: number; }[] {
+    getAsIndexesFor(_: string[][]): { row: number; col: number; }[] {
         return [{row: this.row, col: this.col}]
     }
 }

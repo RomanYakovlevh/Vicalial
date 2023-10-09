@@ -23,14 +23,13 @@ export class MatrixMultiplyByConstant extends NamedMatrix {
     }
 }
 
-function elemWiseMultiplication(arg1: WorkspaceEntry, appendages: string[]): Array<Array<number>> {
+function elemWiseMultiplication(arg1: WorkspaceEntry, appendages: string[]): Array<Array<string>> {
     const xSelect = arg1.selection.getDescription()
 
     const a1 = getAppengadeByIndex(appendages, 0)
 
-    pyodide.globals.set('x', arg1.parent.toString())
     pyodide.runPython(
-        "mx = numpy.matrix(x) \n" +
-        "result = ensureMatrix((" + a1 + ")* mx" + xSelect + ")")
+        "_mx = numpy.matrix(" + arg1.parent.toString() + ") \n" +
+        "result = ensureMatrix((" + a1 + ")* _mx" + xSelect + ")")
     return pyodide.globals.get('result').toJs()
 }

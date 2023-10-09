@@ -130,28 +130,28 @@ export default {
     computed: {
         ones() {
             return (h, w) => {
-                return new Array(Number(h)).fill(1).map(() => {
-                    return new Array(Number(w)).fill(1)
+                return new Array(Number(h)).fill("1").map(() => {
+                    return new Array(Number(w)).fill("1")
                 })
             }
         },
         zeros() {
             return (h, w) => {
-                return Array(Number(h)).fill(1).map(() => {
-                    return new Array(Number(w)).fill(0)
+                return Array(Number(h)).fill("1").map(() => {
+                    return new Array(Number(w)).fill("0")
                 })
             }
         },
         eye() {
             return (h, w) => {
-                return new Array(Number(h)).fill(1).map((x, i) => {
-                    x;
-                    return new Array(Number(w)).fill(1).map((y, j) => {
-                        y;
+                return new Array(Number(h)).fill("1").map((x, i) => {
+                    x; //to not trigger nesseccary use warning.
+                    return new Array(Number(w)).fill("1").map((y, j) => {
+                        y;//to not trigger nesseccary use warning.
                         if (i === j) {
-                            return 1
+                            return "1"
                         } else {
-                            return 0
+                            return "0"
                         }
                     })
                 })
@@ -159,10 +159,10 @@ export default {
         },
         range() {
             return (h, w) => {
-                return new Array(Number(h)).fill(1).map(() => {
-                    return new Array(Number(w)).fill(1).map((y, j) => {
-                        y;
-                        return j
+                return new Array(Number(h)).fill("1").map(() => {
+                    return new Array(Number(w)).fill("1").map((y, j) => {
+                        y;//to not trigger nesseccary use warning.
+                        return j.toString()
                     })
                 })
             }

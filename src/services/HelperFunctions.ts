@@ -15,13 +15,17 @@ import { MatrixSize } from "./MatrixOperations/MatrixSize";
 import { WorkspaceEntry } from "./Workspace";
 
 export function evaluateMathWithPython(expr: string): number {
-    const regex = /^[0-9+\-*/^().\s]+$/;
-    const isValid = true //regex.test(expr);
-    if (!isValid) {
-        throw new MatrixInvalidError("Mathematical expression is unsafe.")
+    const variableNames = pyodide.runPython(
+        "_a = parse_expr('" + expr+ "') \n" +
+        "_fs = _a.free_symbols \n" +
+        "_x = str(_fs)[1:-1] \n" +
+        "print(_x) \n" +
+        "_x \n"
+    )
+    if (variableNames !== "et(") {
+        pyodide.runPython(variableNames + " = sympy.Symbol('" + variableNames + "')")
     }
-
-    return pyodide.runPython(expr);
+    return pyodide.runPython("str(_a)")
 }
 
 /*
@@ -218,13 +222,7 @@ export function getFormattedMatrix(formatStyle: number, matrix: Matrix){
     if (formatStyle === 0) {
         return matrix.asList2D
     } else if (formatStyle === 1) {
-        return matrix.asList2DFractions.map(row => row.map(item => {
-            if (item.denominator === 1) {
-                return item.numerator
-            } else {
-                return item.numerator + "/" + item.denominator
-            }
-        }))
+        return matrix.asList2DFractions
     } else {
         return matrix.asList2D
     }

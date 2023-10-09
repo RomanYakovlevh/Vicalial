@@ -19,18 +19,16 @@ export class MatrixMultiplication extends NamedMatrix {
     }
 }
 
-function multiplication(arg1: WorkspaceEntry, arg2: WorkspaceEntry, appendages: string[]): Array<Array<number>> {
+function multiplication(arg1: WorkspaceEntry, arg2: WorkspaceEntry, appendages: string[]): Array<Array<string>> {
     const xSelect = arg1.selection.getDescription()
     const ySelect = arg2.selection.getDescription()
 
     const a1 = getAppengadeByIndex(appendages, 0)
     const a2 = getAppengadeByIndex(appendages, 1)
 
-    pyodide.globals.set('x', arg1.parent.toString())
-    pyodide.globals.set('y', arg2.parent.toString())
     pyodide.runPython(
-        "mx = numpy.matrix(x) \n" +
-        "my = numpy.matrix(y) \n" +
-        "result = ensureMatrix(numpy.matmul((" + a1 + ")* mx" + xSelect + ", (" + a2 + ")* my" + ySelect + "))")
+        "_mx = numpy.matrix(" + arg1.parent.toString() + ") \n" +
+        "_my = numpy.matrix(" + arg2.parent.toString() + ") \n" +
+        "result = ensureMatrix(numpy.matmul((" + a1 + ")* _mx" + xSelect + ", (" + a2 + ")* _my" + ySelect + "))")
     return pyodide.globals.get('result').toJs()
 }

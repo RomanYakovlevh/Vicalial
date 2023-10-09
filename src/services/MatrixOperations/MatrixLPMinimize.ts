@@ -17,11 +17,10 @@ export class MatrixLPMinimize extends NamedMatrix {
     }
 }
 
-function transposition(arg1: WorkspaceEntry): Array<Array<number>> {
+function transposition(arg1: WorkspaceEntry): Array<Array<string>> {
     const xSelect = arg1.selection.getDescription()
-    pyodide.globals.set('x', arg1.parent.toString())
     pyodide.runPython(
-        "mx = numpy.matrix(x) \n" +
-        "result = [minimize_lp(mx" + xSelect + ").tolist()]")
+        "_mx = numpy.matrix(" + arg1.parent.toString() + ") \n" +
+        "result = [minimize_lp(_mx" + xSelect + ").tolist()]")
     return pyodide.globals.get('result').toJs()
 }
