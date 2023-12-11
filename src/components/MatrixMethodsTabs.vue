@@ -26,7 +26,7 @@
 <script>
 import MatrixMethodsButtons from './MatrixMethodsButtons.vue';
 import { allMethodGroups } from '@/services/MatrixMethods';
-import MethodArguments from './MethodArguments.vue';
+import MethodArguments from './method_argument_types/MethodArguments.vue';
 import { Workspace } from '@/services/Workspace';
 import { findFunctionByName } from '@/services/MatrixMethods';
 

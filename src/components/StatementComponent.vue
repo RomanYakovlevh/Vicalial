@@ -1,256 +1,112 @@
 <template>
-    <div class="holder">
-        <button class="st-cmp-del-button" @click="deleteStatementAndWorkspaceEntries">✖</button>
-        <div class="stt">
-            <div contenteditable="true" @input="onStatementNameEdit">{{ statement.name }}</div> =
-            <div> {{ statement.getRelative() }} </div>
+    <v-sheet variant="tonal" class="d-flex flex-row ma-1 sc2-sheet">
+        <v-btn icon="✖" variant="tonal" class="align-self-center ma-3" @click="onDeleteStatement(matrix.id)">
+            ✖
+        </v-btn>
+        <div :style="nameModelStyle()" class="align-self-center my-auto">
+            <v-text-field class="align-self-center my-auto" variant='plain' v-model="matrixNameModel"
+                @update:model-value="onStatementNameUpdate" counter="20" />
         </div>
-        <table ref="matrix" class="matrix">
-            <tr>
-                <th v-for="col in statement.columnsAmount" :key="col">
-                    <button class="row-col-selector-btn" @click="onColButtonClick(col - 1)"
-                        @mouseover="onColMouseOver(col - 1)" @mouseout="onColMouseOut()">⏺</button>
-                </th>
-                <th> <button class="row-col-selector-btn" @click="onAllButtonClick()" @mouseover="onAllMouseOver()"
-                        @mouseout="onAllMouseOut()">◼</button></th>
-            </tr>
-            <tr v-for="(row, rowIndex) in getMatrixAccordingToFormatter()" :key="rowIndex">
-                <td v-for="(item, colIndex) in row" :style="cellStyle(rowIndex, colIndex)"
-                    :key="rowIndex * statement.columnsAmount + colIndex" @click="onSingleMouseClick(rowIndex, colIndex)"
-                    @mouseover="onSingleMouseOver(rowIndex, colIndex)" @mouseout="onSingleMouseOut()">
-                    <div class="hld">{{ item }}</div>
-                </td>
-                <td>
-                    <button class="row-col-selector-btn" @click="onRowButtonClick(rowIndex)"
-                        @mouseover="onRowMouseOver(rowIndex)" @mouseout="onRowMouseOut()">⏺</button>
-                </td>
-            </tr>
-        </table>
-        <FunctionChoiceComponent v-if="workspace.filter(x => x.parent.id === statement.id).length !== 0"
-            :workspace="workspace" @new-statement-added="newStatementAdded" @workspace-update="onWorkspaceUpdate">
-        </FunctionChoiceComponent>
-    </div>
+        <div class="align-self-center my-auto mx-3">
+            = {{ matrix.getRelative() }}
+        </div>
+        <div>
+            <matrix-viewer :matrix="matrix" :workspace="workspace" :workspace-version="workspaceVersion"
+                @workspace-push="onWorkspacePush" class="ma-3" />
+                <v-btn v-show="workspace.list.filter(x => x.parent.id === matrix.id).length !== 0" variant="tonal" class="mb-3" size='small' @click="onDeleteFromWorkspacebyStId()">
+                    Deselect
+                </v-btn>
+        </div>
+
+        <matrix-methods-tabs v-if="workspace.list.length !== 0 && workspace.list[0].parent.id === matrix.id"
+            :workspace="workspace" @clear-workspace="onClearWorkspace" @statement-added="onStatementAdded" />
+    </v-sheet>
 </template>
-  
+
 <script>
-import FunctionChoiceComponent from "@/components/FunctionChoiceComponent.vue"
-import { getFormattedMatrix } from "@/services/HelperFunctions";
+import { NamedMatrix } from '@/services/NamedMatrix';
+import { Workspace } from '@/services/Workspace';
+import MatrixViewer from './MatrixViewer.vue';
+import MatrixMethodsTabs from './MatrixMethodsTabs.vue';
 
+
+/*
+        <v-sheet v-if="chosenMethod !== undefined" class="ma-sheet ma-2">
+            <v-btn icon="◁" variant="tonal" class="align-self-center ma-3" @click="chosenMethod=undefined">
+                ◁
+            </v-btn>
+        </v-sheet>
+
+*/
+
+//style="border: 1px solid black;"
 export default {
-    name: 'StatementComponent',
-    data() {
-        return {
-            mouseoverRow: -1,
-            mouseoverCol: -1,
-            mouseoverAll: false,
-            mouseOverSingle: { row: -1, col: -1 }
-        };
-    },
+    data: () => ({
+        matrixNameModel: 'unknown',
+    }),
     components: {
-        FunctionChoiceComponent
-    },
-    methods: {
-        onStatementNameEdit() {
-            const newText = event.target.value
-            this.statement.changeNameUnsafe(newText)
-            this.$emit("statementUpdated", this.statement)
-        },
-        deleteStatementAndWorkspaceEntries() {
-            const newWorkspace = this.$props.workspace.filter(x => x.parentId !== this.statement.id)
-            this.$emit("workspaceUpdate", newWorkspace)
-            this.$emit("statementDeleted", this.statement.id)
-        },
-        onWorkspaceUpdate(newWorkspace) {
-            this.$emit("workspaceUpdate", newWorkspace)
-        },
-        onRowButtonClick(rowIndex) {
-            console.log('Button clicked! ', rowIndex);
-            var selected = []
-            for (var i = 0; i < this.statement.columnsAmount; i++) {
-                selected.push({ row: rowIndex, col: i })
-            }
-            const newWorkspace = [...this.$props.workspace, { parent: this.statement, selected }]
-            this.$emit("workspaceUpdate", newWorkspace)
-        },
-        onRowMouseOver(rowIndex) {
-            this.$data.mouseoverRow = rowIndex
-            //console.log(this.$data.mouseoverRow)
-        },
-        onRowMouseOut() {
-            this.$data.mouseoverRow = -1
-            //console.log(this.$data.mouseoverRow)
-        },
-        onColButtonClick(colIndex) { //Dunno why but in template in line with <th v-for="col in statement.matrix.columnsAmount" :key="col"> indexing by some reason starts with 1
-            //console.log('Button clicked! ', colIndex);
-            var selected = []
-            for (var i = 0; i < this.statement.rowsAmount; i++) {
-                selected.push({ row: i, col: colIndex })
-            }
-            const newWorkspace = [...this.$props.workspace, { parent: this.statement, selected }]
-            this.$emit("workspaceUpdate", newWorkspace)
-        },
-        onColMouseOver(colIndex) {
-            this.$data.mouseoverCol = colIndex
-            //console.log(this.$data.mouseoverCol)
-        },
-        onColMouseOut() {
-            this.$data.mouseoverCol = -1
-            //console.log(this.$data.mouseoverCol)
-        },
-        onAllButtonClick() {
-            // console.log('All Button clicked! ');
-            var selected = []
-            for (var i = 0; i < this.statement.rowsAmount; i++) {
-                for (var j = 0; j < this.statement.columnsAmount; j++) {
-                    selected.push({ row: i, col: j })
-                }
-            }
-            const newWorkspace = [...this.$props.workspace, { parent: this.statement, selected }]
-            this.$emit("workspaceUpdate", newWorkspace)
-        },
-        onAllMouseOver() {
-            this.$data.mouseoverAll = true
-            //console.log(this.$data.mouseoverCol)
-        },
-        onAllMouseOut() {
-            this.$data.mouseoverAll = false
-            //console.log(this.$data.mouseoverCol)
-        },
-        onSingleMouseClick(rowIndex, colIndex) {
-            const newWorkspace = [...this.$props.workspace, { parent: this.statement, selected: [{ row: rowIndex, col: colIndex }] }]
-            this.$emit("workspaceUpdate", newWorkspace)
-        },
-        onSingleMouseOver(rowIndex, colIndex) {
-            this.$data.mouseOverSingle = { row: rowIndex, col: colIndex }
-            //console.log(this.$data.mouseOverSingle)
-        },
-        onSingleMouseOut() {
-            this.$data.mouseOverSingle = { row: -1, col: -1 }
-        },
-        newStatementAdded(data) {
-            this.$emit("newStatementAdded", data)
-        }
-    },
-    computed: {
-        cellStyle() {
-            return (rowIndex, colIndex) => {
-                if (this.mouseoverRow === rowIndex || this.mouseoverCol == colIndex || this.mouseoverAll || (this.mouseOverSingle.row === rowIndex && this.mouseOverSingle.col === colIndex)) {
-                    return {
-                        backgroundColor: "grey",
-                        border: "1px solid grey"
-                    };
-                } else if (this.$props.workspace
-                    .filter((w) => {
-                        return w.parent.id === this.statement.id
-                    })
-                    .filter((w) => {
-                        return w.selected.filter((s) => {
-                            //console.log(s.row, rowIndex, s.col, colIndex)
-                            return s.row === rowIndex && s.col === colIndex
-                        }).length !== 0
-                    }).length !== 0) {
-                    return {
-                        backgroundColor: "white",
-                        border: "1px solid black"
-                    };
-                } else {
-                    return {
-                        backgroundColor: "white",
-                        border: "1px solid white"
-                    };
-                }
-            };
-        },
-        getMatrixAccordingToFormatter() {
-            return () => {
-                return getFormattedMatrix(this.$store.state.formatStyle, this.statement)
-            }
-
-        },
+        MatrixViewer,
+        MatrixMethodsTabs,
     },
     props: {
-        statement: {
+        matrix: {
+            type: NamedMatrix,
             required: true,
         },
         workspace: {
-            type: Array,
+            type: Workspace,
+            required: true
+        },
+        workspaceVersion: {
             required: true
         }
     },
-    emits: ['workspaceUpdate', 'newStatementAdded', 'statementDeleted', 'statementUpdated']
-};
+    methods: {
+        onWorkspacePush(we) {
+            this.$emit("workspacePush", we)
+        },
+        onClearWorkspace() {
+            this.$emit('clearWorkspace')
+        },
+        onDeleteFromWorkspacebyStId() {
+            this.$emit('deleteFromWorkspace', this.$props.matrix.id)
+        },
+        onStatementAdded(st) {
+            this.$emit('statementAdded', st)
+        },
+        onDeleteStatement(id) {
+            this.$emit('deleteStatement', id)
+        },
+        onStatementNameUpdate() {
+            const name = this.$data.matrixNameModel
+            this.$props.matrix.changeNameUnsafe(name)
+            this.$emit('statementUpdated', this.$props.matrix)
+        }
+    },
+    computed: {
+        nameModelStyle() {
+            return () => {
+                return {
+                    width: (this.$data.matrixNameModel.length * 0.7) + "rem",
+                }
+            }
+        }
+    },
+    mounted() {
+        this.$data.matrixNameModel = this.$props.matrix.name
+    },
+    emits: ["workspacePush", 'clearWorkspace', 'statementAdded', 'deleteStatement', 'statementUpdated', 'deleteFromWorkspace']
+}
 </script>
-  
+
 <style scoped lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
-
-.holder {
+.sc2-sheet {
     background-color: #f0f0f0;
-    margin: 1px;
     border-radius: 5px;
-    color: #000000;
-    align-content: flex-end;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
 }
 
-.matrix {
-    margin: 0% 1% 1% 1%;
-    border: 0px solid #999999;
-    font-family: 'Roboto Mono', monospace;
-}
-
-.stt {
-    text-align: center;
-    margin: 1%;
-    display: flex;
-    flex-direction: row;
-
-    div {
-        margin: 0em 1em 0em 1em
-    }
-}
-
-.cnt-cell {
-    background-color: white;
-    border: 1px solid black;
-}
-
-.cnt-cell-nohighlight {
-    background-color: white;
-}
-
-.hld {
-    margin: 3px 8px 3px 8px;
-}
-
-.row-col-selector-btn {
-    border: none;
+.ma-sheet {
     border-radius: 5px;
-    width: 2em;
-    height: 2em;
-}
-
-.row-col-selector-btn:hover {
-    background-color: #d6d5d2;
-}
-
-.bg-gray-300 {
-    background-color: #d6d5d2;
-}
-
-.st-cmp-del-button {
-    margin: 1%;
-    text-align: center;
-    font-size: medium;
-    border: none;
-    border-radius: 5px;
-    padding: 4px;
-}
-
-.st-cmp-del-button:hover {
-    background-color: #999999;
+    background-color: #ddd;
 }
 </style>
-  

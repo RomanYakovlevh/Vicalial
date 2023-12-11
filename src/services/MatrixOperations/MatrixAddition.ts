@@ -11,7 +11,7 @@ export class MatrixAddition extends NamedMatrix {
     constructor(matrixLeft: WorkspaceEntry, matrixRight: WorkspaceEntry, inParent: Boolean = false, appendages: string[] = []) {
         if (inParent) {
             const a = addition(matrixLeft, matrixRight, appendages)
-            super(matrixLeft.selection.setForWith(matrixLeft.parent.asList2D, a))
+            super(matrixLeft.selection.setForWith(matrixLeft.parent.asList2D(), a))
         } else {
             super(addition(matrixLeft, matrixRight, appendages))
         }

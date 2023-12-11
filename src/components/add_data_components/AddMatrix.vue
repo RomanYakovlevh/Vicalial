@@ -23,7 +23,7 @@
                 <input
                   v-model="this.dataMatrix[i - 1][j - 1]"
                   class="dataMatrixCellInput"
-                  placeholder="|"
+                  placeholder="0"
                 />
               </div>
             </td>

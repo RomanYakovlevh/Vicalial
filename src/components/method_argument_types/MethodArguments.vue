@@ -66,7 +66,7 @@
                     <button size="small" variant="tonal" class="ma-1" @click="selectionExplanationMessage()"
                         style="background-color: #ccc; border-radius: 4px; padding: 5px 10px 5px 10px">
                         <div v-if="i > workspace.list.length">
-                            Select...
+                            Select...mth
                         </div>
                         <div class="text-none text-subtitle-1" v-if="i <= workspace.list.length">
                             <input style="width: 40px; background-color: white; border-radius: 4px; padding-left: 4px;"
@@ -95,7 +95,7 @@
 <script>
 
 import { Workspace } from '@/services/Workspace';
-import ExportMatrix from './ExportMatrix.vue';
+import ExportMatrix from '@/components/ExportMatrix.vue';
 import { Matrix } from '@/services/Matrix';
 import { getFormattedMatrix } from '@/services/HelperFunctions'
 

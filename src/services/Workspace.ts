@@ -197,7 +197,7 @@ export class WorkspaceEntry {
     }
 
     asList2D() {
-        return this.selection.getFrom(this.parent.asList2D)
+        return this.selection.getFrom(this.parent.asList2D())
     }
 
     getSelectionsAsIndexes() {

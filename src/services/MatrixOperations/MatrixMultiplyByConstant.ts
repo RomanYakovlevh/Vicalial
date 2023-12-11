@@ -9,7 +9,7 @@ export class MatrixMultiplyByConstant extends NamedMatrix {
     constructor(matrixLeft: WorkspaceEntry, inParent: Boolean = false, appendages: string[] = []) {
         if (inParent) {
             const a = elemWiseMultiplication(matrixLeft, appendages)
-            super(matrixLeft.selection.setForWith(matrixLeft.parent.asList2D, a))
+            super(matrixLeft.selection.setForWith(matrixLeft.parent.asList2D(), a))
         } else {
             super(elemWiseMultiplication(matrixLeft, appendages))
         }

@@ -1,4 +1,3 @@
-
 import { NamedMatrix } from "../NamedMatrix";
 import { WorkspaceEntry } from "../Workspace";
 
@@ -20,6 +19,6 @@ export class MatrixReplace extends NamedMatrix {
 function replace(parent: WorkspaceEntry, setTo: WorkspaceEntry) {
     //const groupedMap = groupSelectionByRow(selection)
     //const groupedArray = Array.from(groupedMap.values())
-    const res = parent.selection.setForWith(parent.parent.asList2D, setTo.asList2D())
+    const res = parent.selection.setForWith(parent.parent.asList2D(), setTo.asList2D())
     return res
 }

@@ -68,10 +68,10 @@
 
 <script>
 import { NamedMatrix } from '@/services/NamedMatrix';
-import AddAnyExpression from './AddAnyExpression.vue'
-import AddFromFile from './AddFromFile.vue';
-import MatrixPreview from './MatrixPreview.vue';
-import AddMatrix from './AddMatrix.vue';
+import AddAnyExpression from '@/components/add_data_components/AddAnyExpression.vue'
+import AddFromFile from '@/components/add_data_components/AddFromFile.vue';
+import MatrixPreview from '@/components/MatrixPreview.vue';
+import AddMatrix from '@/components/add_data_components/AddMatrix.vue';
 
 export default {
     name: "AddDataWindow",
@@ -145,9 +145,9 @@ export default {
         eye() {
             return (h, w) => {
                 return new Array(Number(h)).fill("1").map((x, i) => {
-                    x; //to not trigger nesseccary use warning.
+                    x;
                     return new Array(Number(w)).fill("1").map((y, j) => {
-                        y;//to not trigger nesseccary use warning.
+                        y;
                         if (i === j) {
                             return "1"
                         } else {
@@ -161,7 +161,7 @@ export default {
             return (h, w) => {
                 return new Array(Number(h)).fill("1").map(() => {
                     return new Array(Number(w)).fill("1").map((y, j) => {
-                        y;//to not trigger nesseccary use warning.
+                        y;
                         return j.toString()
                     })
                 })

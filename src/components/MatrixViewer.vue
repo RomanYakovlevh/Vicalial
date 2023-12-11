@@ -30,7 +30,7 @@
 </template>
 
 <script>
-//import { NamedMatrix } from '@/services/NamedMatrix';
+import { NamedMatrix } from '@/services/NamedMatrix';
 import { Workspace, WorkspaceEntry, ColSelection, RowSelection, CellSelection, AllSelection } from '@/services/Workspace';
 import { getFormattedMatrix } from '@/services/HelperFunctions';
 
@@ -42,7 +42,8 @@ export default {
     },
     props: {
         matrix: {
-            required: true
+            required: true,
+            type: NamedMatrix
         },
         workspace: {
             type: Workspace,
@@ -154,7 +155,7 @@ export default {
                     this.$data.cellStyles.cols[colIndex].selected ||
                     this.$data.cellStyles.cells[rowIndex][colIndex].selected) {
                     return {
-                        "background-color": "white",
+                        "background-color": this.matrix.getBackgroundColorFor(rowIndex, colIndex),
                         border: "1px solid black"
                     };
                 } else if (this.$data.cellStyles.all.hover ||
@@ -167,7 +168,7 @@ export default {
                     };
                 } else {
                     return {
-                        "background-color": "white",
+                        "background-color": this.matrix.getBackgroundColorFor(rowIndex, colIndex),
                         border: "1px solid white"
                     };
                 }

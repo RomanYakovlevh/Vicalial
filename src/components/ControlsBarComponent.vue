@@ -13,7 +13,7 @@
 
 <script>
 
-import AddDataWindow from './AddDataWindow.vue'
+import AddDataWindow from '@/components/add_data_components/AddDataWindow.vue'
 
 export default {
     name: 'ControlsBarComponent',

@@ -1,11 +1,22 @@
 import { pyodide } from "./PyLoader";
 import { MatrixInvalidError } from "./MatrixErros";
 
+
+class Cell {
+    value: string;
+    valueAsFraction: string;
+    backgroundColor: string;
+
+    constructor(value: string, backgroundColor: string = "white") {
+        this.value = value;
+        this.valueAsFraction =  pyodide.runPython("str(parse_expr('" + value + "', transformations=auto_number_and_ratonalize_transformation)) \n");
+        this.backgroundColor = backgroundColor;
+    }
+}
 export class Matrix {
     rowsAmount: number;
     columnsAmount: number;
-    asList2D: string[][];
-    asList2DFractions: string[][];
+    cells: Cell[][];
     constructor(list2D: Array<Array<string>>) {
         this.rowsAmount = list2D.length
         this.columnsAmount = list2D[0].length
@@ -18,16 +29,13 @@ export class Matrix {
             }
             return
         })
-        this.asList2D = list2D
-        this.asList2DFractions = list2D.map(row => {
+        this.cells = list2D.map(row => {
             return row.map(item => {
-                return pyodide.runPython(
-                    "str(parse_expr('" + item + "', transformations=auto_number_and_ratonalize_transformation)) \n"
-                    )
+                return new Cell(item)
             })
         })
 
-        console.log(this.asList2D, this.asList2DFractions)
+        console.log(this.asList2D(), this.asList2DFractions())
     }
 
     getName() {
@@ -42,9 +50,9 @@ export class Matrix {
         if (this.columnsAmount !== arg1.columnsAmount || this.rowsAmount !== arg1.rowsAmount) {
             return false
         }
-        this.asList2D.forEach((row, i) => {
+        this.asList2D().forEach((row, i) => {
             row.forEach((item, j) => {
-                if (item !== arg1.asList2D[i][j]) {
+                if (item !== arg1.asList2D()[i][j]) {
                     return false
                 }
             })
@@ -72,7 +80,7 @@ export class Matrix {
         return res
         */
         let res = "["
-        this.asList2D.forEach((row, i) => {
+        this.asList2D().forEach((row, i) => {
             let rowAcc = "["
             row.forEach((item, j) => {
                 rowAcc += item
@@ -90,8 +98,29 @@ export class Matrix {
     }
 
     copy() {
-        const list2DCopy = this.asList2D.map(x => x.slice())
+        const list2DCopy = this.asList2D().map(x => x.slice())
         return new Matrix(list2DCopy)
     }
+
+    asList2D(){
+        return this.cells.map(row => {
+            return row.map(item => {
+                return item.value
+            })
+        })
+    }
+
+    asList2DFractions() {
+        return this.cells.map(row => {
+            return row.map(item => {
+                return item.valueAsFraction
+            })
+        })
+    }
+
+    getBackgroundColorFor(rowIndex: number, colIndex: number) {
+        return this.cells[rowIndex][colIndex].backgroundColor;
+    }
+
 }
 

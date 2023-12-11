@@ -16,7 +16,7 @@
         </v-container>
         <div class="statement-components-list">
             <div v-for="s in getStatements" :key=s.id>
-                <StatementComponent2 v-if="s.type === 'NamedMatrix'" :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion"
+                <StatementComponent v-if="s.type === 'NamedMatrix'" :matrix="s" :workspace="workspace" :workspace-version="workspaceVersion"
                     @workspace-push="onPushWorkspace" @clear-workspace="onClearWorkspace" @statement-added="pushStatement"
                     @delete-statement="onDeleteStatement" @statement-updated="onStatementUpdated" @delete-from-workspace="onDeleteFromWorkspace"/>
                     <PlotComponent v-if="s.type==='PlotStatement'" :plot-c="s" @delete-statement="onDeleteStatement" ></PlotComponent>
@@ -39,20 +39,18 @@
 
 
 import ControlsBarComponent from "@/components/ControlsBarComponent.vue";
-//import StatementComponent from "@/components/StatementComponent.vue";
 import { reactiveState } from "@/services/PyLoader";
-import StatementComponent2 from "@/components/StatementComponent2.vue";
+import StatementComponent from "@/components/StatementComponent.vue";
 import { Workspace } from "@/services/Workspace";
 import UniversalSnackBarComponentVue from "@/components/UniversalSnackBarComponent.vue";
-import AddDataWindow from "@/components/AddDataWindow.vue";
+import AddDataWindow from "@/components/add_data_components/AddDataWindow.vue";
 import PlotComponent from "@/components/PlotComponent.vue";
 
 export default {
     name: 'CalculatorView',
     components: {
-        //StatementComponent,
         ControlsBarComponent,
-        StatementComponent2,
+        StatementComponent,
         UniversalSnackBarComponentVue,
         AddDataWindow,
         PlotComponent

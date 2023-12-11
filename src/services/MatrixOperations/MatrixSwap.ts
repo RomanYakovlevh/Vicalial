@@ -19,7 +19,7 @@ export class MatrixSwap extends NamedMatrix {
 }
 
 function swap(arg1: WorkspaceEntry, arg2: WorkspaceEntry) {
-    let res = arg1.selection.setForWith(arg1.parent.asList2D, arg2.asList2D())
+    let res = arg1.selection.setForWith(arg1.parent.asList2D(), arg2.asList2D())
 
     if (!arg1.parent.equals(arg2.parent)) {
         //resArr.push(setElementsBySelection(arg2, arg2Selection, e1))

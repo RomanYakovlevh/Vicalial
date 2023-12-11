@@ -3,7 +3,6 @@ import { Workspace } from "./Workspace"
 import { Matrix } from "./Matrix"
 import { MatrixSelection } from "./MatrixOperations/MatrixSelection"
 import { MatrixAddition } from "./MatrixOperations/MatrixAddition"
-import { pyodide } from "./PyLoader"
 import { MatrixSubstraction } from "./MatrixOperations/MatrixSubstraction"
 import { MatrixMultiplication } from "./MatrixOperations/MatrixMultiplication"
 import { MatrixTransposition } from "./MatrixOperations/MatrixTransposition"
@@ -17,55 +16,80 @@ import { MatrixAppendCols } from "./MatrixOperations/MatrixAppendCols"
 import { PlotStatement } from "./NamedMatrix"
 import { MatrixLPMinimize } from "./MatrixOperations/MatrixLPMinimize"
 import { MatrixMultiplyByConstant } from "./MatrixOperations/MatrixMultiplyByConstant"
+import MethodArguments from "@/components/method_argument_types/MethodArguments.vue";
 
-export interface MatrixMethodGroups { }
+export interface MethodArgumentDescription {
+    type(): string
+}
 
-export class MathMethodGroup implements MatrixMethodGroups {
-    top: Array<MatrixMethod>
-    rest: Array<MatrixMethod>
-    constructor() {
-        this.top = [new AddMethod, new SubtractMethod, new MultiplyMethod, new TransposeMethod, new InverseMethod]
-        this.rest = [new MultiplyByConstant, new ElementWiseProductMethod, new LinearProgrammingMinimizeMethod]
+export interface MethodArgumentResult {
+
+}
+
+enum MethodSymbolPosition {
+    Prefix,
+    AfterFirstArgument,
+    Suffix
+}
+
+export class LimitedSelectionArgument implements MethodArgumentDescription {
+    argumentNumberLimit: number
+    symbol: string
+    symbolPosition: MethodSymbolPosition
+    appendagesOn: Boolean
+
+    constructor(argumentNumberLimit: number, symbol: string, symbolPosition: MethodSymbolPosition, appendagesOn: Boolean) {
+        this.argumentNumberLimit = argumentNumberLimit
+        this.symbol = symbol
+        this.symbolPosition = symbolPosition
+        this.appendagesOn = appendagesOn
     }
 
-    all() {
-        return this.rest.concat(this.top)
+    type() {
+        return "LimitedSelectionArgument"
     }
 }
 
-export class CodeMethodGroup implements MatrixMethodGroups {
-    top: Array<MatrixMethod>
-    rest: Array<MatrixMethod>
-    constructor() {
-        this.top = [new ReplaceMethod, new SwapMethod, new SizeMethod, new SelectMethod/*, new SliceMethod*/]
-        this.rest = [new AppendRowsMethod, new AppendColumnsMethod]
+export class InfiniteSelectionArgument implements MethodArgumentDescription {
+    infiniteArguments: Array<Matrix | undefined>
+    symbol: string
+
+    constructor(infiniteArguments: Array<Matrix | undefined>, symbol: string) {
+        this.infiniteArguments = infiniteArguments
+        this.symbol = symbol
     }
 
-    all() {
-        return this.rest.concat(this.top)
-    }
-}
-
-export class OtherMethodGroup implements MatrixMethodGroups {
-    top: Array<MatrixMethod>
-    rest: Array<MatrixMethod>
-    constructor() {
-        this.top = [new PlotMethod, new ExportMethod]
-        this.rest = []
-    }
-
-    all() {
-        return this.rest.concat(this.top)
+    type() {
+        return "InfiniteSelectionArgument"
     }
 }
 
-type argumentsSet = { selections: number, replaceInParent: Boolean, mutateSelf: Boolean, appendagesOn: Boolean }
+export class SelectionArgumentResult implements MethodArgumentResult {
+    values: Array<Matrix>
+    constructor(values: Array<Matrix>) {
+        this.values = values
+    }
+}
+
+export class ReplaceInParentCheckbox implements MethodArgumentDescription {
+    type() {
+        return "ReplaceInParentCheckbox"
+    }
+}
+
+export class ReplaceInParentCheckboxResult implements MethodArgumentResult {
+    checked: Boolean
+    constructor(checked: Boolean) {
+        this.checked = checked
+    }
+}
+
 export interface MatrixMethod {
     name(): string
 
     desription(): string
 
-    arguments(): argumentsSet
+    arguments(): Array<MethodArgumentDescription>
 
     symbol(): { type: number, value: string } // 0 - stands for prefix, 1 - midfx (only for 2 args), 2 - postfix
 
@@ -82,8 +106,8 @@ export class MultiplyByConstant implements MatrixMethod {
         return "Allows to multiply any selection by coefficient."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 1, replaceInParent: true, mutateSelf: true, appendagesOn: true }
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(1, "", MethodSymbolPosition.Prefix, true), new ReplaceInParentCheckbox()]
     }
 
     symbol(): { type: number; value: string } {
@@ -104,8 +128,8 @@ export class AddMethod implements MatrixMethod {
         return "Adds two matrices/selections of compatible size."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 2, replaceInParent: true, mutateSelf: true, appendagesOn: true }
+    arguments():  Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(2, "+", MethodSymbolPosition.AfterFirstArgument, true), new ReplaceInParentCheckbox()]
     }
 
     symbol(): { type: number; value: string } {
@@ -126,8 +150,8 @@ export class SubtractMethod implements MatrixMethod {
         return "Subtracts two matrices/selections of compatible size."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 2, replaceInParent: true, mutateSelf: true, appendagesOn: true }
+    arguments():  Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(2, "-", MethodSymbolPosition.AfterFirstArgument, true), new ReplaceInParentCheckbox()]
     }
 
     symbol(): { type: number; value: string } {
@@ -148,8 +172,8 @@ export class MultiplyMethod implements MatrixMethod {
         return "Multiplies two matrices/selections of compatible size."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 2, replaceInParent: false, mutateSelf: false, appendagesOn: true }
+    arguments():  Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(2, "*", MethodSymbolPosition.AfterFirstArgument, true)]
     }
 
     symbol(): { type: number; value: string } {
@@ -444,12 +468,35 @@ export class LinearProgrammingMinimizeMethod implements MatrixMethod {
     }
 
     arguments(): argumentsSet {
-        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } // 
+        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } //
     }
 
 
     symbol(): { type: number; value: string } {
         return { type: 0, value: "minimize " }
+    }
+
+    execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
+        return [new MatrixLPMinimize(workspace.list[0])]
+    }
+}
+
+export class SetBackgroundColorMethod implements MatrixMethod {
+    name(): string {
+        return "Background Color"
+    }
+
+    desription(): string {
+        return "Sets background color of selected cells to desired color."
+    }
+
+    arguments(): argumentsSet {
+        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } //
+    }
+
+
+    symbol(): { type: number; value: string } {
+        return { type: 0, value: "color " }
     }
 
     execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {

@@ -11,7 +11,7 @@ export class MatrixElemWiseMultiplication extends NamedMatrix {
         
         if (inParent) {
             const a = elemWiseMultiplication(matrixLeft, matrixRight, appendages)
-            super(matrixLeft.selection.setForWith(matrixLeft.parent.asList2D, a))
+            super(matrixLeft.selection.setForWith(matrixLeft.parent.asList2D(), a))
         } else {
             super(elemWiseMultiplication(matrixLeft, matrixRight, appendages))
         }

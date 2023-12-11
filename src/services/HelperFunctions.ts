@@ -178,7 +178,7 @@ export function extractErrorMessage(traceback: string): string {
 
 export function select(arg1: Matrix, cellsToExtract: Array<{ row: number, col: number }>) {
     const groupedMap = groupSelectionByRow(cellsToExtract)
-    return Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => arg1.asList2D[row][col]))
+    return Array.from(groupedMap.values()).map(x => x.map(({ row, col }) => arg1.asList2D()[row][col]))
 }
 
 export function groupSelectionByRow(cellsToExtract: Array<{ row: number, col: number }>) {
@@ -212,19 +212,19 @@ export function setElementsBySelection(parent: Matrix, selection: Array<{ row: n
     const res = parent.copy() // This can be pre-filled 2d array but i got lazy. TODO: rewrite
     groupedArray.forEach((row, i) => {
         row.forEach((item, j) => {
-            res.asList2D[item.row][item.col] = setTo.asList2D[i][j]
+            res.asList2D()[item.row][item.col] = setTo.asList2D()[i][j]
         })
     })
-    return res.asList2D
+    return res.asList2D()
 }
 
 export function getFormattedMatrix(formatStyle: number, matrix: Matrix){
     if (formatStyle === 0) {
-        return matrix.asList2D
+        return matrix.asList2D()
     } else if (formatStyle === 1) {
-        return matrix.asList2DFractions
+        return matrix.asList2DFractions()
     } else {
-        return matrix.asList2D
+        return matrix.asList2D()
     }
 }
 

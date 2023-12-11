@@ -75,6 +75,8 @@ Add explanations to "In parent" checkbox and coeffictient textfield in MatrixArg
 
 For PlotComponent, make it so in frame of plot are only ponts of intersections of functions and axises.
 
+Statement like 'x+y' cannot be added trhough "Manual input"
+
 3, 2, -5, -1
 2, -1, 3, 13
 1, 2, -1, 9
@@ -85,3 +87,4 @@ For PlotComponent, make it so in frame of plot are only ponts of intersections o
 27, 1, -1, 0, 3
 8, 1,-6,-1, 5
 20, 1, -2, 1, 2
+
