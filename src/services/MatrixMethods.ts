@@ -17,6 +17,7 @@ import { PlotStatement } from "./NamedMatrix"
 import { MatrixLPMinimize } from "./MatrixOperations/MatrixLPMinimize"
 import { MatrixMultiplyByConstant } from "./MatrixOperations/MatrixMultiplyByConstant"
 import MethodArguments from "@/components/method_argument_types/MethodArguments.vue";
+import {CodeMethodGroup, MathMethodGroup, OtherMethodGroup, MatrixMethodGroups} from "./MethodGroups"
 
 export interface MethodArgumentDescription {
     type(): string
@@ -51,11 +52,9 @@ export class LimitedSelectionArgument implements MethodArgumentDescription {
 }
 
 export class InfiniteSelectionArgument implements MethodArgumentDescription {
-    infiniteArguments: Array<Matrix | undefined>
     symbol: string
 
-    constructor(infiniteArguments: Array<Matrix | undefined>, symbol: string) {
-        this.infiniteArguments = infiniteArguments
+    constructor(symbol: string) {
         this.symbol = symbol
     }
 
@@ -194,8 +193,8 @@ export class TransposeMethod implements MatrixMethod {
         return "Transposes matrix or selection."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 1, replaceInParent: false, mutateSelf: true, appendagesOn: true }
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(1, "^T", MethodSymbolPosition.Suffix, true)]
     }
 
     symbol(): { type: number; value: string } {
@@ -216,8 +215,8 @@ export class InverseMethod implements MatrixMethod {
         return "Inverses square matrix or selection."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 1, replaceInParent: false, mutateSelf: true, appendagesOn: true }
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(1, "^-1", MethodSymbolPosition.Suffix, true)]
     }
 
     symbol(): { type: number; value: string } {
@@ -238,8 +237,8 @@ export class ElementWiseProductMethod implements MatrixMethod {
         return "Multiplies element-wise two matrices/selections of compatible size."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 2, replaceInParent: true, mutateSelf: true, appendagesOn: true }
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(2, ".*", MethodSymbolPosition.AfterFirstArgument, true), new ReplaceInParentCheckbox()]
     }
 
     symbol(): { type: number; value: string } {
@@ -260,8 +259,8 @@ export class ReplaceMethod implements MatrixMethod {
         return "Replaces selection from first argument with selection from second argument. Returns whole parent of first selection with replacement."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 2, replaceInParent: false, mutateSelf: true, appendagesOn: false }
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(2, "replace", MethodSymbolPosition.Prefix, false)]
     }
 
     symbol(): { type: number; value: string } {
@@ -282,8 +281,8 @@ export class SwapMethod implements MatrixMethod {
         return "Swaps places of selections from first and second argument."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 2, replaceInParent: false, mutateSelf: true, appendagesOn: false }
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(2, "swap", MethodSymbolPosition.Prefix, false)]
     }
 
     symbol(): { type: number; value: string } {
@@ -308,8 +307,8 @@ export class SizeMethod implements MatrixMethod {
         return "Returns 1-by-2 matrix where left element equals to amount of rows in selection/matrix, and right element is equal to amount of columns."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false }
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(1, "size of", MethodSymbolPosition.Prefix, false)]
     }
 
     symbol(): { type: number; value: string } {
@@ -330,8 +329,8 @@ export class SelectMethod implements MatrixMethod {
         return "Takes any amount of selections as arguments, as long as they all are from the same matrix, and returns new matrix made out of these selections."
     }
 
-    arguments(): argumentsSet {
-        return { selections: -1, replaceInParent: false, mutateSelf: true, appendagesOn: false } //-1 stands for infinity
+    arguments(): Array<MethodArgumentDescription> {
+        return [new InfiniteSelectionArgument("select")]
     }
 
     symbol(): { type: number; value: string } {
@@ -372,8 +371,8 @@ export class AppendRowsMethod implements MatrixMethod {
         return "Appends sideways two matrices/selections of same row amount."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 2, replaceInParent: false, mutateSelf: true, appendagesOn: false } // 
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(2, "append rows", MethodSymbolPosition.Prefix, false)]
     }
 
     symbol(): { type: number; value: string } {
@@ -394,10 +393,9 @@ export class AppendColumnsMethod implements MatrixMethod {
         return "Appends vertically two matrices/selections of same columns amount."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 2, replaceInParent: false, mutateSelf: true, appendagesOn: false } // 
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(2, "append columns", MethodSymbolPosition.Prefix, false)]
     }
-
 
     symbol(): { type: number; value: string } {
         return { type: 0, value: "append columns" }
@@ -420,10 +418,9 @@ export class PlotMethod implements MatrixMethod {
         return "Plots matrix/selection."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } // 
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(1, "plot", MethodSymbolPosition.Prefix, false)]
     }
-
 
     symbol(): { type: number; value: string } {
         return { type: 0, value: "plot" }
@@ -443,10 +440,9 @@ export class ExportMethod implements MatrixMethod {
         return "Allows to export matrix or selection in downloadable formats."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } // 
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(1, "export", MethodSymbolPosition.Prefix, false)]
     }
-
 
     symbol(): { type: number; value: string } {
         return { type: 0, value: "export" }
@@ -467,10 +463,9 @@ export class LinearProgrammingMinimizeMethod implements MatrixMethod {
         return "Takes matrix as if it is a simplex table, and finds minimum of a objective function. Objective function - is a first row of the matrix, constraint coefficients - first column of matrix. Solver treats constrains as if they are equalities."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } //
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(1, "minimize ", MethodSymbolPosition.Prefix, false)]
     }
-
 
     symbol(): { type: number; value: string } {
         return { type: 0, value: "minimize " }
