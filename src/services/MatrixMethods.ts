@@ -1,5 +1,5 @@
 
-import { Workspace } from "./Workspace"
+import {Workspace, WorkspaceEntry} from "./Workspace"
 import { Matrix } from "./Matrix"
 import { MatrixSelection } from "./MatrixOperations/MatrixSelection"
 import { MatrixAddition } from "./MatrixOperations/MatrixAddition"
@@ -20,14 +20,12 @@ import MethodArguments from "@/components/method_argument_types/MethodArguments.
 import {CodeMethodGroup, MathMethodGroup, OtherMethodGroup, MatrixMethodGroups} from "./MethodGroups"
 
 export interface MethodArgumentDescription {
-    type(): string
+    getComponentName(): string
 }
 
-export interface MethodArgumentResult {
+export interface MethodArgumentResult {}
 
-}
-
-enum MethodSymbolPosition {
+export enum MethodSymbolPosition {
     Prefix,
     AfterFirstArgument,
     Suffix
@@ -46,8 +44,8 @@ export class LimitedSelectionArgument implements MethodArgumentDescription {
         this.appendagesOn = appendagesOn
     }
 
-    type() {
-        return "LimitedSelectionArgument"
+    getComponentName() {
+        return "LimitedSelectionComponent"
     }
 }
 
@@ -58,20 +56,22 @@ export class InfiniteSelectionArgument implements MethodArgumentDescription {
         this.symbol = symbol
     }
 
-    type() {
+    getComponentName() {
+        throw new Error("Fill getComponetName()")
         return "InfiniteSelectionArgument"
     }
 }
 
 export class SelectionArgumentResult implements MethodArgumentResult {
-    values: Array<Matrix>
-    constructor(values: Array<Matrix>) {
+    values: Array<WorkspaceEntry>
+    constructor(values: Array<WorkspaceEntry>) {
         this.values = values
     }
 }
 
 export class ReplaceInParentCheckbox implements MethodArgumentDescription {
-    type() {
+    getComponentName() {
+        throw new Error("Fill getComponetName()")
         return "ReplaceInParentCheckbox"
     }
 }
@@ -476,6 +476,7 @@ export class LinearProgrammingMinimizeMethod implements MatrixMethod {
     }
 }
 
+/*
 export class SetBackgroundColorMethod implements MatrixMethod {
     name(): string {
         return "Background Color"
@@ -498,6 +499,8 @@ export class SetBackgroundColorMethod implements MatrixMethod {
         return [new MatrixLPMinimize(workspace.list[0])]
     }
 }
+
+*/
 
 export const allMethodGroups = { math: new MathMethodGroup, code: new CodeMethodGroup, other: new OtherMethodGroup }
 
