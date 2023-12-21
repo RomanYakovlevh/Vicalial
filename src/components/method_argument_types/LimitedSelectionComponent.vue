@@ -1,15 +1,15 @@
 <template>
-  <div class="subtext my-1 mx-3" v-if="limitedSelectionMethod.appendagesOn">
+  <div class="subtext my-1 mx-3" v-if="argumentType.appendagesOn">
     you can write coefficients in white boxes
   </div>
   <span
     v-if="
-      limitedSelectionMethod.symbolPosition === methodSymbolPostion().Prefix
+      argumentType.symbolPosition === methodSymbolPostion().Prefix
     "
-    >{{ limitedSelectionMethod.symbol }}</span
+    >{{ argumentType.symbol }}</span
   >
   <span class="subtext">&lpar;</span>
-  <span v-for="i in limitedSelectionMethod.argumentNumberLimit" :key="i"
+  <span v-for="i in argumentType.argumentNumberLimit" :key="i"
     ><button
       size="small"
       variant="tonal"
@@ -21,8 +21,8 @@
         padding: 5px 10px 5px 10px;
       "
     >
-      <div v-if="i >= workspace.list.length">Select...</div>
-      <div class="text-none text-subtitle-1" v-if="i < workspace.list.length">
+      <div v-if="i-1 >= workspace.list.length">Select...</div>
+      <div class="text-none text-subtitle-1" v-if="i-1 < workspace.list.length">
         <input
           style="
             width: 40px;
@@ -31,27 +31,27 @@
             padding-left: 4px;
           "
           class="ma-1"
-          v-model="appendagesModel[i]"
-          v-if="limitedSelectionMethod.appendagesOn"
-        />{{ workspace.list[i].getDescription() }}
+          v-model="appendagesModel[i-1]"
+          v-if="argumentType.appendagesOn"
+        />{{ workspace.list[i-1].getDescription() }}
       </div>
     </button>
     <span
       v-if="
-        limitedSelectionMethod.symbolPosition ===
+        argumentType.symbolPosition ===
           methodSymbolPostion().AfterFirstArgument && i === 1
       "
     >
-      <span class="subtext">&rpar;</span> {{ limitedSelectionMethod.symbol }}
+      <span class="subtext">&rpar;</span> {{ argumentType.symbol }}
       <span class="subtext">&lpar;</span></span
     >
   </span>
   <span class="subtext">&rpar;</span>
   <span
     v-if="
-      limitedSelectionMethod.symbolPosition === methodSymbolPostion().Suffix
+      argumentType.symbolPosition === methodSymbolPostion().Suffix
     "
-    >{{ limitedSelectionMethod.symbol }}</span
+    >{{ argumentType.symbol }}</span
   >
 </template>
 
@@ -76,7 +76,7 @@ export default {
       type: Workspace,
       required: true,
     },
-    limitedSelectionMethod: {
+    argumentType: {
       type: LimitedSelectionArgument,
       required: true,
     },
@@ -97,15 +97,15 @@ export default {
     //This function is supposed to be called from the parent component
     getResult() {
       if (
-        this.limitedSelectionMethod.argumentNumberLimit >
+        this.argumentType.argumentNumberLimit >
         this.workspace.list.length
       ) {
         throw new Error("Not enough selected arguments.");
       } else {
-        let res = new SelectionArgumentResult([]);
+        let res = new SelectionArgumentResult([], this.appendagesModel);
         for (
           let i = 0;
-          i < this.limitedSelectionMethod.argumentNumberLimit;
+          i < this.argumentType.argumentNumberLimit;
           i++
         ) {
           res.values.push(this.workspace.list[i]);
@@ -114,11 +114,11 @@ export default {
     },
   },
   computed: {},
-  created() {
+  mounted() {
     this.appendagesModel = [].fill(
       null,
       0,
-      this.limitedSelectionMethod.argumentNumberLimit
+      this.argumentType.argumentNumberLimit
     );
   },
   emits: {},

@@ -1,6 +1,7 @@
 <template>
-  {{ infiniteSelectionMethod.symbol
-  }}<span class="subtext">&lpar;</span>Selected: {{ workspace.list.length
+    {{
+        argumentType.symbol
+    }}<span class="subtext">&lpar;</span>Selected: {{ workspace.list.length
   }}<span class="subtext">&rpar;</span>
 </template>
 
@@ -24,7 +25,7 @@ export default {
       type: Workspace,
       required: true,
     },
-    infiniteSelectionMethod: {
+    argumentType: {
       type: InfiniteSelectionArgument,
       required: true,
     },
@@ -36,13 +37,6 @@ export default {
     },
   },
   computed: {},
-  created() {
-    this.appendagesModel = [].fill(
-      null,
-      0,
-      this.limitedSelectionMethod.argumentNumberLimit
-    );
-  },
   emits: {},
 };
 </script>

@@ -17,13 +17,34 @@ import { PlotStatement } from "./NamedMatrix"
 import { MatrixLPMinimize } from "./MatrixOperations/MatrixLPMinimize"
 import { MatrixMultiplyByConstant } from "./MatrixOperations/MatrixMultiplyByConstant"
 import MethodArguments from "@/components/method_argument_types/MethodArguments.vue";
-import {CodeMethodGroup, MathMethodGroup, OtherMethodGroup, MatrixMethodGroups} from "./MethodGroups"
+
+
+
+export function tempWayToParseArgumentResults(matrixMethod: MatrixMethod, methodArgumentResults: Array<MethodArgumentResult>) {
+    const replaceInParentOpt = methodArgumentResults.find(x =>  x.getType() === "ReplaceInParentCheckboxResult")
+    let replaceInParent = false
+    if (replaceInParentOpt !== undefined) {
+        replaceInParent = (replaceInParentOpt as ReplaceInParentCheckboxResult).checked
+    }
+
+    const selectionArgumentOpt = methodArgumentResults.find(x =>  x.getType() === "SelectionArgumentResult")
+    if (selectionArgumentOpt !== undefined) {
+        const selectionArgument = (selectionArgumentOpt) as SelectionArgumentResult
+        const workspace = new Workspace()
+        workspace.list = selectionArgument.values
+        return matrixMethod.execute(workspace, replaceInParent, selectionArgument.appendages)
+    } else {
+        throw new Error("Not enough arguments found")
+    }
+}
 
 export interface MethodArgumentDescription {
     getComponentName(): string
 }
 
-export interface MethodArgumentResult {}
+export interface MethodArgumentResult {
+    getType(): string
+}
 
 export enum MethodSymbolPosition {
     Prefix,
@@ -57,29 +78,37 @@ export class InfiniteSelectionArgument implements MethodArgumentDescription {
     }
 
     getComponentName() {
-        throw new Error("Fill getComponetName()")
-        return "InfiniteSelectionArgument"
+        return "InfiniteSelectionComponent"
     }
 }
 
 export class SelectionArgumentResult implements MethodArgumentResult {
     values: Array<WorkspaceEntry>
-    constructor(values: Array<WorkspaceEntry>) {
+    appendages: Array<string>
+    constructor(values: Array<WorkspaceEntry>, appendages: Array<string>) {
         this.values = values
+        this.appendages = appendages
+    }
+
+    getType(): string {
+        return "SelectionArgumentResult";
     }
 }
 
 export class ReplaceInParentCheckbox implements MethodArgumentDescription {
     getComponentName() {
-        throw new Error("Fill getComponetName()")
-        return "ReplaceInParentCheckbox"
+        return "ReplaceInParentCheckboxComponent"
     }
 }
 
 export class ReplaceInParentCheckboxResult implements MethodArgumentResult {
-    checked: Boolean
-    constructor(checked: Boolean) {
+    checked: boolean
+    constructor(checked: boolean) {
         this.checked = checked
+    }
+
+    getType(): string {
+        return "ReplaceInParentCheckboxResult";
     }
 }
 
@@ -501,11 +530,3 @@ export class SetBackgroundColorMethod implements MatrixMethod {
 }
 
 */
-
-export const allMethodGroups = { math: new MathMethodGroup, code: new CodeMethodGroup, other: new OtherMethodGroup }
-
-export function findFunctionByName(name: string) {
-    const allf = allMethodGroups.math.all().concat(allMethodGroups.code.all()).concat(allMethodGroups.other.all())
-
-    return allf.find(x => x.name() === name)
-}

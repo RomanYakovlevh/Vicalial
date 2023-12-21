@@ -18,32 +18,14 @@
     </div>
 
     <div
-      class="d-flex flex-row ml-3"
-      v-if="matrixMethod.arguments().replaceInParent"
-    >
-      <v-checkbox
-        v-model="replaceInParent"
-        @mouseover="inParentTooltip = true"
-        @mouseout="inParentTooltip = false"
-        label="In parent"
-        v-on="on"
-      >
-        <v-tooltip activator="parent" location="top">
-          <span
-            >If checked, first argument will be replaced inside of its parent
-            with result of this function.
-          </span>
-        </v-tooltip>
-      </v-checkbox>
-    </div>
-
-    <div
       v-for="(matrixMethodArgument, index) in matrixMethod.arguments()"
       :key="index"
     >
       <component
         :is="matrixMethodArgument.getComponentName()"
         ref="`matrixMethodArguments-${index}`"
+        :workspace="workspace"
+        :argumentType="matrixMethodArgument"
       ></component>
     </div>
 
@@ -64,27 +46,21 @@ import { Workspace } from "@/services/Workspace";
 import ExportMatrix from "@/components/ExportMatrix.vue";
 import { Matrix } from "@/services/Matrix";
 import { getFormattedMatrix } from "@/services/HelperFunctions";
-import { MatrixMethod } from "@/services/MatrixMethods";
-
-/*
-        <div v-if="matrixMethod.arguments().selections >= 0">
-            <v-btn size="small" variant="tonal" v-for="i in matrixMethod.arguments().selections" :key="i" class="ma-1">
-                <div v-if="i > workspace.list.length">Select...</div>
-                <div class="text-none text-subtitle-1" v-if="i <= workspace.list.length">{{
-                    workspace.list[i - 1].getDescription() }}</div>
-            </v-btn>
-        </div>
-        <div v-if="matrixMethod.arguments().selections === -1">
-            Selections: {{ workspace.list.length }}
-        </div>
-        <v-text-field variant="solo" flat="true" class="ma-2" density="compact" style="height: 3em;" v-model="model"
-            append-inner-icon="mdi-navigation-variant"><div class="subtext mr-2">M3 = </div> </v-text-field>
-*/
+import {
+  tempWayToParseArgumentResults,
+  MatrixMethod,
+} from "@/services/MatrixMethods";
+import LimitedSelectionComponent from "./LimitedSelectionComponent.vue";
+import InfiniteSelectionComponent from "./InfiniteSelectionComponent.vue";
+import ReplaceInParentCheckboxComponent from "./ReplaceInParentCheckboxComponent.vue";
 
 export default {
   name: "MethodArguments",
   components: {
     ExportMatrix,
+    LimitedSelectionComponent,
+    InfiniteSelectionComponent,
+    ReplaceInParentCheckboxComponent,
   },
   props: {
     matrixMethod: { required: true, type: MatrixMethod },
@@ -96,9 +72,7 @@ export default {
   data() {
     return {
       model: [null, null, null, null],
-      replaceInParent: false,
       exportMatrixDialog: false,
-      inParentTooltip: false,
       refsToMatrixMethodArguments: [], // Array to store references to child components
     };
   },
@@ -108,15 +82,14 @@ export default {
         if (this.matrixMethod.name() === "Export") {
           this.$data.exportMatrixDialog = true;
         } else {
-          this.matrixMethod
-            .execute(
-              this.workspace,
-              this.$data.replaceInParent,
-              this.$data.model
-            )
-            .forEach((element) => {
+          const results = this.refsToMatrixMethodArguments.map((x) =>
+            x.getResult()
+          );
+          tempWayToParseArgumentResults(this.matrixMethod, results).forEach(
+            (element) => {
               this.$emit("statementAdded", element);
-            });
+            }
+          );
           this.$emit("clearWorkspace");
         }
       } catch (e) {
@@ -145,9 +118,13 @@ export default {
     },
   },
   mounted() {
-    this.refsToMatrixMethodArguments = Array.from({ length: this.matrixMethod.arguments().length }, (_, index) => this.$refs[`matrixMethodArguments-${index}`]);
+    this.refsToMatrixMethodArguments = Array.from(
+      { length: this.matrixMethod.arguments().length },
+      (_, index) => this.$refs[`matrixMethodArguments-${index}`]
+    );
+    console.log(this.refsToMatrixMethodArguments)
   },
-    emits: ["statementAdded", "clearWorkspace"],
+  emits: ["statementAdded", "clearWorkspace"],
 };
 </script>
 
