@@ -17,6 +17,7 @@ export class Matrix {
     rowsAmount: number;
     columnsAmount: number;
     cells: Cell[][];
+    type = "Matrix"
     constructor(list2D: Array<Array<string>>) {
         this.rowsAmount = list2D.length
         this.columnsAmount = list2D[0].length
@@ -62,23 +63,6 @@ export class Matrix {
 
     
     toString() {
-        /*
-                let res = ""
-        this.asList2D.forEach((row, i) => {
-            let rowAcc = ""
-            row.forEach((item, j) => {
-                rowAcc += item
-                if (j < this.columnsAmount - 1) {
-                    rowAcc += ","
-                }
-            })
-            res += rowAcc
-            if (i < this.rowsAmount - 1) {
-                res += ";"
-            }
-        })
-        return res
-        */
         let res = "["
         this.asList2D().forEach((row, i) => {
             let rowAcc = "["
@@ -121,6 +105,11 @@ export class Matrix {
     getBackgroundColorFor(rowIndex: number, colIndex: number) {
         return this.cells[rowIndex][colIndex].backgroundColor;
     }
+
+    setBackgroundColorFor(rowIndex: number, colIndex: number, color: string) {
+        this.cells[rowIndex][colIndex].backgroundColor = color;
+    }
+
 
 }
 

@@ -33,11 +33,14 @@ export default {
   methods: {
     //This function is supposed to be called from the parent component
     getResult() {
-      return new SelectionArgumentResult(this.workspace.list);
+      return new SelectionArgumentResult(this.workspace.list, []);
     },
   },
   computed: {},
-  emits: {},
+  mounted() {
+    this.$emit('getResult', () => this.getResult())
+  },
+  emits: ["getResult"],
 };
 </script>
 

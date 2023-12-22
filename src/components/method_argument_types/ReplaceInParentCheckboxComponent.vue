@@ -38,8 +38,10 @@ export default {
     },
   },
   computed: {},
-  mounted() {},
-  emits: {},
+  mounted() {
+    this.$emit('getResult', () => this.getResult())
+  },
+  emits: ["getResult"],
 };
 </script>
 

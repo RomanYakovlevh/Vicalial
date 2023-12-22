@@ -17,17 +17,14 @@
       </v-tooltip>
     </div>
 
-    <div
+    <component
       v-for="(matrixMethodArgument, index) in matrixMethod.arguments()"
       :key="index"
-    >
-      <component
-        :is="matrixMethodArgument.getComponentName()"
-        ref="`matrixMethodArguments-${index}`"
-        :workspace="workspace"
-        :argumentType="matrixMethodArgument"
-      ></component>
-    </div>
+      :is="matrixMethodArgument.getComponentName()"
+      :workspace="workspace"
+      :argumentType="matrixMethodArgument"
+      @getResult="(x) => getResultFromChild(index, x)"
+    ></component>
 
     <v-card-actions>
       <v-btn density="compact" @click="onApplyClick">Apply</v-btn>
@@ -53,6 +50,8 @@ import {
 import LimitedSelectionComponent from "./LimitedSelectionComponent.vue";
 import InfiniteSelectionComponent from "./InfiniteSelectionComponent.vue";
 import ReplaceInParentCheckboxComponent from "./ReplaceInParentCheckboxComponent.vue";
+import SetBackgroundColorChoiceComponent
+    from "@/components/method_argument_types/SetBackgroundColorChoiceComponent.vue";
 
 export default {
   name: "MethodArguments",
@@ -61,6 +60,7 @@ export default {
     LimitedSelectionComponent,
     InfiniteSelectionComponent,
     ReplaceInParentCheckboxComponent,
+    SetBackgroundColorChoiceComponent
   },
   props: {
     matrixMethod: { required: true, type: MatrixMethod },
@@ -73,7 +73,7 @@ export default {
     return {
       model: [null, null, null, null],
       exportMatrixDialog: false,
-      refsToMatrixMethodArguments: [], // Array to store references to child components
+      getResultStorage: new Map(),
     };
   },
   methods: {
@@ -82,12 +82,16 @@ export default {
         if (this.matrixMethod.name() === "Export") {
           this.$data.exportMatrixDialog = true;
         } else {
-          const results = this.refsToMatrixMethodArguments.map((x) =>
-            x.getResult()
-          );
+          const results = Array.from(this.getResultStorage.values()).map((x) => x())
+          console.log(" results: ");
+          console.log(results);
           tempWayToParseArgumentResults(this.matrixMethod, results).forEach(
             (element) => {
-              this.$emit("statementAdded", element);
+              if (element.type === 'WorkspaceVersionUpdateFlag') {
+                this.$emit("statementUpdate")
+              } else {
+                this.$emit("statementAdded", element);
+              }
             }
           );
           this.$emit("clearWorkspace");
@@ -99,6 +103,9 @@ export default {
           kind: "Error",
         });
       }
+    },
+    getResultFromChild(index, getResult) {
+      this.getResultStorage.set(index, getResult);
     },
     selectFormatted() {
       const matrix = new Matrix(this.workspace.list[0].asList2D());
@@ -117,14 +124,7 @@ export default {
       });
     },
   },
-  mounted() {
-    this.refsToMatrixMethodArguments = Array.from(
-      { length: this.matrixMethod.arguments().length },
-      (_, index) => this.$refs[`matrixMethodArguments-${index}`]
-    );
-    console.log(this.refsToMatrixMethodArguments)
-  },
-  emits: ["statementAdded", "clearWorkspace"],
+  emits: ["statementAdded", "clearWorkspace", "statementUpdate"],
 };
 </script>
 

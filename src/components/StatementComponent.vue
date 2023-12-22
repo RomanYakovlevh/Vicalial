@@ -19,7 +19,7 @@
         </div>
 
         <matrix-methods-tabs v-if="workspace.list.length !== 0 && workspace.list[0].parent.id === matrix.id"
-            :workspace="workspace" @clear-workspace="onClearWorkspace" @statement-added="onStatementAdded" />
+            :workspace="workspace" @clear-workspace="onClearWorkspace" @statement-added="onStatementAdded" @statement-update="onStatementUpdate"/>
     </v-sheet>
 </template>
 
@@ -80,6 +80,9 @@ export default {
         onStatementNameUpdate() {
             const name = this.$data.matrixNameModel
             this.$props.matrix.changeNameUnsafe(name)
+            this.$emit('statementUpdated', this.$props.matrix)
+        },
+        onStatementUpdate() {
             this.$emit('statementUpdated', this.$props.matrix)
         }
     },

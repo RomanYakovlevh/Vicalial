@@ -80,6 +80,7 @@ export default {
       type: LimitedSelectionArgument,
       required: true,
     },
+
   },
   methods: {
     selectionExplanationMessage() {
@@ -110,6 +111,7 @@ export default {
         ) {
           res.values.push(this.workspace.list[i]);
         }
+        return res
       }
     },
   },
@@ -120,8 +122,9 @@ export default {
       0,
       this.argumentType.argumentNumberLimit
     );
+    this.$emit('getResult', () => this.getResult())
   },
-  emits: {},
+  emits: ["getResult"],
 };
 </script>
 

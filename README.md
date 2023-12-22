@@ -77,6 +77,8 @@ For PlotComponent, make it so in frame of plot are only ponts of intersections o
 
 Statement like 'x+y' cannot be added trhough "Manual input"
 
+Refactor, exctract PlotStatement and all that is relevevant to its own file from NamedMatrix
+
 3, 2, -5, -1
 2, -1, 3, 13
 1, 2, -1, 9

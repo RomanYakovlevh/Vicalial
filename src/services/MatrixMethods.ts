@@ -17,24 +17,38 @@ import { PlotStatement } from "./NamedMatrix"
 import { MatrixLPMinimize } from "./MatrixOperations/MatrixLPMinimize"
 import { MatrixMultiplyByConstant } from "./MatrixOperations/MatrixMultiplyByConstant"
 import MethodArguments from "@/components/method_argument_types/MethodArguments.vue";
+import {WorkspaceVersionUpdateFlag} from "@/services/WorkspaceVersionUpdateFlag";
 
 
 
+//Todo: ideally, we need to replace current .execute(..) methods with methods that would accept Array<MethodArgumentResult> as argument, but right I don't have time (December 2023)
 export function tempWayToParseArgumentResults(matrixMethod: MatrixMethod, methodArgumentResults: Array<MethodArgumentResult>) {
-    const replaceInParentOpt = methodArgumentResults.find(x =>  x.getType() === "ReplaceInParentCheckboxResult")
-    let replaceInParent = false
-    if (replaceInParentOpt !== undefined) {
-        replaceInParent = (replaceInParentOpt as ReplaceInParentCheckboxResult).checked
-    }
-
-    const selectionArgumentOpt = methodArgumentResults.find(x =>  x.getType() === "SelectionArgumentResult")
-    if (selectionArgumentOpt !== undefined) {
-        const selectionArgument = (selectionArgumentOpt) as SelectionArgumentResult
-        const workspace = new Workspace()
-        workspace.list = selectionArgument.values
-        return matrixMethod.execute(workspace, replaceInParent, selectionArgument.appendages)
+    if (matrixMethod.name() === "Background Color") {
+        const selectionArgumentOpt = methodArgumentResults.find(x =>  x.getType() === "SelectionArgumentResult")
+        const setBackgroundColorOpt = methodArgumentResults.find(x =>  x.getType() === "SetBackgroundColorChoiceResult")
+        if (selectionArgumentOpt !== undefined && selectionArgumentOpt !== undefined) {
+            const selectionArgument = (selectionArgumentOpt) as SelectionArgumentResult
+            const setBackgroundColor = (setBackgroundColorOpt) as SetBackgroundColorChoiceResult
+            return (matrixMethod as SetBackgroundColorMethod).setBackgroundColor(selectionArgument.values[0], setBackgroundColor.color)
+        } else {
+            throw new Error("Not enough arguments found")
+        }
     } else {
-        throw new Error("Not enough arguments found")
+        const replaceInParentOpt = methodArgumentResults.find(x =>  x.getType() === "ReplaceInParentCheckboxResult")
+        let replaceInParent = false
+        if (replaceInParentOpt !== undefined) {
+            replaceInParent = (replaceInParentOpt as ReplaceInParentCheckboxResult).checked
+        }
+
+        const selectionArgumentOpt = methodArgumentResults.find(x =>  x.getType() === "SelectionArgumentResult")
+        if (selectionArgumentOpt !== undefined) {
+            const selectionArgument = (selectionArgumentOpt) as SelectionArgumentResult
+            const workspace = new Workspace()
+            workspace.list = selectionArgument.values
+            return matrixMethod.execute(workspace, replaceInParent, selectionArgument.appendages)
+        } else {
+            throw new Error("Not enough arguments found")
+        }
     }
 }
 
@@ -110,6 +124,22 @@ export class ReplaceInParentCheckboxResult implements MethodArgumentResult {
     getType(): string {
         return "ReplaceInParentCheckboxResult";
     }
+}
+
+export class SetBackgroundColorChoice implements MethodArgumentDescription {
+    getComponentName(): string {
+        return "SetBackgroundColorChoiceComponent";
+    }
+}
+
+export class SetBackgroundColorChoiceResult implements MethodArgumentResult {
+    color: string
+    constructor(color: string) {
+        this.color = color
+    }
+  getType(): string {
+      return "SetBackgroundColorChoiceResult"
+  }
 }
 
 export interface MatrixMethod {
@@ -505,7 +535,6 @@ export class LinearProgrammingMinimizeMethod implements MatrixMethod {
     }
 }
 
-/*
 export class SetBackgroundColorMethod implements MatrixMethod {
     name(): string {
         return "Background Color"
@@ -515,8 +544,8 @@ export class SetBackgroundColorMethod implements MatrixMethod {
         return "Sets background color of selected cells to desired color."
     }
 
-    arguments(): argumentsSet {
-        return { selections: 1, replaceInParent: false, mutateSelf: false, appendagesOn: false } //
+    arguments(): Array<MethodArgumentDescription> {
+        return [new LimitedSelectionArgument(1, "background color ", MethodSymbolPosition.Prefix, false), new SetBackgroundColorChoice()]
     }
 
 
@@ -524,9 +553,16 @@ export class SetBackgroundColorMethod implements MatrixMethod {
         return { type: 0, value: "color " }
     }
 
+    setBackgroundColor(entry: WorkspaceEntry, color: string) {
+        const indexesToColor = entry.selection.getAsIndexesFor(entry.parent.asList2D())
+        indexesToColor.forEach((x) => {
+            entry.parent.setBackgroundColorFor(x.row, x.col, color)
+        })
+        return [new WorkspaceVersionUpdateFlag()]
+    }
+
     execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {
-        return [new MatrixLPMinimize(workspace.list[0])]
+        return []
     }
 }
 
-*/

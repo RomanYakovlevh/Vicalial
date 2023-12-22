@@ -1,6 +1,6 @@
 import {MatrixMethod, AddMethod, SubtractMethod, MultiplyMethod, TransposeMethod, InverseMethod, MultiplyByConstant,
     ElementWiseProductMethod, LinearProgrammingMinimizeMethod, ReplaceMethod, SwapMethod, SizeMethod, SelectMethod,
-    AppendColumnsMethod, AppendRowsMethod, PlotMethod, ExportMethod} from "@/services/MatrixMethods";
+    AppendColumnsMethod, AppendRowsMethod, PlotMethod, ExportMethod, SetBackgroundColorMethod} from "@/services/MatrixMethods";
 
 export interface MatrixMethodGroups { }
 
@@ -34,7 +34,7 @@ export class OtherMethodGroup implements MatrixMethodGroups {
     top: Array<MatrixMethod>
     rest: Array<MatrixMethod>
     constructor() {
-        this.top = [new PlotMethod, new ExportMethod/*, new SetBackgroundColorMethod*/]
+        this.top = [new PlotMethod, new ExportMethod, new SetBackgroundColorMethod]
         this.rest = []
     }
 

@@ -4,6 +4,8 @@ import { WorkspaceEntry } from "./Workspace";
 
 let lastMatrixId = 1
 
+
+//Todo: Refactor, exctract PlotStatement and all that is relevevant to its own file
 export class PlotStatement {
     id: number
     parent: WorkspaceEntry

@@ -20,7 +20,7 @@
             </v-window>
     </v-sheet>
     <method-arguments v-if="chosenMethod !== undefined" :matrix-method="chosenMethod" :workspace="workspace"
-            @clear-workspace="onClearWorkspace" @statement-added="onStatementAdded" />
+            @clear-workspace="onClearWorkspace" @statement-added="onStatementAdded" @statementUpdate="onStatementUpdate"/>
 </template>
 
 <script>
@@ -63,9 +63,12 @@ export default {
         },
         onStatementAdded(st) {
             this.$emit('statementAdded', st)
+        },
+        onStatementUpdate() {
+            this.$emit("statementUpdate")
         }
     },
-    emits: ['clearWorkspace', 'statementAdded']
+    emits: ['clearWorkspace', 'statementAdded', "statementUpdate"]
 }
 
 </script>
