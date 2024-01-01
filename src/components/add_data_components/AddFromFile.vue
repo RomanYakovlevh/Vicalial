@@ -29,7 +29,7 @@ export default {
             try {
                 let arr = await fileToNestedArray(this.files[0])
 
-                const list2D = arr.map((x) => x.map(y => evaluateMathWithPython(y.toString())))
+                const list2D = arr.map((x) => x.map(y => evaluateMathWithPython(y.toString().replace(/\^/g, "**"))))
 
                 const matrix = new NamedMatrix(list2D);
 

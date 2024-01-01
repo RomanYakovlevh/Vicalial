@@ -90,7 +90,8 @@ export default {
         nameModelStyle() {
             return () => {
                 return {
-                    width: (this.$data.matrixNameModel.length * 0.7) + "rem",
+                    // The digit '1' is needed so the field has some width when empty. Otherwise it would not be possible to change name from when its empty
+                    width: 1 + (this.$data.matrixNameModel.length * 0.7) + "rem",
                 }
             }
         }

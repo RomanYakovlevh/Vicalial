@@ -29,7 +29,9 @@ export function tempWayToParseArgumentResults(matrixMethod: MatrixMethod, method
         if (selectionArgumentOpt !== undefined && selectionArgumentOpt !== undefined) {
             const selectionArgument = (selectionArgumentOpt) as SelectionArgumentResult
             const setBackgroundColor = (setBackgroundColorOpt) as SetBackgroundColorChoiceResult
-            return (matrixMethod as SetBackgroundColorMethod).setBackgroundColor(selectionArgument.values[0], setBackgroundColor.color)
+            const workspace = new Workspace()
+            workspace.list = selectionArgument.values
+            return (matrixMethod as SetBackgroundColorMethod).setBackgroundColor(workspace, setBackgroundColor.color)
         } else {
             throw new Error("Not enough arguments found")
         }
@@ -545,7 +547,7 @@ export class SetBackgroundColorMethod implements MatrixMethod {
     }
 
     arguments(): Array<MethodArgumentDescription> {
-        return [new LimitedSelectionArgument(1, "background color ", MethodSymbolPosition.Prefix, false), new SetBackgroundColorChoice()]
+        return [new InfiniteSelectionArgument("background color "), new SetBackgroundColorChoice()]
     }
 
 
@@ -553,12 +555,16 @@ export class SetBackgroundColorMethod implements MatrixMethod {
         return { type: 0, value: "color " }
     }
 
-    setBackgroundColor(entry: WorkspaceEntry, color: string) {
-        const indexesToColor = entry.selection.getAsIndexesFor(entry.parent.asList2D())
-        indexesToColor.forEach((x) => {
-            entry.parent.setBackgroundColorFor(x.row, x.col, color)
-        })
+    setBackgroundColor(entries: Workspace, color: string) {
+entries.list.forEach((entry) => {
+    const indexesToColor = entry.selection.getAsIndexesFor(entry.parent.asList2D())
+    indexesToColor.forEach((x) => {
+        entry.parent.setBackgroundColorFor(x.row, x.col, color)
+    })
+
+})
         return [new WorkspaceVersionUpdateFlag()]
+
     }
 
     execute(workspace: Workspace, inParent: Boolean = false, appendages: string[] = []): Matrix[] {

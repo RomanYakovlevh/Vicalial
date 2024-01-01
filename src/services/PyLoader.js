@@ -12,11 +12,11 @@ from sympy.parsing.sympy_parser import parse_expr, auto_number, rationalize, aut
 auto_number_and_ratonalize_transformation = (auto_symbol, auto_number, rationalize)
 
 def ensureMatrix(M):
-    #print(f'M: {M}, type of M: {type(M)}')
+    print(f'M: {M}, type of M: {type(M)}')
     if type(M) == numpy.matrix:
         return M.tolist()
     else:
-        return [[M.item()]]
+        return numpy.matrix(M).tolist()
 
 def minimize_lp(matrix):
     matrix = matrix.tolist()

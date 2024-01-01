@@ -1,7 +1,6 @@
 <template>
     <v-card>
         <v-tabs v-model="tab" bg-color="primary">
-            <v-tab value="Any expression">Any expression</v-tab>
             <v-tab value="Manual input">Manual input</v-tab>
             <v-tab value="From file">From file</v-tab>
             <v-tab value="Generator">Generator</v-tab>
@@ -9,10 +8,6 @@
 
         <v-card-text>
             <v-window v-model="tab">
-                <v-window-item value="Any expression">
-                    <AddAnyExpression @close-dialog="closeDialog" @new-statement-added="newStatementAdded" />
-                </v-window-item>
-
                 <v-window-item value="Manual input">
                     <AddMatrix @close-dialog="closeDialog" @new-statement-added="newStatementAdded"/>
                 </v-window-item>
@@ -68,7 +63,6 @@
 
 <script>
 import { NamedMatrix } from '@/services/NamedMatrix';
-import AddAnyExpression from '@/components/add_data_components/AddAnyExpression.vue'
 import AddFromFile from '@/components/add_data_components/AddFromFile.vue';
 import MatrixPreview from '@/components/MatrixPreview.vue';
 import AddMatrix from '@/components/add_data_components/AddMatrix.vue';
@@ -76,7 +70,6 @@ import AddMatrix from '@/components/add_data_components/AddMatrix.vue';
 export default {
     name: "AddDataWindow",
     components: {
-        AddAnyExpression,
         AddFromFile,
         MatrixPreview,
         AddMatrix

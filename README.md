@@ -39,17 +39,17 @@ There is so many way to name multiplication of matrices: I should appropriately 
 
 Rename all Matrix methods in a way that it would exactly match names of corresponding functions in numpy.
 
-Just number of arguments is definetly not enough for function choice. We need like dynamic amount (for Extraction function), and typed arguments(for functions like Map and Reduce).
+Done?: Just number of arguments is definetly not enough for function choice. We need like dynamic amount (for Extraction function), and typed arguments(for functions like Map and Reduce).
 
-We hardcode relation selection-parent, but it should be more like parent-child-child-child...
+Done?: We hardcode relation selection-parent, but it should be more like parent-child-child-child...
 
 Done: Important for statements to be written from what expression they have come from, otherwise its easy to get super lost.
 
 Workspace viewer.
 
-Error viewer.
+Done?: Error viewer.
 
-Simple mathematical exprssion should be possible to be done quicker and easier.
+Done: Simple mathematical exprssion should be possible to be done quicker and easier.
 
 Add functions: slice, mapRows, mapColumns, replace map with mathElements, appendRows, appendColumns
 
@@ -59,7 +59,7 @@ In FileWorkers.ts, it would prbably be meaningful to be more permissive to imper
 
 Done: Make something like MatrixPreview component, i think it would be useful in a lot of places, like during export for example.
 
-Allow user to choose format of saving.
+Done: Allow user to choose format of saving.
 
 Repair selectedStyle() temporal solution in MatrixView
 
@@ -78,6 +78,10 @@ For PlotComponent, make it so in frame of plot are only ponts of intersections o
 Statement like 'x+y' cannot be added trhough "Manual input"
 
 Refactor, exctract PlotStatement and all that is relevevant to its own file from NamedMatrix
+
+In Future, add a feature that would allow to edit arguments of already executed functions. Feature to reactively transform all subsequent computations can also be added.\
+
+Fix the way symbols are handled in come. Symbols are created as variable in python environment, together with variables that we actually for internal functioning. This is not the way to do that.
 
 3, 2, -5, -1
 2, -1, 3, 13
