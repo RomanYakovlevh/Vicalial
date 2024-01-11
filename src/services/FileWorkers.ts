@@ -82,7 +82,7 @@ export function exportExcel(data: any[][]) {
 
   export function nestedArrayToLaTex(data: any[][]): string {
     const tableRows = data.map(row => row.join(' & ')).join(' \\\\ \n');
-    const latexData = `\\begin{tabular}{${'c'.repeat(data[0].length)}}\n${tableRows} \n\\end{tabular}`;
+    const latexData = `\\left(\n\\begin{tabular}{${'c'.repeat(data[0].length)}}\n${tableRows} \n\\end{tabular}\n\\right)`;
     return latexData
   }
 
