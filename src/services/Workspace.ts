@@ -74,7 +74,7 @@ export class ColSelection implements SelectionType {
 
     getAsIndexesFor(matrix: string[][]): { row: number; col: number; }[] {
         return matrix.map((x, i) => {
-            x; //<-- for no eror
+            x; //<-- Just so i dowsnt throw error un unused variables
             return { row: i, col: this.col }
         })
     }
