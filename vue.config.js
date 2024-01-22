@@ -4,7 +4,7 @@ module.exports = defineConfig({
   devServer: {
     headers: { 'Access-Control-Allow-Origin': '*' }
   },
-  publicPath: '/~royako/iti0209/vicalial-vue/dist/',
+  publicPath: '/~mati.valjas/vicalial/Vicalial/dist/',
   css: {
     loaderOptions: {
       sass: {
