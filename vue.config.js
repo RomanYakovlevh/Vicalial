@@ -4,7 +4,7 @@ module.exports = defineConfig({
   devServer: {
     headers: { 'Access-Control-Allow-Origin': '*' }
   },
-  publicPath: '/~mati.valjas/vicalial/Vicalial/dist/',
+  //publicPath: '/dist/',
   css: {
     loaderOptions: {
       sass: {
