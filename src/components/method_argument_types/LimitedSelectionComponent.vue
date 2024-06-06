@@ -58,7 +58,7 @@
 <script>
 import { Workspace } from "@/services/Workspace";
 import {
-  LimitedSelectionArgument,
+  LimitedSelectionArgumentDescription,
   MethodSymbolPosition,
   SelectionArgumentResult,
 } from "@/services/MatrixMethods";
@@ -77,7 +77,7 @@ export default {
       required: true,
     },
     argumentType: {
-      type: LimitedSelectionArgument,
+      type: LimitedSelectionArgumentDescription,
       required: true,
     },
 

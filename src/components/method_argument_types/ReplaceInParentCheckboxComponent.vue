@@ -11,7 +11,7 @@
 
 <script>
 import { Workspace } from "@/services/Workspace";
-import { ReplaceInParentCheckbox, ReplaceInParentCheckboxResult } from "@/services/MatrixMethods";
+import { ReplaceInParentCheckboxDescription, ReplaceInParentCheckboxResult } from "@/services/MatrixMethods";
 
 export default {
   name: "ReplaceInParentCheckboxComponent",
@@ -27,7 +27,7 @@ export default {
       required: true,
     },
     argumentType: {
-      type: ReplaceInParentCheckbox,
+      type: ReplaceInParentCheckboxDescription,
       required: true,
     },
   },

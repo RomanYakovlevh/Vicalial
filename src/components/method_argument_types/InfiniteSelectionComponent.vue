@@ -8,7 +8,7 @@
 <script>
 import { Workspace } from "@/services/Workspace";
 import {
-  InfiniteSelectionArgument,
+  InfiniteSelectionArgumentDescription,
   SelectionArgumentResult,
 } from "@/services/MatrixMethods";
 
@@ -26,7 +26,7 @@ export default {
       required: true,
     },
     argumentType: {
-      type: InfiniteSelectionArgument,
+      type: InfiniteSelectionArgumentDescription,
       required: true,
     },
   },

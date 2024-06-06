@@ -52,6 +52,8 @@ import InfiniteSelectionComponent from "./InfiniteSelectionComponent.vue";
 import ReplaceInParentCheckboxComponent from "./ReplaceInParentCheckboxComponent.vue";
 import SetBackgroundColorChoiceComponent
     from "@/components/method_argument_types/SetBackgroundColorChoiceComponent.vue";
+import LinearProgrammingTableViewComponent
+    from "@/components/method_argument_types/LinearProgrammingTableViewComponent.vue";
 
 export default {
   name: "MethodArguments",
@@ -60,7 +62,8 @@ export default {
     LimitedSelectionComponent,
     InfiniteSelectionComponent,
     ReplaceInParentCheckboxComponent,
-    SetBackgroundColorChoiceComponent
+    SetBackgroundColorChoiceComponent,
+    LinearProgrammingTableViewComponent
   },
   props: {
     matrixMethod: { required: true, type: MatrixMethod },

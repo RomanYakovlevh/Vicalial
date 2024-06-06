@@ -24,7 +24,7 @@
 <script>
 import { Workspace } from "@/services/Workspace";
 import {
-  SetBackgroundColorChoice,
+  SetBackgroundColorChoiceDescription,
   SetBackgroundColorChoiceResult,
 } from "@/services/MatrixMethods";
 
@@ -42,7 +42,7 @@ export default {
       required: true,
     },
     argumentType: {
-      type: SetBackgroundColorChoice,
+      type: SetBackgroundColorChoiceDescription,
       required: true,
     },
   },
