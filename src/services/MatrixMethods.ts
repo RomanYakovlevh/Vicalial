@@ -12,7 +12,7 @@ import { MatrixSwap } from "./MatrixOperations/MatrixSwap";
 import { MatrixSize } from "./MatrixOperations/MatrixSize";
 import { MatrixAppendRows } from "./MatrixOperations/MatrixAppendRows";
 import { MatrixAppendCols } from "./MatrixOperations/MatrixAppendCols";
-import { PlotStatement } from "./NamedMatrix";
+import { PlotStatement } from "./PlotStatement";
 import { MatrixLPMinimize } from "./MatrixOperations/MatrixLPMinimize";
 import { MatrixMultiplyByConstant } from "./MatrixOperations/MatrixMultiplyByConstant";
 import MethodArguments from "@/components/method_argument_types/MethodArguments.vue";

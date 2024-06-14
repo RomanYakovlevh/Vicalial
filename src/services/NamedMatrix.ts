@@ -1,22 +1,6 @@
 //Temporary crutch, intil we invent good type system.
 import { Matrix } from "./Matrix";
-import { WorkspaceEntry } from "./Workspace";
-
-let lastMatrixId = 1
-
-
-//Todo: Refactor, exctract PlotStatement and all that is relevevant to its own file
-export class PlotStatement {
-    id: number
-    parent: WorkspaceEntry
-    type: string
-    constructor(parent: WorkspaceEntry) {
-        this.id = lastMatrixId
-        lastMatrixId++
-        this.parent = parent
-        this.type  = 'PlotStatement'
-    }
-}
+import {getLastmatrixId, incrementLastMatrixId} from "@/services/LastMatrixIdStatic";
 
 export class NamedMatrix extends Matrix {
     id: number;
@@ -25,8 +9,8 @@ export class NamedMatrix extends Matrix {
     constructor(list2D: Array<Array<string>>, supressed: boolean = false) {
         super(list2D)
         if (!supressed) {
-            this.id = lastMatrixId
-            lastMatrixId++
+            this.id = getLastmatrixId()
+            incrementLastMatrixId()
         } else {
             this.id = -1
         }
