@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { NamedMatrix } from '@/services/NamedMatrix';
+import { Matrix } from '@/services/Matrix';
 import { Workspace } from '@/services/Workspace';
 import MatrixViewer from './MatrixViewer.vue';
 import MatrixMethodsTabs from './MatrixMethodsTabs.vue';
@@ -50,7 +50,7 @@ export default {
     },
     props: {
         matrix: {
-            type: NamedMatrix,
+            type: Matrix,
             required: true,
         },
         workspace: {

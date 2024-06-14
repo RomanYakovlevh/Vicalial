@@ -1,13 +1,14 @@
-import { NamedMatrix } from "../NamedMatrix";
+import { Matrix } from "../Matrix";
 import { WorkspaceEntry } from "../Workspace";
 
-export class MatrixReplace extends NamedMatrix {
+export class MatrixReplace extends Matrix {
     parentLeft: WorkspaceEntry
     parentRight: WorkspaceEntry
     constructor(matrixLeft: WorkspaceEntry, matrixRight: WorkspaceEntry) {
         super(replace(matrixLeft, matrixRight))
         this.parentLeft = matrixLeft
         this.parentRight = matrixRight
+        this.giveNextName()
     }
 
 

@@ -1,7 +1,7 @@
-import { NamedMatrix } from "../NamedMatrix";
+import { Matrix } from "../Matrix";
 import { WorkspaceEntry } from "../Workspace";
 
-export class MatrixAppendRows extends NamedMatrix {
+export class MatrixAppendRows extends Matrix {
     parentLeft: WorkspaceEntry
     parentRight: WorkspaceEntry
     constructor(parentLeft: WorkspaceEntry, parentRight: WorkspaceEntry) {
@@ -9,6 +9,7 @@ export class MatrixAppendRows extends NamedMatrix {
         super(parentLeft.asList2D().concat(pr2d))
         this.parentLeft = parentLeft
         this.parentRight = parentRight
+        this.giveNextName()
     }
 
     getRelative(): string {

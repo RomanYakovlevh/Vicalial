@@ -1,17 +1,19 @@
 import { Matrix } from "../Matrix";
-import { NamedMatrix } from "../NamedMatrix";
 import { WorkspaceEntry } from "../Workspace";
 
-export class MatrixSelection extends NamedMatrix {
+export class MatrixSelection extends Matrix {
     parents: WorkspaceEntry[]
     selections: Array<{ row: number, col: number }>
     constructor(parents: WorkspaceEntry[], supressed: boolean = false) {
         const etalon = parents[0].parent.id
         parents = parents.filter(x => x.parent.id === etalon)
         const selections = parents.map(x => x.selection.getAsIndexesFor(x.parent.asList2D())).flat()
-        super(select(parents[0].parent.asList2D(), selections), supressed)
+        super(select(parents[0].parent.asList2D(), selections))
         this.selections = selections
         this.parents = parents
+        if (!supressed) {
+            this.giveNextName()
+        }
     }
 
 

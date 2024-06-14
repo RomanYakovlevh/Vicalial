@@ -1,16 +1,17 @@
 
-import { NamedMatrix } from "../NamedMatrix";
+import { Matrix } from "../Matrix";
 import { pyodide } from "../PyLoader";
 import { WorkspaceEntry } from "../Workspace";
 import { getFullParent, getAppengadeByIndex } from "../HelperFunctions";
 
-export class MatrixTransposition extends NamedMatrix {
+export class MatrixTransposition extends Matrix {
     parent: WorkspaceEntry
     appendages: string[]
     constructor(matrix: WorkspaceEntry, appendages: string[] = []) {
         super(transposition(matrix, appendages))
         this.parent = matrix
         this.appendages = appendages
+        this.giveNextName()
     }
 
 

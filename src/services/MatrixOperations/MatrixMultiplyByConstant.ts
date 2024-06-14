@@ -1,9 +1,9 @@
-import { NamedMatrix } from "../NamedMatrix";
+import { Matrix } from "../Matrix";
 import { WorkspaceEntry } from "../Workspace";
 import { pyodide } from "../PyLoader";
 import { getAppengadeByIndex, getFullParent } from "../HelperFunctions";
 
-export class MatrixMultiplyByConstant extends NamedMatrix {
+export class MatrixMultiplyByConstant extends Matrix {
     parentLeft: WorkspaceEntry
     appendages: string[]
     constructor(matrixLeft: WorkspaceEntry, inParent: Boolean = false, appendages: string[] = []) {
@@ -15,6 +15,7 @@ export class MatrixMultiplyByConstant extends NamedMatrix {
         }
         this.parentLeft = matrixLeft
         this.appendages = appendages
+        this.giveNextName()
     }
 
 

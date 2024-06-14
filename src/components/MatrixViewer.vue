@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { NamedMatrix } from '@/services/NamedMatrix';
+import { Matrix } from '@/services/Matrix';
 import { Workspace, WorkspaceEntry, ColSelection, RowSelection, CellSelection, AllSelection } from '@/services/Workspace';
 import { getFormattedMatrix } from '@/services/HelperFunctions';
 
@@ -43,7 +43,7 @@ export default {
     props: {
         matrix: {
             required: true,
-            type: NamedMatrix
+            type: Matrix
         },
         workspace: {
             type: Workspace,

@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { NamedMatrix } from "@/services/NamedMatrix";
+import { Matrix } from "@/services/Matrix";
 import { evaluateMathWithPython } from "@/services/HelperFunctions";
 
 export default {
@@ -59,7 +59,7 @@ export default {
           })
         );
 
-        const matrix = new NamedMatrix(list2D);
+        const matrix = (new Matrix(list2D)).giveNextName();
 
         this.$emit("newStatementAdded", matrix);
         this.$emit("closeDialog");

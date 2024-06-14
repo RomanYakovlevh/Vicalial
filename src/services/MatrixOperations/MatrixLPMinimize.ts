@@ -1,15 +1,15 @@
 
-import { NamedMatrix } from "../NamedMatrix";
+import { Matrix } from "../Matrix";
 import { pyodide } from "../PyLoader";
 import { WorkspaceEntry } from "../Workspace";
 
-export class MatrixLPMinimize extends NamedMatrix {
+export class MatrixLPMinimize extends Matrix {
     parent: WorkspaceEntry
     constructor(matrix: WorkspaceEntry) {
         const r = transposition(matrix)
-        console.log(r)
         super(r)
         this.parent = matrix
+        this.giveNextName()
     }
 
     getRelative() {

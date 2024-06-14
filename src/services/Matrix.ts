@@ -1,5 +1,6 @@
 import { pyodide } from "./PyLoader";
 import { MatrixInvalidError } from "./MatrixErros";
+import {getLastmatrixId, incrementLastMatrixId} from "@/services/LastMatrixIdStatic";
 
 
 class Cell {
@@ -13,11 +14,15 @@ class Cell {
         this.backgroundColor = backgroundColor;
     }
 }
+
 export class Matrix {
     rowsAmount: number;
     columnsAmount: number;
     cells: Cell[][];
     type = "Matrix"
+
+    name: string = "unnamed";
+    id: number | null = null;
     constructor(list2D: Array<Array<string>>) {
         this.rowsAmount = list2D.length
         this.columnsAmount = list2D[0].length
@@ -39,8 +44,23 @@ export class Matrix {
         console.log(this.asList2D(), this.asList2DFractions())
     }
 
+    giveNextName() {
+        if (this.id === null) {
+            this.id = getLastmatrixId()
+            incrementLastMatrixId()
+            this.name = "M" + this.id
+            this.type = 'NamedMatrix'
+        }
+
+        return this
+    }
+
+    changeNameUnsafe(newName: string) {
+        this.name = newName
+    }
+
     getName() {
-        return "unnamed"
+        return this.name
     }
 
     getRelative() {
@@ -109,7 +129,5 @@ export class Matrix {
     setBackgroundColorFor(rowIndex: number, colIndex: number, color: string) {
         this.cells[rowIndex][colIndex].backgroundColor = color;
     }
-
-
 }
 

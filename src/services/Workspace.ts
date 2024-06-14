@@ -1,7 +1,5 @@
 
 import { Matrix } from "./Matrix";
-import { NamedMatrix } from "./NamedMatrix";
-
 
 export interface SelectionType {
     getDescription(): string
@@ -185,9 +183,9 @@ export class Workspace {
 }
 
 export class WorkspaceEntry {
-    parent: NamedMatrix
+    parent: Matrix
     selection: SelectionType
-    constructor(parent: NamedMatrix, selection: SelectionType) {
+    constructor(parent: Matrix, selection: SelectionType) {
         this.parent = parent
         this.selection = selection
     }

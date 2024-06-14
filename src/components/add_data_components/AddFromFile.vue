@@ -11,7 +11,7 @@
 
 <script>
 import { fileToNestedArray } from '@/services/FileWorkers';
-import { NamedMatrix } from '@/services/NamedMatrix';
+import { Matrix } from '@/services/Matrix';
 import { evaluateMathWithPython } from '@/services/HelperFunctions';
 import { MatrixInvalidError } from '@/services/MatrixErros';
 
@@ -31,7 +31,7 @@ export default {
 
                 const list2D = arr.map((x) => x.map(y => evaluateMathWithPython(y.toString().replace(/\^/g, "**"))))
 
-                const matrix = new NamedMatrix(list2D);
+                const matrix = (new Matrix(list2D)).giveNextName();
 
                 this.$emit("newStatementAdded", matrix)
                 this.$emit("closeDialog")

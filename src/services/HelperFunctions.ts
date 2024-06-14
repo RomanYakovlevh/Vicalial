@@ -7,7 +7,6 @@ import { MatrixMultiplication } from "./MatrixOperations/MatrixMultiplication";
 import { MatrixTransposition } from "./MatrixOperations/MatrixTransposition";
 import { MatrixInversion } from "./MatrixOperations/MatrixInversion";
 import { MatrixElemWiseMultiplication } from "./MatrixOperations/MatrixElemWiseMultiplication";
-import { NamedMatrix } from "./NamedMatrix";
 import { MatrixSelection } from "./MatrixOperations/MatrixSelection";
 import { MatrixReplace } from "./MatrixOperations/MatrixReplace";
 import { MatrixSwap } from "./MatrixOperations/MatrixSwap";
