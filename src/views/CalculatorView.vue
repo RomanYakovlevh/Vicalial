@@ -10,8 +10,12 @@
           </h2>
           <p class="mb-4 grey--text">As a first step, you might want to...</p>
           <v-btn class="btn primary" large @click="dialog = true"
-            >Add Data</v-btn
-          >
+            >Add Data
+          </v-btn>
+          <div class="text-disabled ma-10">
+            Share your feedback at
+            <span class="text-medium-emphasis"> contact@vicalial.com</span>
+          </div>
         </v-col>
       </v-row>
       <v-dialog v-model="dialog" width="auto">
